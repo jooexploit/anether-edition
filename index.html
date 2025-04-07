@@ -1,0 +1,2252 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Team Shoky Helper</title>
+    <link rel="manifest" href="manifest.json">
+    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@6.0.0/css/all.min.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/fullcalendar@5.10.1/main.min.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@6.0.0/css/all.min.css" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/fullcalendar@5.10.1/main.min.js"></script>
+    <script>
+        if ("serviceWorker" in navigator) {
+            navigator.serviceWorker.register("./service-worker.js")
+                .then(() => console.log("Service Worker Registered"))
+                .catch((error) => console.error("Service Worker Registration Failed:", error));
+        }
+
+        let deferredPrompt;
+
+        document.addEventListener('DOMContentLoaded', () => {
+            const installButtonContainer = document.getElementById('install-app-button-container');
+            const installButton = document.getElementById('install-app-button');
+
+            // Check if the app is already running as a PWA
+            const isRunningAsPWA = window.matchMedia('(display-mode: standalone)').matches || window.navigator.standalone;
+
+            if (isRunningAsPWA) {
+                // Disable the "Download App" button if the app is already running
+                installButton.disabled = true;
+                installButton.textContent = 'App Installed';
+                installButtonContainer.classList.remove('hidden');
+            } else {
+                // Listen for the beforeinstallprompt event
+                window.addEventListener('beforeinstallprompt', (e) => {
+                    // Prevent the mini-infobar from appearing on mobile
+                    e.preventDefault();
+                    // Stash the event so it can be triggered later
+                    deferredPrompt = e;
+
+                    // Show the "Download App" button
+                    installButtonContainer.classList.remove('hidden');
+                });
+
+                if (installButton) {
+                    installButton.addEventListener('click', async () => {
+                        if (deferredPrompt) {
+                            // Show the install prompt
+                            deferredPrompt.prompt();
+
+                            // Wait for the user to respond to the prompt
+                            const { outcome } = await deferredPrompt.userChoice;
+                            if (outcome === 'accepted') {
+                                console.log('User accepted the install prompt');
+                            } else {
+                                console.log('User dismissed the install prompt');
+                            }
+
+                            // Clear the deferredPrompt variable
+                            deferredPrompt = null;
+                        }
+                    });
+                }
+            }
+        });
+    </script>
+    <style>
+        :root {
+            --primary-color: #4F46E5;
+            --secondary-color: #7C3AED;
+            --accent-color: #10B981;
+            --light-bg: #F9FAFB;
+            --dark-bg: #1F2937;
+            --dark-card: #374151;
+            --text-light: #F3F4F6;
+            --text-dark: #1F2937;
+        }
+
+        /* Popup animation */
+        @keyframes popup-animation {
+            0% {
+                transform: translate(-50%, -50%) scale(0);
+                opacity: 0;
+            }
+
+            100% {
+                transform: translate(-50%, -50%) scale(1);
+                opacity: 1;
+            }
+        }
+
+        /* Popup close animation */
+        @keyframes popup-close-animation {
+            0% {
+                transform: translate(-50%, -50%) scale(1);
+                opacity: 1;
+            }
+
+            100% {
+                transform: translate(-50%, -50%) scale(0);
+                opacity: 0;
+            }
+        }
+
+        /* Add this to your existing CSS */
+        body.dark .bg-white {
+            background-color: #4B5563;
+            /* Dark background */
+        }
+
+        body.dark {
+            background-color: var(--dark-bg);
+            /* Ensure this is defined in your :root */
+        }
+
+        body.light {
+            background-color: var(--light-bg);
+            /* Ensure this is defined in your :root */
+        }
+
+        /* For Tailwind CSS */
+        body.dark .content-area {
+            background-color: #1F2937;
+            /* Dark background */
+        }
+
+        body.light .content-area {
+            background-color: #F9FAFB;
+            /* Light background */
+        }
+
+        body.dark .text-gray-900 {
+            color: #F3F4F6;
+            /* Light text */
+        }
+
+        body.dark .text-gray-600 {
+            color: #D1D5DB;
+            /* Lighter gray text */
+        }
+
+        body.dark .border-gray-300 {
+            border-color: #374151;
+            /* Darker border */
+        }
+
+        /* Add other necessary styles for dark mode */
+        body {
+            font-family: 'Inter', system-ui, -apple-system, sans-serif;
+            transition: background-color 0.3s, color 0.3s;
+        }
+
+        body.dark {
+            background-color: var(--dark-bg);
+            color: var(--text-light);
+        }
+
+        body.light {
+            background-color: var(--light-bg);
+            color: var(--text-dark);
+        }
+
+        .modal-backdrop {
+            backdrop-filter: blur(5px);
+            background-color: rgba(0, 0, 0, 0.5);
+        }
+
+        .gradient-bg {
+            background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+        }
+
+        .card-hover {
+            transition: transform 0.3s, box-shadow 0.3s;
+        }
+
+        .card-hover:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.1);
+        }
+
+        .sidebar {
+            min-width: 250px;
+            transition: transform 0.3s ease;
+        }
+
+        .content-area {
+            min-height: calc(100vh - 60px);
+        }
+
+        .sidebar-collapsed {
+            transform: translateX(-250px);
+        }
+
+        .news-item {
+            border-left: 4px solid var(--accent-color);
+        }
+
+        .calendar-container {
+            height: 600px;
+        }
+
+        /* Theme toggle switch */
+        .switch {
+            position: relative;
+            display: inline-block;
+            width: 48px;
+            height: 24px;
+        }
+
+        .switch input {
+            opacity: 0;
+            width: 0;
+            height: 0;
+        }
+
+        .slider {
+            position: absolute;
+            cursor: pointer;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-color: #ccc;
+            transition: .4s;
+            border-radius: 24px;
+        }
+
+        .slider:before {
+            position: absolute;
+            content: "";
+            height: 16px;
+            width: 16px;
+            left: 4px;
+            bottom: 4px;
+            background-color: white;
+            transition: .4s;
+            border-radius: 50%;
+        }
+
+        input:checked+.slider {
+            background-color: #4F46E5;
+        }
+
+        input:checked+.slider:before {
+            transform: translateX(24px);
+        }
+
+        /* Animations */
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+            }
+
+            to {
+                opacity: 1;
+            }
+        }
+
+        .animate-fadeIn {
+            animation: fadeIn 0.5s ease-in-out;
+        }
+
+        .pulse-badge {
+            animation: pulse 2s infinite;
+        }
+
+        @keyframes pulse {
+            0% {
+                transform: scale(0.95);
+                box-shadow: 0 0 0 0 rgba(79, 70, 229, 0.7);
+            }
+
+            70% {
+                transform: scale(1);
+                box-shadow: 0 0 0 10px rgba(79, 70, 229, 0);
+            }
+
+            100% {
+                transform: scale(0.95);
+                box-shadow: 0 0 0 0 rgba(79, 70, 229, 0);
+            }
+        }
+
+        .breadcrumb-item::after {
+            content: '/';
+            margin: 0 0.5rem;
+            color: #9CA3AF;
+        }
+
+        .breadcrumb-item:last-child::after {
+            content: '';
+        }
+
+
+        /* PDF Optimization */
+        @media print {
+
+            .sidebar,
+            .navbar {
+                display: none;
+            }
+
+            .content-area {
+                margin-left: 0 !important;
+                width: 100% !important;
+            }
+
+            .hidden-print {
+                display: none !important;
+            }
+
+            .page-container {
+                display: block !important;
+            }
+
+            .tab-content>div {
+                display: block !important;
+                opacity: 1 !important;
+                height: auto !important;
+            }
+
+            html,
+            body {
+                width: 100%;
+                margin: 0;
+                padding: 0;
+            }
+        }
+    </style>
+</head>
+
+<body class="light">
+    <!-- Welcome Modal (First Visit) -->
+    <div id="welcome-modal" class="fixed inset-0 z-50 flex items-center justify-center modal-backdrop hidden">
+        <div class="bg-white dark:bg-gray-800 rounded-lg shadow-xl p-6 w-full max-w-md mx-4 animate-fadeIn">
+            <h2 class="text-2xl font-bold text-gray-900 dark:text-white mb-4">Welcome to Team Shoky Helper!</h2>
+            <p class="text-gray-600 dark:text-gray-300 mb-6">Please tell us a bit about yourself to personalize your
+                experience.</p>
+
+            <form id="user-info-form">
+                <div class="mb-4">
+                    <label for="userName" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Your
+                        Name</label>
+                    <input type="text" placeholder="Yousef Tamer" id="userName"
+                        class="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500"
+                        required>
+                </div>
+
+                <div class="mb-4">
+                    <label for="university"
+                        class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">University</label>
+                    <select id="university"
+                        class="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500"
+                        required>
+                        <option value="" disabled selected>Select your university</option>
+                        <option value="hti">HTI University</option>
+                        <option value="other">Other</option>
+                    </select>
+                </div>
+
+                <div id="other-university-container" class="mb-4 hidden">
+                    <label for="otherUniversity"
+                        class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">University Name</label>
+                    <input type="text" placeholder="this will be avillable soon no data here just test"
+                        id="otherUniversity"
+                        class="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500">
+                </div>
+
+                <div class="mb-4">
+                    <label for="academicYear"
+                        class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Academic Year</label>
+                    <select id="academicYear"
+                        class="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500"
+                        required>
+                        <option value="" disabled selected>Select your academic year</option>
+                        <option value="1">Year 1</option>
+                        <option value="2">Year 2</option>
+                        <option value="3">Year 3</option>
+                        <option value="4">Year 4</option>
+                    </select>
+                </div>
+
+                <div class="mb-6">
+                    <label for="group"
+                        class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Group</label>
+                    <select id="group"
+                        class="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500"
+                        required>
+                        <option value="" disabled selected>Select your group</option>
+                        <option value="1">Group 1</option>
+                        <option value="2">Group 2</option>
+                        <option value="3">Group 3</option>
+                        <option value="4">Group 4</option>
+                        <option value="5">Group 5</option>
+                        <option value="6">Group 6</option>
+                        <option value="7">Group 7</option>
+                        <option value="8">Group 8</option>
+                        <option value="100">Group 100</option>
+                    </select>
+                </div>
+
+                <button type="submit"
+                    class="w-full py-2 px-4 gradient-bg text-white font-medium rounded-md shadow-sm hover:opacity-90 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500">
+                    Get Started
+                </button>
+            </form>
+        </div>
+    </div>
+
+    <!-- Main Application Container -->
+    <div class="flex h-screen overflow-hidden relative">
+        <!-- Sidebar -->
+        <div id="sidebar"
+            class="sidebar bg-indigo-800 text-white h-screen flex-shrink-0 fixed left-0 top-0 bottom-0 z-30">
+            <div class="p-4 flex items-center justify-between">
+                <h1 class="text-xl font-bold">Team Shoky Helper</h1>
+                <button id="close-sidebar" class="lg:hidden text-white focus:outline-none">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+
+            <div class="mt-6 px-3">
+                <div id="user-info" class="mb-8 px-3 py-4 bg-indigo-700 rounded-lg">
+                    <div class="flex items-center mb-3">
+                        <div
+                            class="w-10 h-10 rounded-full bg-indigo-500 flex items-center justify-center text-lg font-semibold mr-3">
+                            <span id="user-initials">U</span>
+                        </div>
+                        <div>
+                            <h3 id="sidebar-user-name" class="font-medium">User Name</h3>
+                            <p id="sidebar-university" class="text-xs text-indigo-200">University</p>
+                        </div>
+                    </div>
+                    <div class="flex justify-between text-xs text-indigo-200">
+                        <span>Year: <span id="sidebar-year">-</span></span>
+                        <span>Group: <span id="sidebar-group">-</span></span>
+                    </div>
+                </div>
+
+                <nav>
+                    <ul class="space-y-2">
+                        <li>
+                            <button data-page="dashboard"
+                                class="nav-link w-full flex items-center px-3 py-2 rounded-md font-medium hover:bg-indigo-700 transition-colors">
+                                <i class="fas fa-home w-6"></i>
+                                <span>Dashboard</span>
+                            </button>
+                        </li>
+                        <li>
+                            <button data-page="courses"
+                                class="nav-link w-full flex items-center px-3 py-2 rounded-md font-medium hover:bg-indigo-700 transition-colors">
+                                <i class="fas fa-book w-6"></i>
+                                <span>Courses</span>
+                            </button>
+                        </li>
+                        <li>
+                            <button data-page="news"
+                                class="nav-link w-full flex items-center px-3 py-2 rounded-md font-medium hover:bg-indigo-700 transition-colors">
+                                <i class="fas fa-newspaper w-6"></i>
+                                <span>News</span>
+                            </button>
+                        </li>
+                        <li>
+                            <button data-page="about-us"
+                                class="nav-link w-full flex items-center px-3 py-2 rounded-md font-medium hover:bg-indigo-700 transition-colors">
+                                <i class="fas fa-info-circle w-6"></i>
+                                <span>About Us</span>
+                            </button>
+                        </li>
+                        <li>
+                            <button data-page="settings"
+                                class="nav-link w-full flex items-center px-3 py-2 rounded-md font-medium hover:bg-indigo-700 transition-colors">
+                                <i class="fas fa-cog w-6"></i>
+                                <span>Settings</span>
+                            </button>
+                        </li>
+                        <li id="install-app-button-container">
+                            <button id="install-app-button"
+                                class="nav-link w-full flex items-center px-3 py-2 rounded-md font-medium hover:bg-indigo-700 transition-colors">
+                                <i class="fas fa-download w-6"></i>
+                                <span>Download App</span>
+                            </button>
+                        </li>
+                    </ul>
+                </nav>
+            </div>
+
+            <div class="absolute bottom-4 left-0 right-0 px-4">
+                <div class="flex justify-between items-center text-indigo-200 text-sm">
+                    <span>© 2025 Team Shoky</span>
+                    <button id="theme-toggle" class="hover:text-white">
+                        <i class="fas fa-moon"></i>
+                    </button>
+                </div>
+                <button id="logout-button"
+                    class="w-full mt-4 py-2 px-4 bg-red-600 text-white font-medium rounded-md shadow-sm hover:bg-red-700 transition-colors">
+                    Logout
+                </button>
+            </div>
+        </div>
+
+        <!-- Main Content -->
+        <div class="flex-1 flex flex-col ml-0 lg:ml-64 transition-all duration-300">
+            <!-- Navbar -->
+            <header class="bg-white dark:bg-gray-800 shadow-sm h-16 flex items-center px-4 sticky top-0 z-20">
+                <button id="open-sidebar" class="lg:hidden mr-4 text-gray-600 dark:text-gray-300 focus:outline-none">
+                    <i class="fas fa-bars"></i>
+                </button>
+
+                <div class="flex-1 flex items-center">
+                    <div id="breadcrumbs" class="hidden sm:flex items-center text-sm text-gray-500 dark:text-gray-400">
+                        <span class="breadcrumb-item">Team Shoky Helper</span>
+                        <span id="current-page-breadcrumb"
+                            class="breadcrumb-item text-indigo-600 dark:text-indigo-400">Dashboard</span>
+                    </div>
+                </div>
+
+                <div class="flex items-center space-x-4">
+                    <div class="relative">
+                        <button id="notification-button" class="text-gray-600 dark:text-gray-300 focus:outline-none">
+                            <i class="fas fa-bell"></i>
+                            <span id="notification-badge"
+                                class="absolute -top-1 -right-1 bg-red-500 text-white rounded-full w-4 h-4 flex items-center justify-center text-xs pulse-badge">0</span>
+                        </button>
+                    </div>
+
+                    <div class="relative">
+                        <div class="flex items-center">
+                            <div class="w-8 h-8 rounded-full bg-indigo-600 flex items-center justify-center text-white">
+                                <span id="nav-user-initials">U</span>
+                            </div>
+                            <span id="nav-user-name" class="ml-2 text-sm font-medium hidden sm:inline-block">User
+                                Name</span>
+                        </div>
+                    </div>
+                </div>
+            </header>
+
+            <!-- Content Area -->
+            <main class="flex-1 overflow-x-hidden overflow-y-auto bg-gray-100 dark:bg-gray-900 p-4 md:p-6 content-area">
+                <div id="tab-content" class="tab-content">
+                    <!-- Dashboard Page -->
+                    <div id="dashboard-page" class="page-container animate-fadeIn">
+                        <h1 class="text-2xl font-bold mb-6">Dashboard</h1>
+
+                        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-8">
+                            <!-- Welcome Card -->
+                            <div
+                                class="bg-gradient-to-r from-indigo-600 to-purple-600 rounded-xl text-white p-6 shadow-lg col-span-full lg:col-span-2">
+                                <div class="flex items-center">
+                                    <div>
+                                        <h2 class="text-xl font-semibold">Welcome back, <span
+                                                id="dashboard-user-name">User</span>!</h2>
+                                        <p class="mt-2 opacity-90">Today is <span id="current-date">April 5, 2025</span>
+                                        </p>
+                                        <div class="mt-4">
+                                            <button data-page="settings"
+                                                class="bg-white text-indigo-600 px-4 py-2 rounded-md text-sm font-medium hover:bg-opacity-90 transition-colors">
+                                                Edit Your Profile
+                                            </button>
+                                        </div>
+                                    </div>
+                                    <div class="ml-auto hidden md:block">
+                                        <i class="fas fa-user-graduate text-6xl opacity-80"></i>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Upcoming Lectures Card -->
+                            <div class="bg-white dark:bg-gray-800 rounded-xl p-6 shadow-md card-hover">
+                                <div class="flex items-center justify-between mb-4">
+                                    <h3 class="text-lg font-semibold">Upcoming Lectures</h3>
+                                    <span
+                                        class="text-xs bg-indigo-100 dark:bg-indigo-900 text-indigo-800 dark:text-indigo-200 px-2 py-1 rounded-full">Next
+                                        7 days</span>
+                                </div>
+                                <div id="upcoming-lectures" class="space-y-3">
+                                    <!-- Dynamically populated -->
+                                </div>
+
+                            </div>
+                        </div>
+
+                        <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+                            <!-- Recent Materials -->
+                            <div class="bg-white dark:bg-gray-800 rounded-xl p-6 shadow-md lg:col-span-2 card-hover">
+                                <div class="flex items-center justify-between mb-4">
+                                    <h3 class="text-lg font-semibold">Recent Materials</h3>
+                                    <span
+                                        class="text-xs bg-green-100 dark:bg-green-900 text-green-800 dark:text-green-200 px-2 py-1 rounded-full">New</span>
+                                </div>
+
+                                <div id="recent-materials" class="space-y-4">
+                                    <!-- Dynamically populated -->
+                                </div>
+
+                                <button data-page="courses"
+                                    class="nav-link mt-4 text-sm text-indigo-600 dark:text-indigo-400 hover:underline w-full text-center">
+                                    View All Courses
+                                </button>
+                            </div>
+
+                            <!-- Latest News -->
+                            <div class="bg-white dark:bg-gray-800 rounded-xl p-6 shadow-md card-hover">
+                                <div class="flex items-center justify-between mb-4">
+                                    <h3 class="text-lg font-semibold">Latest News</h3>
+                                </div>
+
+                                <div id="dashboard-news" class="space-y-4">
+                                    <!-- Dynamically populated -->
+                                </div>
+
+                                <button data-page="news"
+                                    class="nav-link mt-4 text-sm text-indigo-600 dark:text-indigo-400 hover:underline w-full text-center">
+                                    View All News
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Courses Page -->
+                    <div id="courses-page" class="page-container hidden animate-fadeIn">
+                        <div class="flex justify-between items-center mb-6">
+                            <h1 class="text-2xl font-bold">My Courses</h1>
+
+                            <div class="relative">
+                                <input type="text" id="course-search" placeholder="Search courses..."
+                                    class="w-full sm:w-64 pl-10 pr-4 py-2 border border-gray-300 dark:border-gray-700 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500 bg-white dark:bg-gray-800">
+                                <div class="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400">
+                                    <i class="fas fa-search"></i>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div id="courses-container" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                            <!-- Dynamically populated -->
+                        </div>
+                    </div>
+
+                    <!-- Course Details Page -->
+                    <div id="course-details-page" class="page-container hidden animate-fadeIn">
+                        <button id="back-to-courses"
+                            class="flex items-center text-indigo-600 dark:text-indigo-400 mb-4 hover:underline">
+                            <i class="fas fa-arrow-left mr-2"></i> Back to Courses
+                        </button>
+
+                        <div id="course-details-content">
+                            <!-- Dynamically populated -->
+                        </div>
+                    </div>
+
+                    <!-- Lectures Page -->
+                    <div id="lectures-page" class="page-container hidden animate-fadeIn">
+                        <h1 class="text-2xl font-bold mb-6">Lecture Schedule</h1>
+
+                        <div class="bg-white dark:bg-gray-800 rounded-xl shadow-md p-4 mb-6">
+                            <div class="flex flex-wrap items-center gap-4">
+                                <button id="view-calendar"
+                                    class="px-4 py-2 rounded-md bg-indigo-600 text-white hover:bg-indigo-700">Calendar
+                                    View</button>
+                                <button id="view-list"
+                                    class="px-4 py-2 rounded-md bg-gray-200 dark:bg-gray-700 text-gray-800 dark:text-white hover:bg-gray-300 dark:hover:bg-gray-600">List
+                                    View</button>
+                            </div>
+                        </div>
+
+                        <div id="calendar-view"
+                            class="bg-white dark:bg-gray-800 rounded-xl shadow-md p-4 calendar-container">
+                            <!-- FullCalendar will be mounted here -->
+                        </div>
+
+                        <div id="list-view" class="bg-white dark:bg-gray-800 rounded-xl shadow-md p-4 hidden">
+                            <div class="overflow-x-auto">
+                                <table class="min-w-full divide-y divide-gray-200 dark:divide-gray-700">
+                                    <thead>
+                                        <tr>
+                                            <th
+                                                class="px-6 py-3 bg-gray-50 dark:bg-gray-900 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">
+                                                Date & Time</th>
+                                            <th
+                                                class="px-6 py-3 bg-gray-50 dark:bg-gray-900 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">
+                                                Course</th>
+                                            <th
+                                                class="px-6 py-3 bg-gray-50 dark:bg-gray-900 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">
+                                                Location</th>
+                                            <th
+                                                class="px-6 py-3 bg-gray-50 dark:bg-gray-900 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">
+                                                Instructor</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody id="lecture-list"
+                                        class="bg-white dark:bg-gray-800 divide-y divide-gray-200 dark:divide-gray-700">
+                                        <!-- Dynamically populated -->
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- News Page -->
+                    <div id="news-page" class="page-container hidden animate-fadeIn">
+                        <h1 class="text-2xl font-bold mb-6">University News</h1>
+
+                        <div id="news-container" class="space-y-6">
+                            <!-- Dynamically populated -->
+                        </div>
+                    </div>
+
+                    <!-- Settings Page -->
+                    <div id="settings-page" class="page-container hidden animate-fadeIn">
+                        <h1 class="text-2xl font-bold mb-6">Settings</h1>
+
+                        <div class="bg-white dark:bg-gray-800 rounded-xl shadow-md p-6 mb-6">
+                            <h2 class="text-xl font-semibold mb-4">Personal Information</h2>
+
+                            <form id="settings-form" class="space-y-4">
+                                <div>
+                                    <label for="settings-name"
+                                        class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Your
+                                        Name</label>
+                                    <input type="text" id="settings-name"
+                                        class="w-full px-3 py-2 border border-gray-300 dark:border-gray-700 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 bg-white dark:bg-gray-900">
+                                </div>
+
+                                <div>
+                                    <label for="settings-university"
+                                        class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">University</label>
+                                    <select id="settings-university"
+                                        class="w-full px-3 py-2 border border-gray-300 dark:border-gray-700 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 bg-white dark:bg-gray-900">
+                                        <option value="hti">HTI University</option>
+                                        <option value="other">Other</option>
+                                    </select>
+                                </div>
+
+                                <div id="settings-other-university-container" class="hidden">
+                                    <label for="settings-other-university"
+                                        class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">University
+                                        Name</label>
+                                    <input type="text" id="settings-other-university"
+                                        class="w-full px-3 py-2 border border-gray-300 dark:border-gray-700 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 bg-white dark:bg-gray-900">
+                                </div>
+
+                                <div>
+                                    <label for="settings-year"
+                                        class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Academic
+                                        Year</label>
+                                    <select id="settings-year"
+                                        class="w-full px-3 py-2 border border-gray-300 dark:border-gray-700 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 bg-white dark:bg-gray-900">
+                                        <option value="1">Year 1</option>
+                                        <option value="2">Year 2</option>
+                                        <option value="3">Year 3</option>
+                                        <option value="4">Year 4</option>
+                                    </select>
+                                </div>
+
+                                <div>
+                                    <label for="settings-group"
+                                        class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Group</label>
+                                    <select id="settings-group"
+                                        class="w-full px-3 py-2 border border-gray-300 dark:border-gray-700 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 bg-white dark:bg-gray-900">
+                                        <option value="1">Group 1</option>
+                                        <option value="2">Group 2</option>
+                                    </select>
+                                </div>
+
+                                <button type="submit"
+                                    class="w-full sm:w-auto py-2 px-4 gradient-bg text-white font-medium rounded-md shadow-sm hover:opacity-90 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500">
+                                    Save Changes
+                                </button>
+                            </form>
+                        </div>
+
+                        <div class="bg-white dark:bg-gray-800 rounded-xl shadow-md p-6 mb-6">
+                            <h2 class="text-xl font-semibold mb-4">Preferences</h2>
+
+                            <div class="space-y-4">
+                                <div class="flex items-center justify-between">
+                                    <div>
+                                        <h3 class="font-medium">Dark Mode</h3>
+                                        <p class="text-sm text-gray-500 dark:text-gray-400">Toggle dark/light theme</p>
+                                    </div>
+                                    <label class="switch">
+                                        <input type="checkbox" id="settings-theme-toggle">
+                                        <span class="slider"></span>
+                                    </label>
+                                </div>
+
+                                <div class="flex items-center justify-between">
+                                    <div>
+                                        <h3 class="font-medium">Notifications</h3>
+                                        <p class="text-sm text-gray-500 dark:text-gray-400">Enable in-app notifications
+                                        </p>
+                                    </div>
+                                    <label class="switch">
+                                        <input type="checkbox" id="settings-notifications-toggle" checked>
+                                        <span class="slider"></span>
+                                    </label>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="bg-white dark:bg-gray-800 rounded-xl shadow-md p-6">
+                            <h2 class="text-xl font-semibold mb-4">About Team Shoky Helper</h2>
+
+                            <p class="text-gray-600 dark:text-gray-300 mb-4">
+                                Team Shoky Helper is a modern web application designed for college students to access
+                                their
+                                courses, lecture schedules, and university news.
+                            </p>
+
+                            <p class="text-gray-600 dark:text-gray-300">
+                                Version 1.0.0 - Last Updated: April 5, 2025
+                            </p>
+                        </div>
+                    </div>
+
+                    <!-- About Us Page -->
+                    <div id="about-us-page" class="page-container hidden animate-fadeIn">
+                        <h1 class="text-3xl font-bold mb-6 text-center text-gray-800 dark:text-gray-100">Meet the
+                            Brilliant Minds Behind Our Platform</h1>
+                        <p class="text-lg text-gray-600 dark:text-gray-300 text-center mb-8 max-w-2xl mx-auto">
+                            Our team of skilled developers, meticulous data collectors, and visionary owners have worked
+                            tirelessly to create this dynamic platform.
+                            Learn more about the individuals who brought this project to life.
+                        </p>
+                        <!-- Owners Section -->
+                        <h2 class="text-2xl font-semibold mb-6 mt-12 text-gray-800 dark:text-gray-100">Team Shoky Owners
+                        </h2>
+                        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">
+                            <!-- 1 Owner Card with Background Cover Photo -->
+                            <div
+                                class="relative bg-white dark:bg-gray-800 rounded-xl shadow-xl overflow-hidden transform hover:scale-105 transition duration-300 ease-in-out p-8">
+                                <!-- Cover Photo -->
+                                <div class="absolute inset-0">
+                                    <img src="youseftamer_profile.jpg" alt="Cover Photo"
+                                        class="w-full h-full object-cover opacity-30">
+                                </div>
+
+                                <!-- Profile Section -->
+                                <div class="relative flex flex-col items-center">
+                                    <div class="w-40 h-40 rounded-full border-4 border-indigo-500 overflow-hidden">
+                                        <img src="youseftamer_profile.jpg" alt="youseftamer_profile"
+                                            class="w-full h-full object-cover">
+                                    </div>
+                                    <h3 class="text-2xl font-semibold text-gray-800 dark:text-gray-100 mt-4">Yousef
+                                        Tamer</h3>
+                                    <p class="text-lg text-gray-500 dark:text-gray-400">Head of Team Shoky</p>
+                                    <div class="flex space-x-4 mt-4">
+                                        <!-- Mail Icon -->
+                                        <a href="mailto:youseftamereg@gmail.com"
+                                            class="text-indigo-600 dark:text-indigo-400 hover:text-indigo-500 transform hover:scale-110 transition duration-200">
+                                            <i class="fas fa-envelope fa-2x"></i>
+                                        </a>
+                                        <!-- Linktree Icon -->
+                                        <a href="https://linktr.ee/jooexploit" target="_blank"
+                                            class="text-indigo-600 dark:text-indigo-400 hover:text-indigo-500 transform hover:scale-110 transition duration-200">
+                                            <img src="https://cdn.brandfetch.io/id_tNIm05N/theme/dark/symbol.svg"
+                                                alt="Linktree" class="w-8 h-8">
+                                        </a>
+                                    </div>
+                                </div>
+
+                                <p class="text-gray-600 dark:text-gray-300 mt-6 text-sm text-center">
+                                    fullstack dev and bug hunter | non tech lead@ CyberCrew |
+                                    cybersecurity co lead and backend lead@IEEE HTI
+                                </p>
+                            </div>
+                            <!-- 2 Owner Card with Background Cover Photo -->
+                            <div
+                                class="relative bg-white dark:bg-gray-800 rounded-xl shadow-xl overflow-hidden transform hover:scale-105 transition duration-300 ease-in-out p-8">
+                                <!-- Cover Photo -->
+                                <div class="absolute inset-0">
+                                    <img src="ahmed_adel.jpeg" alt="Cover Photo"
+                                        class="w-full h-full object-cover opacity-30">
+                                </div>
+
+                                <!-- Profile Section -->
+                                <div class="relative flex flex-col items-center">
+                                    <div class="w-40 h-40 rounded-full border-4 border-indigo-500 overflow-hidden">
+                                        <img src="ahmed_adel.jpeg" alt="youseftamer_profile"
+                                            class="w-full h-full object-cover">
+                                    </div>
+                                    <h3 class="text-2xl font-semibold text-gray-800 dark:text-gray-100 mt-4">Ahmed Adel
+                                    </h3>
+                                    <p class="text-lg text-gray-500 dark:text-gray-400">Head of Team Shoky</p>
+                                    <div class="flex space-x-4 mt-4">
+                                        <!-- Mail Icon -->
+                                        <a href="mailto:ahmedadela2006@gmail.com"
+                                            class="text-indigo-600 dark:text-indigo-400 hover:text-indigo-500 transform hover:scale-110 transition duration-200">
+                                            <i class="fas fa-envelope fa-2x"></i>
+                                        </a>
+                                        <!-- Linktree Icon -->
+                                        <a href="https://linktr.ee/ahmedadela1st" target="_blank"
+                                            class="text-indigo-600 dark:text-indigo-400 hover:text-indigo-500 transform hover:scale-110 transition duration-200">
+                                            <img src="https://cdn.brandfetch.io/id_tNIm05N/theme/dark/symbol.svg"
+                                                alt="Linktree" class="w-8 h-8">
+                                        </a>
+                                    </div>
+                                </div>
+
+                                <p class="text-gray-600 dark:text-gray-300 mt-6 text-sm text-center">
+                                    Computer science student and Frontend Web Developer React.js
+                                </p>
+                            </div>
+                            <!-- 3 Owner Card with Background Cover Photo -->
+                            <div
+                                class="relative bg-white dark:bg-gray-800 rounded-xl shadow-xl overflow-hidden transform hover:scale-105 transition duration-300 ease-in-out p-8">
+                                <!-- Cover Photo -->
+                                <div class="absolute inset-0">
+                                    <img src="youseftamer_profile.jpg" alt="Cover Photo"
+                                        class="w-full h-full object-cover opacity-30">
+                                </div>
+
+                                <!-- Profile Section -->
+                                <div class="relative flex flex-col items-center">
+                                    <div class="w-40 h-40 rounded-full border-4 border-indigo-500 overflow-hidden">
+                                        <img src="youseftamer_profile.jpg" alt="youseftamer_profile"
+                                            class="w-full h-full object-cover">
+                                    </div>
+                                    <h3 class="text-2xl font-semibold text-gray-800 dark:text-gray-100 mt-4">Yousef
+                                        Tamer</h3>
+                                    <p class="text-lg text-gray-500 dark:text-gray-400">Head of Team Shoky</p>
+                                    <div class="flex space-x-4 mt-4">
+                                        <!-- Mail Icon -->
+                                        <a href="mailto:youseftamereg@gmail.com"
+                                            class="text-indigo-600 dark:text-indigo-400 hover:text-indigo-500 transform hover:scale-110 transition duration-200">
+                                            <i class="fas fa-envelope fa-2x"></i>
+                                        </a>
+                                        <!-- Linktree Icon -->
+                                        <a href="https://linktr.ee/jooexploit" target="_blank"
+                                            class="text-indigo-600 dark:text-indigo-400 hover:text-indigo-500 transform hover:scale-110 transition duration-200">
+                                            <img src="https://cdn.brandfetch.io/id_tNIm05N/theme/dark/symbol.svg"
+                                                alt="Linktree" class="w-8 h-8">
+                                        </a>
+                                    </div>
+                                </div>
+
+                                <p class="text-gray-600 dark:text-gray-300 mt-6 text-sm text-center">
+                                    fullstack dev and bug hunter | non tech lead@ CyberCrew |
+                                    cybersecurity co lead and backend lead@IEEE HTI
+                                </p>
+                            </div>
+                            <!-- Repeat Owner Cards as needed -->
+                        </div>
+                        <br>
+                        <!-- Developers Section -->
+                        <h2 class="text-2xl font-semibold mb-6 text-gray-800 dark:text-gray-100">Meet Our Developers
+                        </h2>
+                        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">
+                            <!-- Developer Card -->
+                            <div
+                                class="bg-white dark:bg-gray-800 rounded-xl shadow-xl transform hover:scale-105 transition duration-300 ease-in-out p-8">
+                                <div class="flex flex-col items-center">
+                                    <img src="https://placehold.co/150" alt="Developer Photo"
+                                        class="w-32 h-32 rounded-full border-4 border-indigo-500 mb-4">
+                                    <h3 class="text-xl font-semibold text-gray-800 dark:text-gray-100">John Doe</h3>
+                                    <p class="text-md text-gray-500 dark:text-gray-400">Frontend Developer</p>
+                                    <div class="flex space-x-4 mt-6">
+                                        <a href="https://github.com/johndoe" target="_blank"
+                                            class="text-indigo-600 dark:text-indigo-400 hover:text-indigo-500 transform hover:scale-110 transition duration-200">
+                                            <i class="fab fa-github fa-2x"></i>
+                                        </a>
+                                        <a href="https://linkedin.com/in/johndoe" target="_blank"
+                                            class="text-indigo-600 dark:text-indigo-400 hover:text-indigo-500 transform hover:scale-110 transition duration-200">
+                                            <i class="fab fa-linkedin fa-2x"></i>
+                                        </a>
+                                    </div>
+                                </div>
+                                <p class="text-gray-600 dark:text-gray-300 mt-4 text-sm">
+                                    John specializes in crafting responsive, user-friendly interfaces with HTML, CSS,
+                                    and JavaScript, delivering an optimal user experience.
+                                </p>
+                            </div>
+
+                            <!-- Repeat Developer Cards as needed -->
+                        </div>
+
+                        <!-- Data Collectors Section -->
+                        <h2 class="text-2xl font-semibold mb-6 mt-12 text-gray-800 dark:text-gray-100">Our Data
+                            Collectors</h2>
+                        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">
+                            <!-- Data Collector Card -->
+                            <div
+                                class="bg-white dark:bg-gray-800 rounded-xl shadow-xl transform hover:scale-105 transition duration-300 ease-in-out p-8">
+                                <div class="flex flex-col items-center">
+                                    <img src="ammar roshdy.jpg" alt="Data Collector Photo"
+                                        class="w-32 h-32 rounded-full border-4 border-indigo-500 mb-4">
+                                    <h3 class="text-xl font-semibold text-gray-800 dark:text-gray-100">ammar roshdy</h3>
+                                    <p class="text-md text-gray-500 dark:text-gray-400">Year 2 Helper</p>
+                                    <div class="flex space-x-4 mt-6">
+                                        <a href="https://www.instagram.com/3mar_roshdyy"
+                                            class="text-indigo-600 dark:text-indigo-400 hover:text-indigo-500 transform hover:scale-110 transition duration-200"
+                                            target="_blank" rel="noopener noreferrer">
+                                            <i class="fab fa-instagram fa-2x"></i>
+                                        </a>
+                                    </div>
+                                </div>
+                                <p dir="rtl" class="text-gray-600 dark:text-gray-300 mt-4 text-sm">
+                                    مهندس علي ما تفرج
+                                </p>
+                            </div>
+                            <!-- Repeat Data Collector Cards as needed -->
+                        </div>
+
+
+                        <!-- Call to Action -->
+                        <div class="mt-12 text-center">
+                            <p class="text-gray-600 dark:text-gray-300 text-lg">
+                                Interested in joining our team? Visit our <a href="#careers"
+                                    class="text-indigo-600 dark:text-indigo-400 hover:text-indigo-500 transform hover:scale-110 transition duration-200">Careers
+                                    Page</a> for exciting opportunities!
+                            </p>
+                        </div>
+                    </div>
+
+                </div>
+            </main>
+        </div>
+    </div>
+
+    <!-- Notification Dropdown -->
+    <div id="notification-dropdown"
+        class="hidden absolute right-4 top-16 w-80 max-h-96 overflow-y-auto bg-white dark:bg-gray-800 rounded-lg shadow-lg z-50 border border-gray-200 dark:border-gray-700">
+        <div class="p-4 border-b border-gray-200 dark:border-gray-700">
+            <h3 class="font-semibold text-gray-900 dark:text-white">Notifications</h3>
+        </div>
+
+        <div id="notification-list" class="p-2">
+            <!-- Dynamically populated -->
+        </div>
+
+        <div class="p-3 text-center border-t border-gray-200 dark:border-gray-700">
+            <button id="clear-notifications" class="text-sm text-indigo-600 dark:text-indigo-400 hover:underline">Clear
+                All</button>
+        </div>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            // static dataset for lectureData
+
+            const lectureData = [
+                {
+                    id: 1,
+                    title: "CS101: Introduction to Computer Science ",
+                    date: "2025-04-05",
+                    time: "10:00:00",
+                    location: "Hall A",
+                    instructor: "Dr. Sarah Johnson"
+                },
+                {
+                    id: 2,
+                    title: "MATH201: Linear Algebra - Lecture 2",
+                    date: "2025-04-06",
+                    time: "12:30:00",
+                    location: "Room 101",
+                    instructor: "Prof. Michael Chen"
+                },
+                // Add more lectures as needed
+            ];
+            // Static dataset for courses
+            const courseData = {
+                1: [ // academic year 
+                    {
+                        id: "CS101",
+                        title: "Introduction to Computer Science",
+                        instructor: "Dr. Sarah Johnson",
+                        description: "Learn the basics of computer science and programming.",
+                        chapters: [
+                            {
+                                title: "Chapter 1: Basics of Programming",
+                                description: "Introduction to programming concepts.",
+                                materials: [
+                                    { title: "Lecture 1 Notes", type: "pdf", date: "2025-01-10", link: "/files/lecture2-notes.pdf" },
+                                    { title: "Programming Basics Video", type: "video", date: "2025-01-12", link: "/files/lecture2-notes.mp4" }
+                                ]
+                            },
+                            {
+                                title: "Chapter 2: Data Structures",
+                                description: "Learn about arrays, lists, and more.",
+                                materials: [
+                                    { title: "Lecture 2 Notes", type: "pdf", date: "2025-01-20", link: "/files/lecture2-notes.pdf" },
+                                    { title: "Data Structures Assignment", type: "assignment", date: "2025-01-18", link: "/files/lecture2-notes.pdf" }
+                                ]
+                            }
+                        ]
+                    }
+                ],
+                2: [ // academic year 
+                    {
+                        id: "MATH201",
+                        title: "Linear Algebra",
+                        instructor: "Prof. Michael Chen",
+                        description: "Explore matrices, vectors, and linear transformations.",
+                        chapters: [
+                            {
+                                title: "Chapter 1: Matrices",
+                                description: "Introduction to matrices and operations.",
+                                materials: [
+                                    { title: "Lecture 1 Notes", type: "pdf", date: "2025-02-10", link: "/files/lecture2-notes.pdf" },
+                                    { title: "Matrix Operations Video", type: "video", date: "2025-02-12", link: "/files/lecture2-notes.pdf" }
+                                ]
+                            }
+                        ]
+                    }, {
+                        "id": "H204",
+                        "title": "Quality Control and Quality Assurance",
+                        "instructor": "Dr. Nelly",
+                        "description": "This course covers the fundamentals of Quality Control (QC) and Quality Assurance (QA) in various industries. You will learn how to ensure product and service quality, detect defects, and improve processes. Topics include quality standards, inspection methods, testing techniques, and continuous improvement strategies. By the end, you’ll understand how to maintain high-quality standards and enhance customer satisfaction.",
+                        "chapters": [
+                            {
+                                "title": "Chapter 1: QA vs QC",
+                                "description": "This chapter explains the difference between Quality Assurance (QA) and Quality Control (QC). QA focuses on preventing defects by improving processes and ensuring standards are followed. It's proactive. QC is about identifying and fixing defects in the final product through inspection and testing. It's reactive. Both aim to ensure high-quality products, but QA works on the process, while QC works on the product.",
+                                "materials": [
+                                    {
+                                        "title": "Lecture 1 Presentation",
+                                        "type": "pdf",
+                                        "date": "2025-04-06",
+                                        "link": "https://drive.google.com/drive/folders/1NTzFvRFOto4yxDIrGFthVNo9SiiN7Sdn"
+                                    },
+                                    {
+                                        "title": "Lecture 1 Summary",
+                                        "type": "pdf",
+                                        "date": "2025-04-06",
+                                        "link": "https://drive.google.com/drive/folders/1NTzFvRFOto4yxDIrGFthVNo9SiiN7Sdn"
+                                    },
+                                    {
+                                        "title": "Lecture 1 Summary (Video)",
+                                        "type": "video",
+                                        "date": "2025-04-06",
+                                        "link": "https://drive.google.com/file/d/1NWUGW1wM5ze6gHqGlAwg3_NzgM69cQIV/view?usp=drive_link"
+                                    }
+                                ]
+                            },
+                            {
+                                "title": "Chapter 2: Quality Blueprint - Improve Customer Satisfaction & Conform to Specification",
+                                "description": "This section focuses on creating a Quality Blueprint that helps businesses improve customer satisfaction and ensure products conform to specifications. A Quality Blueprint outlines the standards and processes required to meet customer expectations and industry standards. By following this blueprint, companies can systematically ensure that their products are consistent, reliable, and meet all required specifications, leading to higher customer satisfaction and fewer defects. The blueprint also includes methods for continuous improvement and feedback loops to adapt to changing customer needs.",
+                                "materials": [
+                                    {
+                                        "title": "Lecture 2 Presentation",
+                                        "type": "pdf",
+                                        "date": "2025-04-06",
+                                        "link": "https://drive.google.com/drive/folders/1N_7egmJg4PHEMVYlpUXXAdAhOyuJshVa"
+                                    },
+                                    {
+                                        "title": "Lecture 2 Summary",
+                                        "type": "pdf",
+                                        "date": "2025-04-06",
+                                        "link": "https://drive.google.com/drive/folders/1N_7egmJg4PHEMVYlpUXXAdAhOyuJshVa"
+                                    }
+                                ]
+                            },
+                            {
+                                "title": "Chapter 3: The Quality Assurance/Quality Control (QA/QC) Plan",
+                                "description": "This chapter covers the QA/QC Plan, a structured approach to maintaining high-quality standards. QA Plan: Focuses on setting procedures, guidelines, and best practices to prevent defects before production. QC Plan: Involves inspection, testing, and corrective actions to detect and fix defects in the final product. A strong QA/QC Plan ensures consistency, reduces errors, and improves customer satisfaction by aligning with quality standards and continuous improvement strategies.",
+                                "materials": [
+                                    {
+                                        "title": "Lecture 3 Presentation",
+                                        "type": "pdf",
+                                        "date": "2025-04-06",
+                                        "link": "https://drive.google.com/drive/folders/1NdfkI6ELR5SwhkNX0HmHHo5xkA1M8EkA"
+                                    },
+                                    {
+                                        "title": "Lecture 3 Summary (Video)",
+                                        "type": "video",
+                                        "date": "2025-04-06",
+                                        "link": "https://drive.google.com/file/d/1UUu4bvSG9hCrWWVTFazfCh4p10ZRAHdZ/view?usp=drive_link"
+                                    }
+                                ]
+                            }
+                        ]
+                    }
+
+
+                ]
+            };
+
+
+            // Initialize Application
+            const app = {
+
+                // State Management
+                state: {
+                    darkMode: false,
+                    currentPage: 'dashboard',
+                    notifications: true,
+                    selectedCourse: null,
+                    userData: {
+                        name: null,
+                        university: null,
+                        universityName: null,
+                        year: null,
+                        group: null
+                    }
+                },
+
+                // Initialize Application
+                init: function () {
+                    this.loadUserData();
+                    this.setupEventListeners();
+                    this.setupFullCalendar();
+                    this.loadMockData();
+                    this.renderCurrentPage();
+                    this.updateUIWithUserData();
+                    this.renderNotifications();
+
+                    // Check theme preference
+                    const savedDarkMode = localStorage.getItem('darkMode');
+                    if (savedDarkMode === 'true') {
+                        this.toggleDarkMode(true);
+                    }
+
+                    // Show welcome modal if first visit
+                    if (!this.state.userData.name) {
+                        document.getElementById('welcome-modal').classList.remove('hidden');
+                    }
+
+                    // Set current date
+                    const dateOptions = { year: 'numeric', month: 'long', day: 'numeric' };
+                    document.getElementById('current-date').textContent = new Date().toLocaleDateString('en-US', dateOptions);
+                },
+
+                // Load User Data from Cookies
+                loadUserData: function () {
+                    this.state.userData.name = this.getCookie('userName');
+                    this.state.userData.university = this.getCookie('university');
+                    this.state.userData.universityName = this.getCookie('universityName');
+                    this.state.userData.year = this.getCookie('academicYear');
+                    this.state.userData.group = this.getCookie('group');
+                },
+
+                // Update UI with User Data
+                updateUIWithUserData: function () {
+                    const userData = this.state.userData;
+
+                    if (userData.name) {
+                        document.getElementById('sidebar-user-name').textContent = userData.name;
+                        document.getElementById('nav-user-name').textContent = userData.name;
+                        document.getElementById('dashboard-user-name').textContent = userData.name;
+                        document.getElementById('settings-name').value = userData.name;
+
+                        // Set user initials
+                        const initials = userData.name.split(' ').map(name => name[0]).join('');
+                        document.getElementById('user-initials').textContent = initials;
+                        document.getElementById('nav-user-initials').textContent = initials;
+                    }
+
+                    if (userData.university) {
+                        const universityText = userData.universityName || this.getUniversityNameFromCode(userData.university);
+                        document.getElementById('sidebar-university').textContent = universityText;
+                        document.getElementById('settings-university').value = userData.university;
+
+                        if (userData.university === 'other' && userData.universityName) {
+                            document.getElementById('settings-other-university-container').classList.remove('hidden');
+                            document.getElementById('settings-other-university').value = userData.universityName;
+                        }
+                    }
+
+                    if (userData.year) {
+                        document.getElementById('sidebar-year').textContent = userData.year;
+                        document.getElementById('settings-year').value = userData.year;
+                    }
+
+                    if (userData.group) {
+                        document.getElementById('sidebar-group').textContent = userData.group;
+                        document.getElementById('settings-group').value = userData.group;
+                    }
+                },
+
+                // Utility: Get University Name from Code
+                getUniversityNameFromCode: function (code) {
+                    const universities = {
+                        'hti': 'HTI University',
+                        'other': 'Other University'
+                    };
+
+                    return universities[code] || 'University';
+                },
+
+                // Setup Event Listeners
+                setupEventListeners: function () {
+                    // User Info Form Submission
+                    document.getElementById('user-info-form').addEventListener('submit', this.handleUserInfoSubmit.bind(this));
+
+                    // University Selection Change
+                    document.getElementById('university').addEventListener('change', function (e) {
+                        const otherContainer = document.getElementById('other-university-container');
+                        if (e.target.value === 'other') {
+                            otherContainer.classList.remove('hidden');
+                        } else {
+                            otherContainer.classList.add('hidden');
+                        }
+                    });
+
+                    // Settings Form Submission
+                    document.getElementById('settings-form').addEventListener('submit', this.handleSettingsSubmit.bind(this));
+
+                    // Settings University Selection Change
+                    document.getElementById('settings-university').addEventListener('change', function (e) {
+                        const otherContainer = document.getElementById('settings-other-university-container');
+                        if (e.target.value === 'other') {
+                            otherContainer.classList.remove('hidden');
+                        } else {
+                            otherContainer.classList.add('hidden');
+                        }
+                    });
+                    document.querySelectorAll('[data-page]').forEach(link => {
+                        link.addEventListener('click', (e) => {
+                            console.log('Navigating to:', e.currentTarget.dataset.page); // Debugging
+                            const page = e.currentTarget.dataset.page;
+                            app.navigateTo(page);
+                        });
+                    });
+                    // Navigation Links
+                    document.querySelectorAll('.nav-link').forEach(link => {
+                        link.addEventListener('click', (e) => {
+                            const page = e.currentTarget.dataset.page;
+                            this.navigateTo(page);
+
+                            // Close sidebar on mobile after navigation
+                            if (window.innerWidth < 1024) {
+                                document.getElementById('sidebar').classList.add('sidebar-collapsed');
+                            }
+                        });
+                    });
+
+                    // Sidebar Toggle (Mobile)
+                    document.getElementById('open-sidebar').addEventListener('click', () => {
+                        document.getElementById('sidebar').classList.remove('sidebar-collapsed');
+                    });
+
+                    document.getElementById('close-sidebar').addEventListener('click', () => {
+                        document.getElementById('sidebar').classList.add('sidebar-collapsed');
+                    });
+
+                    // Theme Toggle
+                    document.getElementById('theme-toggle').addEventListener('click', () => {
+                        this.toggleDarkMode();
+                    });
+
+                    document.getElementById('settings-theme-toggle').addEventListener('change', (e) => {
+                        this.toggleDarkMode(e.target.checked);
+                    });
+
+                    // Notification Toggle
+                    document.getElementById('notification-button').addEventListener('click', this.toggleNotificationDropdown.bind(this));
+                    document.getElementById('clear-notifications').addEventListener('click', this.clearNotifications.bind(this));
+
+                    // Back to Courses Button
+                    document.getElementById('back-to-courses').addEventListener('click', () => {
+                        this.navigateTo('courses');
+                    });
+
+                    // Lecture View Toggles
+                    document.getElementById('view-calendar').addEventListener('click', () => {
+                        document.getElementById('calendar-view').classList.remove('hidden');
+                        document.getElementById('list-view').classList.add('hidden');
+                        document.getElementById('view-calendar').classList.remove('bg-gray-200', 'dark:bg-gray-700', 'text-gray-800', 'dark:text-white', 'hover:bg-gray-300', 'dark:hover:bg-gray-600');
+                        document.getElementById('view-calendar').classList.add('bg-indigo-600', 'text-white', 'hover:bg-indigo-700');
+                        document.getElementById('view-list').classList.remove('bg-indigo-600', 'text-white', 'hover:bg-indigo-700');
+                        document.getElementById('view-list').classList.add('bg-gray-200', 'dark:bg-gray-700', 'text-gray-800', 'dark:text-white', 'hover:bg-gray-300', 'dark:hover:bg-gray-600');
+                        this.calendar.render();
+                    });
+
+                    document.getElementById('view-list').addEventListener('click', () => {
+                        document.getElementById('calendar-view').classList.add('hidden');
+                        document.getElementById('list-view').classList.remove('hidden');
+                        document.getElementById('view-list').classList.remove('bg-gray-200', 'dark:bg-gray-700', 'text-gray-800', 'dark:text-white', 'hover:bg-gray-300', 'dark:hover:bg-gray-600');
+                        document.getElementById('view-list').classList.add('bg-indigo-600', 'text-white', 'hover:bg-indigo-700');
+                        document.getElementById('view-calendar').classList.remove('bg-indigo-600', 'text-white', 'hover:bg-indigo-700');
+                        document.getElementById('view-calendar').classList.add('bg-gray-200', 'dark:bg-gray-700', 'text-gray-800', 'dark:text-white', 'hover:bg-gray-300', 'dark:hover:bg-gray-600');
+                    });
+
+                    // Course Search
+                    document.getElementById('course-search').addEventListener('input', (e) => {
+                        const searchTerm = e.target.value.toLowerCase();
+                        this.filterCourses(searchTerm);
+                    });
+
+                    // Close notification dropdown when clicking outside
+                    document.addEventListener('click', (e) => {
+                        const dropdown = document.getElementById('notification-dropdown');
+                        const button = document.getElementById('notification-button');
+
+                        if (!dropdown.contains(e.target) && !button.contains(e.target) && !dropdown.classList.contains('hidden')) {
+                            dropdown.classList.add('hidden');
+                        }
+                    });
+
+                    // Logout Button Event Listener
+                    document.getElementById('logout-button').addEventListener('click', function () {
+                        // Clear user-related cookies
+                        document.cookie.split(";").forEach(function (c) {
+                            document.cookie = c.trim().split("=")[0] + "=;expires=Thu, 01 Jan 1970 00:00:00 UTC;path=/";
+                        });
+
+                        // Redirect to login or welcome page
+                        location.reload();
+                    });
+                },
+
+                // Handle User Info Form Submission
+                handleUserInfoSubmit: function (e) {
+                    e.preventDefault();
+
+                    const name = document.getElementById('userName').value;
+                    const university = document.getElementById('university').value;
+                    const year = document.getElementById('academicYear').value;
+                    const group = document.getElementById('group').value;
+
+                    let universityName = null;
+                    if (university === 'other') {
+                        universityName = document.getElementById('otherUniversity').value;
+                    }
+
+                    // Set cookies
+                    this.setCookie('userName', name, 365);
+                    this.setCookie('university', university, 365);
+                    this.setCookie('academicYear', year, 365);
+                    this.setCookie('group', group, 365);
+
+                    if (universityName) {
+                        this.setCookie('universityName', universityName, 365);
+                    }
+
+                    // Update application state
+                    this.state.userData.name = name;
+                    this.state.userData.university = university;
+                    this.state.userData.year = year;
+                    this.state.userData.group = group;
+                    this.state.userData.universityName = universityName;
+
+                    // Update UI
+                    this.updateUIWithUserData();
+
+                    // Hide modal
+                    document.getElementById('welcome-modal').classList.add('hidden');
+
+                    // Reload mock data based on new user info
+                    this.loadMockData();
+                },
+
+                // Handle Settings Form Submission
+                handleSettingsSubmit: function (e) {
+                    e.preventDefault();
+
+                    const name = document.getElementById('settings-name').value;
+                    const university = document.getElementById('settings-university').value;
+                    const year = document.getElementById('settings-year').value;
+                    const group = document.getElementById('settings-group').value;
+
+                    let universityName = null;
+                    if (university === 'other') {
+                        universityName = document.getElementById('settings-other-university').value;
+                    }
+
+                    // Set cookies
+                    this.setCookie('userName', name, 365);
+                    this.setCookie('university', university, 365);
+                    this.setCookie('academicYear', year, 365);
+                    this.setCookie('group', group, 365);
+
+                    if (universityName) {
+                        this.setCookie('universityName', universityName, 365);
+                    } else {
+                        this.eraseCookie('universityName');
+                    }
+
+                    // Update application state
+                    this.state.userData.name = name;
+                    this.state.userData.university = university;
+                    this.state.userData.year = year;
+                    this.state.userData.group = group;
+                    this.state.userData.universityName = universityName;
+
+                    // Update UI
+                    this.updateUIWithUserData();
+
+                    // Show notification
+                    this.addNotification('Settings Updated', 'Your personal information has been updated successfully.');
+
+                    // Reload mock data based on new user info
+                    this.loadMockData();
+                },
+
+                // Navigate to Page
+                navigateTo: function (page) {
+                    // If it's a course details page
+                    if (page === 'course-details') {
+                        document.getElementById('courses-page').classList.add('hidden');
+                        document.getElementById('course-details-page').classList.remove('hidden');
+                        this.renderCourseDetails();
+                    } else if (page === 'about-us') {
+                        document.querySelectorAll('.page-container').forEach(pageEl => {
+                            pageEl.classList.add('hidden');
+                        });
+                        document.getElementById('about-us-page').classList.remove('hidden');
+                        document.getElementById('current-page-breadcrumb').textContent = 'About Us';
+                        this.state.currentPage = page;
+                        return;
+                    } else {
+                        // Hide all pages
+                        document.querySelectorAll('.page-container').forEach(pageEl => {
+                            pageEl.classList.add('hidden');
+                        });
+
+                        // Show selected page
+                        document.getElementById(`${page}-page`).classList.remove('hidden');
+
+                        // Update breadcrumbs
+                        document.getElementById('current-page-breadcrumb').textContent = this.capitalizeFirstLetter(page);
+
+                        // Update state
+                        this.state.currentPage = page;
+
+                        // Special handling for calendar view
+                        if (page === 'lectures' && !document.getElementById('calendar-view').classList.contains('hidden')) {
+                            this.calendar.render();
+                        }
+                    }
+                },
+
+                // Toggle Dark Mode
+                toggleDarkMode: function (forcedState) {
+                    const newState = forcedState !== undefined ? forcedState : !this.state.darkMode;
+
+                    if (newState) {
+                        document.body.classList.remove('light');
+                        document.body.classList.add('dark');
+                        document.getElementById('theme-toggle').innerHTML = '<i class="fas fa-sun"></i>';
+
+                        // Add dark mode classes to elements that need them
+                        document.querySelectorAll('.bg-white').forEach(el => {
+                            el.classList.add('dark:bg-gray-800');
+                        });
+
+                        document.querySelectorAll('.text-gray-900').forEach(el => {
+                            el.classList.add('dark:text-white');
+                        });
+
+                        document.querySelectorAll('.text-gray-600, .text-gray-700').forEach(el => {
+                            el.classList.add('dark:text-gray-300');
+                        });
+
+                        document.querySelectorAll('.text-gray-500').forEach(el => {
+                            el.classList.add('dark:text-gray-400');
+                        });
+
+                        document.querySelectorAll('.bg-gray-100').forEach(el => {
+                            el.classList.add('dark:bg-gray-900');
+                        });
+
+                        document.querySelectorAll('.bg-gray-200').forEach(el => {
+                            el.classList.add('dark:bg-gray-700');
+                        });
+
+                        document.querySelectorAll('.border-gray-300').forEach(el => {
+                            el.classList.add('dark:border-gray-700');
+                        });
+
+                        document.querySelectorAll('.text-indigo-600').forEach(el => {
+                            el.classList.add('dark:text-indigo-400');
+                        });
+                    } else {
+                        document.body.classList.remove('dark');
+                        document.body.classList.add('light');
+                        document.getElementById('theme-toggle').innerHTML = '<i class="fas fa-moon"></i>';
+                    }
+
+                    // Update checkbox state
+                    document.getElementById('settings-theme-toggle').checked = newState;
+
+                    // Save preference
+                    localStorage.setItem('darkMode', newState);
+
+                    // Update state
+                    this.state.darkMode = newState;
+
+                    // Re-render calendar if visible
+                    if (this.state.currentPage === 'lectures' && !document.getElementById('calendar-view').classList.contains('hidden')) {
+                        this.calendar.render();
+                    }
+                },
+
+                // Toggle Notification Dropdown
+                toggleNotificationDropdown: function () {
+                    const dropdown = document.getElementById('notification-dropdown');
+                    dropdown.classList.toggle('hidden');
+                },
+
+                addNotification: function (title, message) {
+                    const notificationList = document.getElementById('notification-list');
+                    const notificationBadge = document.getElementById('notification-badge');
+
+                    // Create notification object
+                    const notification = {
+                        title,
+                        message,
+                        timestamp: new Date().toISOString()
+                    };
+
+                    // Save notification to localStorage
+                    const notifications = JSON.parse(localStorage.getItem('notifications')) || [];
+                    notifications.unshift(notification);
+                    localStorage.setItem('notifications', JSON.stringify(notifications));
+
+                    // Render notification
+                    this.renderNotifications();
+
+                    // Update badge
+                    notificationBadge.textContent = notifications.length;
+                    notificationBadge.classList.remove('hidden');
+                },
+
+                clearNotifications: function () {
+                    // Clear notifications from localStorage
+                    localStorage.removeItem('notifications');
+
+                    // Clear notification list in the UI
+                    document.getElementById('notification-list').innerHTML = '<p class="p-4 text-center text-gray-500 dark:text-gray-400">No notifications</p>';
+                    document.getElementById('notification-badge').textContent = '0';
+                    document.getElementById('notification-badge').classList.add('hidden');
+                    document.getElementById('notification-dropdown').classList.add('hidden');
+                },
+
+                renderNotifications: function () {
+                    const notificationList = document.getElementById('notification-list');
+                    const notifications = JSON.parse(localStorage.getItem('notifications')) || [];
+
+                    if (notifications.length === 0) {
+                        notificationList.innerHTML = '<p class="p-4 text-center text-gray-500 dark:text-gray-400">No notifications</p>';
+                        return;
+                    }
+
+                    notificationList.innerHTML = '';
+                    notifications.forEach(notification => {
+                        const notificationEl = document.createElement('div');
+                        notificationEl.className = 'p-3 hover:bg-gray-100 dark:hover:bg-gray-700 border-b border-gray-200 dark:border-gray-700 animate-fadeIn';
+                        notificationEl.innerHTML = `
+            <h4 class="font-medium text-gray-900 dark:text-white">${notification.title}</h4>
+            <p class="text-sm text-gray-600 dark:text-gray-300">${notification.message}</p>
+            <p class="text-xs text-gray-500 dark:text-gray-400 mt-1">${new Date(notification.timestamp).toLocaleString()}</p>
+        `;
+                        notificationList.appendChild(notificationEl);
+                    });
+
+                    // Update badge
+                    const notificationBadge = document.getElementById('notification-badge');
+                    notificationBadge.textContent = notifications.length;
+                    notificationBadge.classList.remove('hidden');
+                },
+
+                // Setup FullCalendar
+                setupFullCalendar: function () {
+                    const calendarEl = document.getElementById('calendar-view');
+
+                    this.calendar = new FullCalendar.Calendar(calendarEl, {
+                        initialView: 'dayGridMonth',
+                        headerToolbar: {
+                            left: 'prev,next today',
+                            center: 'title',
+                            right: 'dayGridMonth,timeGridWeek,timeGridDay'
+                        },
+                        events: [],
+                        themeSystem: 'standard',
+                        height: 'auto',
+                        eventClick: info => {
+                            this.addNotification('Lecture Reminder', `${info.event.title} starting at ${info.event.start.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })} in ${info.event.extendedProps.location}`);
+                        }
+                    });
+                },
+
+                // Load Mock Data for the Application
+                loadMockData: function () {
+                    // Load data based on user's year and university
+                    const year = this.state.userData.year || '1';
+
+                    // Generate courses for the user's year
+                    this.mockData = {
+                        courses: this.generateMockCourses(year),
+                        lectures: this.generateMockLectures(year),
+                        news: this.generateMockNews()
+                    };
+
+                    // Render data
+                    this.renderDashboard();
+                    this.renderCourses();
+                    this.renderLectures();
+                    this.renderNews();
+                    this.populateCalendar();
+                },
+
+                // Render Current Page
+                renderCurrentPage: function () {
+                    this.navigateTo(this.state.currentPage);
+                },
+
+                // Render Dashboard
+                renderDashboard: function () {
+                    this.renderUpcomingLectures();
+                    this.renderRecentMaterials();
+                    this.renderDashboardNews();
+                },
+
+                // Render Upcoming Lectures on Dashboard
+                renderUpcomingLectures: function () {
+                    const container = document.getElementById('upcoming-lectures');
+                    container.innerHTML = '';
+
+                    // Get upcoming lectures (next 7 days)
+                    const now = new Date();
+                    const nextWeek = new Date(now);
+                    nextWeek.setDate(now.getDate() + 7);
+
+                    const upcomingLectures = this.mockData.lectures
+                        .filter(lecture => {
+                            const lectureDate = new Date(lecture.date + 'T' + lecture.time);
+                            return lectureDate >= now && lectureDate <= nextWeek;
+                        })
+                        .sort((a, b) => {
+                            const dateA = new Date(a.date + 'T' + a.time);
+                            const dateB = new Date(b.date + 'T' + b.time);
+                            return dateA - dateB;
+                        })
+                        .slice(0, 3);
+
+                    if (upcomingLectures.length === 0) {
+                        container.innerHTML = '<p class="text-gray-500 dark:text-gray-400 text-center p-4">Will be available soon</p>';
+                        return;
+                    }
+
+                    upcomingLectures.forEach(lecture => {
+                        const lectureDate = new Date(lecture.date + 'T' + lecture.time);
+                        const formattedDate = lectureDate.toLocaleDateString('en-US', { weekday: 'short', month: 'short', day: 'numeric' });
+                        const formattedTime = lectureDate.toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit' });
+
+                        const lectureEl = document.createElement('div');
+                        lectureEl.className = 'flex items-start p-2 rounded-lg hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors';
+                        lectureEl.innerHTML = `
+                            <div class="flex-shrink-0 w-10 h-10 rounded-md bg-indigo-100 dark:bg-indigo-900 flex items-center justify-center text-indigo-600 dark:text-indigo-300 mr-3">
+                                <i class="fas fa-clock"></i>
+                            </div>
+                            <div>
+                                <h4 class="font-medium text-gray-900 dark:text-white">${lecture.title}</h4>
+                                <p class="text-sm text-gray-600 dark:text-gray-300">${formattedDate} at ${formattedTime}</p>
+                                <p class="text-xs text-gray-500 dark:text-gray-400">Location: ${lecture.location}</p>
+                            </div>
+                        `;
+
+                        container.appendChild(lectureEl);
+                    });
+                },
+
+                // Render Recent Materials on Dashboard
+                renderRecentMaterials: function () {
+                    const container = document.getElementById('recent-materials');
+                    container.innerHTML = '';
+
+                    // Collect all materials from courses
+                    const allMaterials = [];
+                    this.mockData.courses.forEach(course => {
+                        course.chapters.forEach(chapter => {
+                            chapter.materials.forEach(material => {
+                                allMaterials.push({
+                                    title: material.title,
+                                    type: material.type,
+                                    course: course.title,
+                                    chapter: chapter.title,
+                                    date: material.date
+                                });
+                            });
+                        });
+                    });
+
+                    // Sort materials by date (newest first)
+                    allMaterials.sort((a, b) => new Date(b.date) - new Date(a.date));
+
+                    // Take the most recent 3 materials
+                    const displayMaterials = allMaterials.slice(0, 3);
+
+                    if (displayMaterials.length === 0) {
+                        container.innerHTML = '<p class="text-gray-500 dark:text-gray-400 text-center p-4">No recent materials available</p>';
+                        return;
+                    }
+
+                    displayMaterials.forEach(material => {
+                        const materialDate = new Date(material.date);
+                        const formattedDate = materialDate.toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
+
+                        let icon = 'fa-file-pdf';
+                        let bgColor = 'bg-red-100 dark:bg-red-900 text-red-600 dark:text-red-300';
+
+                        if (material.type === 'video') {
+                            icon = 'fa-video';
+                            bgColor = 'bg-blue-100 dark:bg-blue-900 text-blue-600 dark:text-blue-300';
+                        } else if (material.type === 'assignment') {
+                            icon = 'fa-tasks';
+                            bgColor = 'bg-green-100 dark:bg-green-900 text-green-600 dark:text-green-300';
+                        }
+
+                        const materialEl = document.createElement('div');
+                        materialEl.className = 'flex items-start p-2 rounded-lg hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors';
+                        materialEl.innerHTML = `
+                    <div class="flex-shrink-0 w-10 h-10 rounded-md ${bgColor} flex items-center justify-center mr-3">
+                        <i class="fas ${icon}"></i>
+                    </div>
+                    <div class="flex-1">
+                        <div class="flex justify-between">
+                            <h4 class="font-medium text-gray-900 dark:text-white">${material.title}</h4>
+                            <span class="text-xs text-gray-500 dark:text-gray-400">${formattedDate}</span>
+                        </div>
+                        <p class="text-sm text-gray-600 dark:text-gray-300">${material.course} - ${material.chapter}</p>
+                    </div>
+                `;
+
+                        container.appendChild(materialEl);
+                    });
+                },
+
+                // Render Dashboard News
+                renderDashboardNews: function () {
+                    const container = document.getElementById('dashboard-news');
+                    container.innerHTML = '';
+
+                    // Sort news by date (most recent first)
+                    const topNews = this.mockData.news
+                        .slice(0, 3)
+                        .sort((a, b) => new Date(b.date) - new Date(a.date));
+
+                    if (topNews.length === 0) {
+                        container.innerHTML = '<p class="text-gray-500 dark:text-gray-400 text-center p-4">No news available</p>';
+                        return;
+                    }
+
+                    topNews.forEach(news => {
+                        const newsDate = new Date(news.date);
+                        const formattedDate = newsDate.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' });
+
+                        const newsEl = document.createElement('div');
+                        newsEl.className = 'p-2 rounded-lg hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors news-item';
+                        newsEl.innerHTML = `
+            <div class="flex justify-between mb-1">
+                <h4 class="font-medium text-gray-900 dark:text-white">${news.title}</h4>
+                <span class="text-xs text-gray-500 dark:text-gray-400">${formattedDate}</span>
+            </div>
+            <p class="text-sm text-gray-600 dark:text-gray-300 line-clamp-2">${news.content.substring(0, 100)}...</p>
+        `;
+
+                        container.appendChild(newsEl);
+                    });
+                },
+
+                // Render Courses
+                renderCourses: function () {
+                    const container = document.getElementById('courses-container');
+                    container.innerHTML = '';
+
+                    this.mockData.courses.forEach(course => {
+                        const courseEl = document.createElement('div');
+                        courseEl.className = 'bg-white dark:bg-gray-800 rounded-xl shadow-md overflow-hidden card-hover';
+                        courseEl.innerHTML = `
+                            <div class="h-24 gradient-bg flex items-center justify-center">
+                                <i class="fas fa-book text-4xl text-white opacity-75"></i>
+                            </div>
+                            <div class="p-5">
+                                <h3 class="text-xl font-semibold mb-2">${course.title}</h3>
+                                <p class="text-gray-600 dark:text-gray-300 mb-4">${course.instructor}</p>
+                                <div class="flex justify-between items-center">
+                                    <span class="text-sm text-gray-500 dark:text-gray-400">${course.chapters.length} Chapters</span>
+                                    <button data-course-id="${course.id}" class="view-course-btn px-4 py-2 rounded-md bg-indigo-600 text-white text-sm hover:bg-indigo-700 transition-colors">View Course</button>
+                                </div>
+                            </div>
+                        `;
+
+                        container.appendChild(courseEl);
+                    });
+
+                    // Add event listeners to view-course-buttons
+                    document.querySelectorAll('.view-course-btn').forEach(button => {
+                        button.addEventListener('click', (e) => {
+                            const courseId = e.target.dataset.courseId;
+                            this.state.selectedCourse = this.mockData.courses.find(course => course.id === courseId);
+                            this.navigateTo('course-details');
+                        });
+                    });
+                },
+
+                // Filter Courses by Search Term
+                filterCourses: function (searchTerm) {
+                    document.querySelectorAll('#courses-container > div').forEach(courseEl => {
+                        const title = courseEl.querySelector('h3').textContent.toLowerCase();
+                        const instructor = courseEl.querySelector('p').textContent.toLowerCase();
+
+                        if (title.includes(searchTerm) || instructor.includes(searchTerm)) {
+                            courseEl.classList.remove('hidden');
+                        } else {
+                            courseEl.classList.add('hidden');
+                        }
+                    });
+                },
+
+                // Render Course Details
+                renderCourseDetails: function () {
+                    const container = document.getElementById('course-details-content');
+                    const course = this.state.selectedCourse;
+
+                    if (!course) {
+                        this.navigateTo('courses');
+                        return;
+                    }
+
+                    container.innerHTML = `
+                        <div class="bg-white dark:bg-gray-800 rounded-xl shadow-md overflow-hidden mb-6">
+                            <div class="p-6">
+                                <h1 class="text-2xl font-bold mb-2">${course.title}</h1>
+                                <p class="text-gray-600 dark:text-gray-300 mb-4">Instructor: ${course.instructor}</p>
+                                <p class="text-gray-700 dark:text-gray-300">${course.description}</p>
+                            </div>
+                        </div>
+                        
+                        <h2 class="text-xl font-semibold mb-4">Course Chapters</h2>
+                        <div id="chapters-container" class="space-y-4">
+                            ${course.chapters.map((chapter, index) => `
+                                <div class="bg-white dark:bg-gray-800 rounded-xl shadow-md overflow-hidden">
+                                    <div class="p-4 bg-gray-50 dark:bg-gray-700 flex justify-between items-center cursor-pointer chapter-header" data-chapter-index="${index}">
+                                        <h3 class="font-medium">${chapter.title}</h3>
+                                        <i class="fas fa-chevron-down text-gray-500 dark:text-gray-400 transform transition-transform duration-300"></i>
+                                    </div>
+                                    <div class="chapter-content p-4 hidden">
+                                        <p class="text-gray-600 dark:text-gray-300 mb-4">${chapter.description}</p>
+                                        
+                                        <h4 class="font-medium mb-2">Materials</h4>
+                                        <div class="space-y-2">
+                                            ${chapter.materials.map(material => {
+                        let icon = 'fa-file-pdf';
+                        let color = 'text-red-600 dark:text-red-400';
+
+                        if (material.type === 'video') {
+                            icon = 'fa-video';
+                            color = 'text-blue-600 dark:text-blue-400';
+                        } else if (material.type === 'assignment') {
+                            icon = 'fa-tasks';
+                            color = 'text-green-600 dark:text-green-400';
+                        }
+
+                        return `
+                                                <div class="flex items-center p-2 hover:bg-gray-50 dark:hover:bg-gray-700 rounded-md">
+                                                    <i class="fas ${icon} ${color} mr-3"></i>
+                                                    <div class="flex-1">
+                                                        <p class="font-medium">${material.title}</p>
+                                                        <p class="text-xs text-gray-500 dark:text-gray-400">Added: ${new Date(material.date).toLocaleDateString()}</p>
+                                                    </div>
+                                                    <a href="${material.link}" target="_blank" class="px-3 py-1 rounded-md bg-gray-200 dark:bg-gray-600 text-gray-800 dark:text-white text-sm hover:bg-gray-300 dark:hover:bg-gray-500 transition-colors download-btn">
+                                                        <i class="fas fa-download mr-1"></i> Download
+                                                    </a>
+                                                </div>
+                                            `;
+                    }).join('')}
+                                        </div>
+                                    </div>
+                                </div>
+                            `).join('')}
+                        </div>
+                    `;
+
+                    // Add event listeners to chapter headers
+                    document.querySelectorAll('.chapter-header').forEach(header => {
+                        header.addEventListener('click', () => {
+                            const content = header.nextElementSibling;
+                            const icon = header.querySelector('i');
+
+                            content.classList.toggle('hidden');
+                            icon.classList.toggle('rotate-180');
+                        });
+                    });
+                },
+
+                // Render Lectures
+                renderLectures: function () {
+                    const tbody = document.getElementById('lecture-list');
+                    tbody.innerHTML = '';
+
+                    this.mockData.lectures.forEach(lecture => {
+                        const lectureDate = new Date(lecture.date + 'T' + lecture.time);
+                        const formattedDate = lectureDate.toLocaleDateString('en-US', { weekday: 'long', month: 'long', day: 'numeric' });
+                        const formattedTime = lectureDate.toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit' });
+
+                        const row = document.createElement('tr');
+                        row.innerHTML = `
+                            <td class="px-6 py-4 whitespace-nowrap">
+                                <div class="text-sm font-medium text-gray-900 dark:text-white">${formattedDate}</div>
+                                <div class="text-sm text-gray-500 dark:text-gray-400">${formattedTime}</div>
+                            </td>
+                            <td class="px-6 py-4 whitespace-nowrap">
+                                <div class="text-sm text-gray-900 dark:text-white">${lecture.title}</div>
+                            </td>
+                            <td class="px-6 py-4 whitespace-nowrap">
+                                <div class="text-sm text-gray-900 dark:text-white">${lecture.location}</div>
+                            </td>
+                            <td class="px-6 py-4 whitespace-nowrap">
+                                <div class="text-sm text-gray-900 dark:text-white">${lecture.instructor}</div>
+                            </td>
+                        `;
+
+                        tbody.appendChild(row);
+                    });
+                },
+
+                // Populate Calendar
+                populateCalendar: function () {
+                    // Clear existing events
+                    this.calendar.removeAllEvents();
+
+                    // Add lectures as events
+                    this.mockData.lectures.forEach(lecture => {
+                        const eventColor = this.getRandomColor();
+
+                        this.calendar.addEvent({
+                            title: lecture.title,
+                            start: `${lecture.date}T${lecture.time}`,
+                            end: this.calculateEndTime(lecture.date, lecture.time),
+                            extendedProps: {
+                                location: lecture.location,
+                                instructor: lecture.instructor
+                            },
+                            backgroundColor: eventColor,
+                            borderColor: eventColor
+                        });
+                    });
+
+                    // Render calendar
+                    this.calendar.render();
+                },
+
+                // Calculate End Time (1 hour after start)
+                calculateEndTime: function (date, time) {
+                    const startTime = new Date(`${date}T${time}`);
+                    const endTime = new Date(startTime.getTime() + 60 * 60 * 1000);
+
+                    return endTime.toISOString();
+                },
+
+                // Get Random Color for Calendar Events
+                getRandomColor: function () {
+                    const colors = [
+                        '#4F46E5', // Indigo
+                        '#7C3AED', // Purple
+                        '#10B981', // Green
+                        '#EF4444', // Red
+                        '#F59E0B', // Amber
+                        '#3B82F6', // Blue
+                        '#EC4899'  // Pink
+                    ];
+
+                    return colors[Math.floor(Math.random() * colors.length)];
+                },
+
+                // Render News
+                renderNews: function () {
+                    const container = document.getElementById('news-container');
+                    container.innerHTML = '';
+
+                    // Sort news by date (latest first)
+                    const sortedNews = this.mockData.news.sort((a, b) => new Date(b.date) - new Date(a.date));
+
+                    sortedNews.forEach(news => {
+                        const newsDate = new Date(news.date);
+                        const formattedDate = newsDate.toLocaleDateString('en-US', { weekday: 'long', month: 'long', day: 'numeric', year: 'numeric' });
+
+                        const newsEl = document.createElement('div');
+                        newsEl.className = 'bg-white dark:bg-gray-800 rounded-xl shadow-md overflow-hidden news-item';
+                        newsEl.innerHTML = `
+            <div class="p-6">
+                <div class="flex justify-between items-start mb-4">
+                    <h3 class="text-xl font-semibold">${news.title}</h3>
+                    <span class="text-sm text-gray-500 dark:text-gray-400">${formattedDate}</span>
+                </div>
+                
+                <div class="news-content">
+                    <p class="text-gray-600 dark:text-gray-300">${news.content}</p>
+                </div>
+                
+                <div class="mt-4 flex items-center text-sm">
+                    <span class="text-gray-500 dark:text-gray-400">Source: ${news.source}</span>
+                </div>
+            </div>
+        `;
+
+                        container.appendChild(newsEl);
+                    });
+                },
+
+                // Updated function to load courses from the dataset
+                generateMockCourses: function (year) {
+                    const yearNum = parseInt(year);
+                    return courseData[yearNum] || [];
+                },
+
+                // Generate Mock Lectures
+                generateMockLectures: function () {
+                    return lectureData; // Use the static dataset
+                },
+
+                // Generate Mock News
+                generateMockNews: function () {
+                    const news = [
+                        {
+                            id: 1,
+                            title: 'Spring 2025 Semester Updates',
+                            date: '2025-04-01',
+                            content: 'We are excited to announce updates to the Spring 2025 semester schedule. The academic calendar has been revised to include additional study days before final exams. This change is in response to student feedback and aims to provide more preparation time. Additionally, the library will extend its hours during the final exam period.',
+                            source: 'University Administration'
+                        },
+                        {
+                            id: 2,
+                            title: 'New AI Research Center Opening',
+                            date: '2026-03-28',
+                            content: 'The university is proud to announce the opening of our new Artificial Intelligence Research Center. This state-of-the-art facility will bring together faculty and students from Computer Science, Mathematics, and Engineering to collaborate on cutting-edge AI projects. The center will feature advanced computing resources, dedicated research spaces, and opportunities for undergraduate research assistantships.',
+                            source: 'Research Department'
+                        },
+                        {
+                            id: 3,
+                            title: 'Campus Sustainability Initiative',
+                            date: '2025-03-25',
+                            content: 'As part of our commitment to environmental responsibility, the university is launching a comprehensive sustainability initiative. This program includes installing solar panels on campus buildings, implementing water conservation systems, and expanding recycling facilities. Students are encouraged to join the new Sustainability Club to participate in campus-wide green projects.',
+                            source: 'Campus Operations'
+                        },
+                        {
+                            id: 4,
+                            title: 'International Exchange Program Expansion',
+                            date: '2025-03-20',
+                            content: 'The International Studies department is pleased to announce an expansion of our exchange program. New partnerships with universities in Singapore, Brazil, and Germany will provide additional opportunities for students to study abroad. An information session will be held next week for interested students to learn about application requirements and scholarship options.',
+                            source: 'International Studies Department'
+                        },
+                        {
+                            id: 5,
+                            title: 'Student Government Elections',
+                            date: '2025-03-15',
+                            content: 'Student Government Association elections will be held from April 10-12. All enrolled students are eligible to vote for representatives who will advocate for student interests during the 2025-2026 academic year. Candidates will present their platforms at a town hall meeting on April 8. Online voting will be available through the student portal.',
+                            source: 'Student Affairs'
+                        }
+                    ];
+
+                    return news;
+                },
+
+                // Helper: Get Course Title
+                getCourseTitle: function (prefix, number) {
+                    const titles = {
+                        'CS': ['Introduction to Computer Science', 'Data Structures and Algorithms', 'Web Development', 'Database Systems', 'Computer Networks', 'Operating Systems'],
+                        'MATH': ['Calculus I', 'Linear Algebra', 'Discrete Mathematics', 'Differential Equations', 'Statistics', 'Mathematical Modeling'],
+                        'ENG': ['English Composition', 'Technical Writing', 'Literature', 'Communication Skills'],
+                        'PHYS': ['Physics I', 'Mechanics', 'Electromagnetism', 'Modern Physics'],
+                        'STAT': ['Probability Theory', 'Statistical Methods', 'Data Analysis'],
+                        'ECON': ['Microeconomics', 'Macroeconomics', 'Economic Theory'],
+                        'SE': ['Software Engineering', 'Requirements Engineering', 'Software Testing', 'Project Management'],
+                        'AI': ['Artificial Intelligence', 'Machine Learning', 'Natural Language Processing', 'Computer Vision'],
+                        'DB': ['Database Design', 'Big Data Analytics', 'Data Warehousing'],
+                        'NET': ['Network Security', 'Cloud Computing', 'Distributed Systems']
+                    };
+
+                    const availableTitles = titles[prefix];
+                    return prefix + number + ': ' + availableTitles[Math.floor(Math.random() * availableTitles.length)];
+                },
+
+                // Helper: Get Chapter Title
+                getChapterTitle: function (prefix) {
+                    const titles = {
+                        'CS': ['Programming Fundamentals', 'Object-Oriented Design', 'Data Structures', 'Algorithms', 'Web Technologies', 'Security Principles'],
+                        'MATH': ['Functions and Limits', 'Derivatives', 'Integrals', 'Series and Sequences', 'Vectors', 'Matrices'],
+                        'ENG': ['Essay Writing', 'Grammar and Style', 'Critical Analysis', 'Research Methods'],
+                        'PHYS': ['Newton\'s Laws', 'Work and Energy', 'Electric Fields', 'Magnetic Fields', 'Relativity'],
+                        'STAT': ['Probability Distributions', 'Hypothesis Testing', 'Regression Analysis', 'ANOVA'],
+                        'ECON': ['Supply and Demand', 'Market Structures', 'Fiscal Policy', 'Monetary Policy'],
+                        'SE': ['Agile Methodologies', 'Design Patterns', 'Testing Strategies', 'CI/CD Pipelines'],
+                        'AI': ['Search Algorithms', 'Neural Networks', 'Reinforcement Learning', 'Natural Language Processing'],
+                        'DB': ['Relational Model', 'SQL', 'NoSQL Systems', 'Query Optimization'],
+                        'NET': ['Network Protocols', 'Routing Algorithms', 'Cloud Services', 'Cybersecurity']
+                    };
+
+                    const defaultTitles = ['Introduction', 'Basic Concepts', 'Advanced Topics', 'Applications', 'Case Studies'];
+
+                    const availableTitles = titles[prefix] || defaultTitles;
+                    return availableTitles[Math.floor(Math.random() * availableTitles.length)];
+                },
+
+                // Helper: Get Material Title
+                getMaterialTitle: function (type, chapter, item) {
+                    if (type === 'pdf') {
+                        return `Lecture ${chapter}.${item} Notes`;
+                    } else if (type === 'video') {
+                        return `Video Tutorial ${chapter}.${item}`;
+                    } else {
+                        return `Assignment ${chapter}.${item}`;
+                    }
+                },
+
+                // Helper: Get Random Instructor
+                getRandomInstructor: function () {
+                    const instructors = [
+                        'Dr. Sarah Johnson',
+                        'Prof. Michael Chen',
+                        'Dr. Emily Rodriguez',
+                        'Prof. David Williams',
+                        'Dr. Jessica Thompson',
+                        'Prof. Robert Kim',
+                        'Dr. Lisa Patel',
+                        'Prof. James Wilson'
+                    ];
+
+                    return instructors[Math.floor(Math.random() * instructors.length)];
+                },
+
+                // Utility: Set Cookie
+                setCookie: function (name, value, days) {
+                    const expires = new Date();
+                    expires.setTime(expires.getTime() + days * 24 * 60 * 60 * 1000);
+                    document.cookie = name + '=' + encodeURIComponent(value) + ';expires=' + expires.toUTCString() + ';path=/';
+                },
+
+                // Utility: Get Cookie
+                getCookie: function (name) {
+                    const nameEQ = name + '=';
+                    const ca = document.cookie.split(';');
+                    for (let i = 0; i < ca.length; i++) {
+                        let c = ca[i];
+                        while (c.charAt(0) === ' ') c = c.substring(1, c.length);
+                        if (c.indexOf(nameEQ) === 0) return decodeURIComponent(c.substring(nameEQ.length, c.length));
+                    }
+                    return null;
+                },
+
+                // Utility: Erase Cookie
+                eraseCookie: function (name) {
+                    document.cookie = name + '=;Max-Age=-99999999;path=/';
+                },
+
+                // Utility: Capitalize First Letter
+                capitalizeFirstLetter: function (string) {
+                    return string.charAt(0).toUpperCase() + string.slice(1);
+                }
+            };
+
+            // Initialize the application
+            app.init();
+        });
+    </script>
+</body>
+
+</html>
