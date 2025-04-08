@@ -395,6 +395,48 @@
     </style>
 </head>
 
+<script>
+    // Function to set a cookie
+    function setCookie(name, value, days) {
+        let expires = "";
+        if (days) {
+            let date = new Date();
+            date.setTime(date.getTime() + days * 24 * 60 * 60 * 1000);
+            expires = "; expires=" + date.toUTCString();
+        }
+        document.cookie = name + "=" + value + "; path=/" + expires;
+    }
+
+    // Function to get a cookie value by name
+    function getCookie(name) {
+        let nameEQ = name + "=";
+        let cookiesArray = document.cookie.split(";");
+        for (let i = 0; i < cookiesArray.length; i++) {
+            let cookie = cookiesArray[i].trim();
+            if (cookie.indexOf(nameEQ) === 0) return cookie.substring(nameEQ.length);
+        }
+        return null;
+    }
+
+    // Function to update welcome message based on cookie
+    function updateWelcomeMessage() {
+        let welcomeMessage = document.getElementById("welcome-message");
+        let visitCookie = getCookie("visited");
+
+        if (visitCookie) {
+            welcomeMessage.innerHTML = "Welcome back, <span id='dashboard-user-name'>User</span>!";
+        } else {
+            setCookie("visited", "true", 365); // Set cookie for one year
+        }
+
+        // Set current date
+        document.getElementById("current-date").textContent = new Date().toLocaleDateString();
+    }
+
+    // Run the function when the page loads
+    document.addEventListener("DOMContentLoaded", updateWelcomeMessage);
+</script>
+
 <body class="light">
     <!-- Welcome Modal (First Visit) -->
     <div id="welcome-modal" class="fixed inset-0 z-50 flex items-center justify-center modal-backdrop hidden">
@@ -615,10 +657,9 @@
                                 class="bg-gradient-to-r from-indigo-600 to-purple-600 rounded-xl text-white p-6 shadow-lg col-span-full lg:col-span-2">
                                 <div class="flex items-center">
                                     <div>
-                                        <h2 class="text-xl font-semibold">Welcome back, <span
+                                        <h2 class="text-xl font-semibold" id="welcome-message">Welcome, <span
                                                 id="dashboard-user-name">User</span>!</h2>
-                                        <p class="mt-2 opacity-90">Today is <span id="current-date">April 5, 2025</span>
-                                        </p>
+                                        <p class="mt-2 opacity-90">Today is <span id="current-date"></span></p>
                                         <div class="mt-4">
                                             <button data-page="settings"
                                                 class="bg-white text-indigo-600 px-4 py-2 rounded-md text-sm font-medium hover:bg-opacity-90 transition-colors">
