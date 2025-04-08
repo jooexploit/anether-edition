@@ -3,6 +3,7 @@
 
 <head>
     <meta charset="UTF-8">
+    <meta name="theme-color" content="#4F46E5">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="description"
         content="Team Shoky Helper - A modern web application for college students to access courses, lecture schedules, and university news.">
@@ -1625,6 +1626,7 @@
                         });
 
                         document.querySelectorAll('.text-indigo-600').forEach(el => {
+                            el.classList.remove('text-indigo-600');
                             el.classList.add('dark:text-indigo-400');
                         });
                     } else {
