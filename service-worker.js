@@ -10,6 +10,7 @@ const urlsToCache = [
   "./youseftamer_profile.jpg",
   "./ahmed_adel.jpeg",
   "./ammar roshdy.jpg",
+  "./abdelhady.jpg",
 ];
 
 self.addEventListener("install", (event) => {
