@@ -131,7 +131,7 @@
                     if (statusElement) statusElement.textContent = 'Subscribed to notifications!';
 
                     // Send subscription to your server
-                    fetch('http://localhost:3000/subscribe', { // Replace with your server URL
+                    fetch('https://push-notfication-server-production.up.railway.app/subscribe', { // Replace with your server URL
                         method: 'POST',
                         headers: { 'Content-Type': 'application/json' },
                         body: JSON.stringify(subscription)
