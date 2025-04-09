@@ -84,6 +84,80 @@
                 .then(() => console.log("Service Worker Registered"))
                 .catch((error) => console.error("Service Worker Registration Failed:", error));
         }
+        document.addEventListener('DOMContentLoaded', () => {
+            const statusElement = document.getElementById('notification-status'); // Optional
+
+            // Check if push notifications are supported
+            if ('serviceWorker' in navigator && 'PushManager' in window) {
+                navigator.serviceWorker.ready.then(registration => {
+                    // Replace with your public VAPID key
+                    const applicationServerKey = 'BMKGpCMKhbZK013iH-1q3K6Qbmv6Yz6gEwlklT-24GT_pk9f6R2Otq1byR8I2bUmBZmrreyAkkkJplb-M1XEpJs';
+
+                    // Check current permission state
+                    if (Notification.permission === 'granted') {
+                        subscribeUser(registration, applicationServerKey);
+                    } else if (Notification.permission !== 'denied') {
+                        // Request permission immediately
+                        Notification.requestPermission().then(permission => {
+                            if (permission === 'granted') {
+                                subscribeUser(registration, applicationServerKey);
+                            } else {
+                                if (statusElement) statusElement.textContent = 'Notification permission denied.';
+                                console.log('User denied notification permission');
+                            }
+                        });
+                    } else {
+                        if (statusElement) statusElement.textContent = 'Notifications blocked by user.';
+                        console.log('Notifications already denied');
+                    }
+                });
+            } else {
+                if (statusElement) statusElement.textContent = 'Push notifications not supported.';
+                console.log('Push notifications not supported in this browser');
+            }
+        });
+
+        // Function to subscribe the user
+        function subscribeUser(registration, applicationServerKey) {
+            const subscribeOptions = {
+                userVisibleOnly: true,
+                applicationServerKey: urlBase64ToUint8Array(applicationServerKey)
+            };
+
+            registration.pushManager.subscribe(subscribeOptions)
+                .then(subscription => {
+                    console.log('User subscribed:', subscription);
+                    const statusElement = document.getElementById('notification-status');
+                    if (statusElement) statusElement.textContent = 'Subscribed to notifications!';
+
+                    // Send subscription to your server
+                    fetch('http://localhost:3000/subscribe', { // Replace with your server URL
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify(subscription)
+                    })
+                        .then(response => response.json())
+                        .then(data => console.log('Subscription saved:', data))
+                        .catch(error => console.error('Error saving subscription:', error));
+                })
+                .catch(error => {
+                    console.error('Subscription failed:', error);
+                    const statusElement = document.getElementById('notification-status');
+                    if (statusElement) statusElement.textContent = 'Failed to subscribe to notifications.';
+                });
+        }
+
+        // Utility function to convert VAPID key
+        function urlBase64ToUint8Array(base64String) {
+            const padding = '='.repeat((4 - base64String.length % 4) % 4);
+            const base64 = (base64String + padding).replace(/-/g, '+').replace(/_/g, '/');
+            const rawData = window.atob(base64);
+            const outputArray = new Uint8Array(rawData.length);
+            for (let i = 0; i < rawData.length; ++i) {
+                outputArray[i] = rawData.charCodeAt(i);
+            }
+            return outputArray;
+        }
 
         let deferredPrompt;
 
@@ -2079,8 +2153,29 @@
                     });
 
                     // Notification Toggle
-                    document.getElementById('notification-button').addEventListener('click', this.toggleNotificationDropdown.bind(this));
-                    document.getElementById('clear-notifications').addEventListener('click', this.clearNotifications.bind(this));
+                    document.getElementById('notification-button').addEventListener('click', async function () {
+                        // Check if push notifications are supported
+                        if ('serviceWorker' in navigator && 'PushManager' in window) {
+                            try {
+                                const registration = await navigator.serviceWorker.ready;
+                                const permission = await Notification.requestPermission();
+
+                                if (permission === 'granted') {
+                                    const applicationServerKey = 'BMKGpCMKhbZK013iH-1q3K6Qbmv6Yz6gEwlklT-24GT_pk9f6R2Otq1byR8I2bUmBZmrreyAkkkJplb-M1XEpJs';
+                                    subscribeUser(registration, applicationServerKey);
+                                } else {
+                                    console.log('Notification permission denied');
+                                }
+                            } catch (error) {
+                                console.error('Error requesting notification permission:', error);
+                            }
+                        } else {
+                            console.log('Push notifications not supported');
+                        }
+
+                        // Keep existing dropdown toggle functionality
+                        document.getElementById('notification-dropdown').classList.toggle('hidden');
+                    }); document.getElementById('clear-notifications').addEventListener('click', this.clearNotifications.bind(this));
 
                     // Back to Courses Button
                     document.getElementById('back-to-courses').addEventListener('click', () => {

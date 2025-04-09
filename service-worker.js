@@ -22,6 +22,25 @@ self.addEventListener("install", (event) => {
     })
   );
 });
+// Add this to your existing service-worker.js
+self.addEventListener("push", function (event) {
+  const data = event.data
+    ? event.data.json()
+    : { title: "Welcome", body: "Thanks for visiting!" };
+  const options = {
+    body: data.body,
+    icon: "./icon-192x192.png", // Replace with your icon path from manifest.json or another URL
+    badge: "./icon-512x512.png", // Optional: Small badge image
+  };
+  event.waitUntil(self.registration.showNotification(data.title, options));
+});
+
+self.addEventListener("notificationclick", function (event) {
+  event.notification.close();
+  event.waitUntil(
+    clients.openWindow("/") // Redirect to your homepage
+  );
+});
 
 self.addEventListener("fetch", (event) => {
   event.respondWith(
