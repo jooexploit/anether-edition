@@ -37,6 +37,9 @@
     <link rel="icon" type="image/png" sizes="32x32" href="favicon/favicon-32x32.png">
     <link rel="icon" type="image/png" sizes="96x96" href="favicon/favicon-96x96.png">
     <link rel="icon" type="image/png" sizes="16x16" href="favicon/favicon-16x16.png">
+    <!-- Add after your existing CSS links -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/shepherd.js@10.0.1/dist/css/shepherd.css" />
+    <script src="https://cdn.jsdelivr.net/npm/shepherd.js@10.0.1/dist/js/shepherd.min.js"></script>
     <script type="application/ld+json">
         {
           "@context": "https://schema.org",
@@ -142,6 +145,174 @@
             --text-dark: #1F2937;
         }
 
+        /* Shepherd Tour Custom Styles */
+        .shepherd-theme-custom {
+            max-width: 90vw !important;
+            /* Ensures it never exceeds viewport width */
+            width: fit-content !important;
+            /* Adapts to content */
+            font-size: 14px !important;
+            z-index: 9999 !important;
+        }
+
+        .shepherd-theme-custom .shepherd-button-primary {
+            background: #4F46E5 !important;
+            color: white !important;
+            border-radius: 0.375rem !important;
+            padding: 0.5rem 1rem !important;
+            font-weight: 500 !important;
+            transition: background-color 0.2s !important;
+        }
+
+        .shepherd-theme-custom .shepherd-button-primary:hover {
+            background: #4338CA !important;
+        }
+
+        .shepherd-theme-custom .shepherd-button-secondary {
+            background: #9CA3AF !important;
+            color: white !important;
+            border-radius: 0.375rem !important;
+            padding: 0.5rem 1rem !important;
+            font-weight: 500 !important;
+            transition: background-color 0.2s !important;
+        }
+
+        .shepherd-theme-custom .shepherd-button-secondary:hover {
+            background: #6B7280 !important;
+        }
+
+        .shepherd-theme-custom .shepherd-button-done {
+            background: #0cd358 !important;
+            color: white !important;
+            border-radius: 0.375rem !important;
+            padding: 0.5rem 1rem !important;
+            font-weight: 500 !important;
+            transition: background-color 0.2s !important;
+        }
+
+        .shepherd-theme-custom .shepherd-button-done:hover {
+            background: #039e20 !important;
+        }
+
+        .shepherd-theme-custom .shepherd-button-cancel {
+            background: #d30c0c !important;
+            color: white !important;
+            border-radius: 0.375rem !important;
+            padding: 0.5rem 1rem !important;
+            font-weight: 500 !important;
+            transition: background-color 0.2s !important;
+        }
+
+        .shepherd-theme-custom .shepherd-button-cancel:hover {
+            background: #9e0303 !important;
+        }
+
+        .shepherd-theme-custom .shepherd-text {
+            font-size: 0.875rem !important;
+            line-height: 1.25rem !important;
+            padding: 1rem !important;
+        }
+
+        /* Make sure the content does not exceed the screen */
+        .shepherd-theme-custom .shepherd-content {
+            border-radius: 12px !important;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06) !important;
+            width: auto !important;
+            /* Adjust width dynamically */
+            max-width: 85vw !important;
+            /* Prevents it from getting too large */
+            word-wrap: break-word !important;
+            /* Prevents text overflow */
+            white-space: normal !important;
+            overflow: hidden !important;
+        }
+
+        /* Ensure text does not overflow */
+        .shepherd-theme-custom .shepherd-text {
+            font-size: 0.875rem !important;
+            line-height: 1.4 !important;
+            padding: 0.75rem !important;
+            width: 100% !important;
+            word-wrap: break-word !important;
+            white-space: normal !important;
+            overflow-wrap: break-word !important;
+        }
+
+        /* Make sure buttons adjust and do not break layout */
+        .shepherd-theme-custom .shepherd-footer {
+            padding: 0.5rem !important;
+            display: flex !important;
+            justify-content: center !important;
+            gap: 0.5rem !important;
+            flex-wrap: wrap !important;
+        }
+
+        /* Buttons should shrink when needed */
+        .shepherd-theme-custom .shepherd-button {
+            font-size: 0.875rem !important;
+            padding: 0.375rem 0.75rem !important;
+            border-radius: 0.375rem !important;
+            font-weight: 500 !important;
+            min-height: 2rem !important;
+            min-width: 4rem !important;
+            max-width: 100% !important;
+            /* Ensures it does not overflow */
+        }
+
+        /* Mobile Optimizations */
+        @media (max-width: 640px) {
+            .shepherd-theme-custom {
+                max-width: 95vw !important;
+                /* Fits inside small screens */
+                font-size: 13px !important;
+                margin: 0 auto !important;
+            }
+
+            .shepherd-theme-custom .shepherd-content {
+                max-width: 90vw !important;
+                /* Prevents cutting on small screens */
+            }
+
+            .shepherd-theme-custom .shepherd-text {
+                padding: 0.5rem !important;
+                font-size: 0.813rem !important;
+                overflow-wrap: break-word !important;
+                word-break: break-word !important;
+            }
+
+            .shepherd-theme-custom .shepherd-button {
+                padding: 0.25rem 0.5rem !important;
+                font-size: 0.813rem !important;
+                min-height: 1.75rem !important;
+            }
+
+            .shepherd-theme-custom .shepherd-footer {
+                padding: 0.375rem !important;
+                justify-content: center !important;
+            }
+        }
+
+        /* Ensure it never goes off the screen */
+        .shepherd-element {
+            position: fixed !important;
+            z-index: 9999 !important;
+            left: 50% !important;
+            transform: translateX(-50%) !important;
+            /* Centers it properly */
+            max-width: 90vw !important;
+        }
+
+        /* Keep it properly positioned over the target */
+        .shepherd-target.shepherd-enabled {
+            position: relative !important;
+            z-index: 9998 !important;
+        }
+
+        .shepherd-modal-overlay-container {
+            z-index: 9997 !important;
+        }
+
+
         /* Popup animation */
         @keyframes popup-animation {
             0% {
@@ -246,6 +417,7 @@
 
         .sidebar {
             min-width: 250px;
+            transform: translateX(0);
             transition: transform 0.3s ease;
         }
 
@@ -254,7 +426,7 @@
         }
 
         .sidebar-collapsed {
-            transform: translateX(-250px);
+            transform: translateX(-100%);
         }
 
         .news-item {
@@ -392,6 +564,12 @@
                 padding: 0;
             }
         }
+
+        @media (min-width: 1024px) {
+            .sidebar-collapsed {
+                transform: translateX(0);
+            }
+        }
     </style>
 </head>
 
@@ -519,7 +697,7 @@
     <div class="flex h-screen overflow-hidden relative">
         <!-- Sidebar -->
         <div id="sidebar"
-            class="sidebar bg-indigo-800 text-white h-screen flex-shrink-0 fixed left-0 top-0 bottom-0 z-30">
+            class="sidebar bg-indigo-800 text-white h-screen flex-shrink-0 fixed left-0 top-0 bottom-0 z-30 transition-transform duration-300 ease-in-out transform">
             <div class="p-4 flex items-center justify-between">
                 <h1 class="text-xl font-bold">Team Shoky Helper</h1>
                 <button id="close-sidebar" class="lg:hidden text-white focus:outline-none">
@@ -1086,69 +1264,87 @@
                         <!-- Data Collectors Section -->
                         <h2 class="text-2xl font-semibold mb-6 mt-12 text-gray-800 dark:text-gray-100">Our Data
                             Collectors</h2>
-                        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">
-                            <!-- Data Collector Card 1 -->
-                            <div
-                                class="bg-white dark:bg-gray-800 rounded-xl shadow-xl transform hover:scale-105 transition duration-300 ease-in-out p-8">
-                                <div class="flex flex-col items-center">
-                                    <img src="ammar roshdy.jpg" alt="Ammar Roshdy - Data Collector Photo"
-                                        class="w-32 h-32 rounded-full border-4 border-indigo-500 mb-4">
-                                    <h3 class="text-xl font-semibold text-gray-800 dark:text-gray-100">ammar roshdy</h3>
-                                    <p class="text-md text-gray-500 dark:text-gray-400">Year 2 Helper</p>
-                                    <div class="flex space-x-4 mt-6">
-                                        <a href="https://www.instagram.com/3mar_roshdyy"
-                                            class="text-indigo-600 dark:text-indigo-400 hover:text-indigo-500 transform hover:scale-110 transition duration-200"
-                                            target="_blank" rel="noopener noreferrer">
-                                            <i class="fab fa-instagram fa-2x"></i>
-                                        </a>
+
+                        <!-- Year 1 Helpers -->
+                        <div class="mb-8">
+                            <h3 class="text-xl font-semibold mb-4 text-indigo-600 dark:text-indigo-400">Year 1 Helpers
+                            </h3>
+                            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">
+                                <!-- Nare Mohammed Card -->
+                                <div
+                                    class="bg-white dark:bg-gray-800 rounded-xl shadow-xl transform hover:scale-105 transition duration-300 ease-in-out p-8">
+                                    <div class="flex flex-col items-center">
+                                        <img src="Nare Mohammed.jpg" alt="Nare Mohammed - Data Collector Photo"
+                                            class="w-32 h-32 rounded-full border-4 border-indigo-500 mb-4 object-cover">
+                                        <h3 class="text-xl font-semibold text-gray-800 dark:text-gray-100">Nare Mohammed
+                                        </h3>
+                                        <p class="text-md text-gray-500 dark:text-gray-400">Year 1 Helper</p>
+                                        <div class="flex space-x-4 mt-6">
+                                            <a href="https://www.linkedin.com/in/naira-elshorbagy-710017330?utm_source=share&utm_campaign=share_via&utm_content=profile&utm_medium=android_app"
+                                                class="text-indigo-600 dark:text-indigo-400 hover:text-indigo-500 transform hover:scale-110 transition duration-200"
+                                                target="_blank" rel="noopener noreferrer">
+                                                <i class="fab fa-linkedin fa-2x"></i>
+                                            </a>
+                                        </div>
                                     </div>
+                                    <p class="text-gray-600 dark:text-gray-300 mt-4 text-sm">
+                                        AI intern , HTI first year student
+                                    </p>
                                 </div>
-                                <p dir="rtl" class="text-gray-600 dark:text-gray-300 mt-4 text-sm">
-                                    مهندس علي ما تفرج
-                                </p>
+                                <!-- Add more Year 1 helpers here -->
                             </div>
-                            <!-- Data Collector Card 2 -->
-                            <div
-                                class="bg-white dark:bg-gray-800 rounded-xl shadow-xl transform hover:scale-105 transition duration-300 ease-in-out p-8">
-                                <div class="flex flex-col items-center">
-                                    <img src="Nare Mohammed.jpg" alt="Nare Mohammed - Data Collector Photo"
-                                        class="w-32 h-32 rounded-full border-4 border-indigo-500 mb-4 object-cover">
-                                    <h3 class="text-xl font-semibold text-gray-800 dark:text-gray-100">Nare Mohammed
-                                    </h3>
-                                    <p class="text-md text-gray-500 dark:text-gray-400">Year 1 Helper</p>
-                                    <div class="flex space-x-4 mt-6">
-                                        <a href="https://www.linkedin.com/in/naira-elshorbagy-710017330?utm_source=share&utm_campaign=share_via&utm_content=profile&utm_medium=android_app"
-                                            class="text-indigo-600 dark:text-indigo-400 hover:text-indigo-500 transform hover:scale-110 transition duration-200"
-                                            target="_blank" rel="noopener noreferrer">
-                                            <i class="fab fa-linkedin fa-2x"></i>
-                                        </a>
-                                    </div>
-                                </div>
-                                <p class="text-gray-600 dark:text-gray-300 mt-4 text-sm">
-                                    AI intern , HTI first year student
-                                </p>
-                            </div>
-                            <!-- Data Collector Card 3 -->
-                            <div
-                                class="bg-white dark:bg-gray-800 rounded-xl shadow-xl transform hover:scale-105 transition duration-300 ease-in-out p-8">
-                                <div class="flex flex-col items-center">
-                                    <img src="Mohand khaled.jpg" alt="Mohand khaled - Data Collector Photo"
-                                        class="w-32 h-32 rounded-full border-4 border-indigo-500 mb-4 object-cover">
-                                    <h3 class="text-xl font-semibold text-gray-800 dark:text-gray-100">Mohand khaled
-                                    </h3>
-                                    <p class="text-md text-gray-500 dark:text-gray-400">Year 2 Helper</p>
-                                </div>
-                            </div>
-                            <!-- Repeat Data Collector Cards as needed -->
                         </div>
 
+                        <!-- Year 2 Helpers -->
+                        <div>
+                            <h3 class="text-xl font-semibold mb-4 text-indigo-600 dark:text-indigo-400">Year 2 Helpers
+                            </h3>
+                            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">
+                                <!-- Ammar Roshdy Card -->
+                                <div
+                                    class="bg-white dark:bg-gray-800 rounded-xl shadow-xl transform hover:scale-105 transition duration-300 ease-in-out p-8">
+                                    <div class="flex flex-col items-center">
+                                        <img src="ammar roshdy.jpg" alt="Ammar Roshdy - Data Collector Photo"
+                                            class="w-32 h-32 rounded-full border-4 border-indigo-500 mb-4">
+                                        <h3 class="text-xl font-semibold text-gray-800 dark:text-gray-100">ammar roshdy
+                                        </h3>
+                                        <p class="text-md text-gray-500 dark:text-gray-400">Year 2 Helper</p>
+                                        <div class="flex space-x-4 mt-6">
+                                            <a href="https://www.instagram.com/3mar_roshdyy"
+                                                class="text-indigo-600 dark:text-indigo-400 hover:text-indigo-500 transform hover:scale-110 transition duration-200"
+                                                target="_blank" rel="noopener noreferrer">
+                                                <i class="fab fa-instagram fa-2x"></i>
+                                            </a>
+                                        </div>
+                                    </div>
+                                    <p dir="rtl" class="text-gray-600 dark:text-gray-300 mt-4 text-sm">
+                                        مهندس علي ما تفرج
+                                    </p>
+                                </div>
+
+                                <!-- Mohand khaled Card -->
+                                <div
+                                    class="bg-white dark:bg-gray-800 rounded-xl shadow-xl transform hover:scale-105 transition duration-300 ease-in-out p-8">
+                                    <div class="flex flex-col items-center">
+                                        <img src="Mohand khaled.jpg" alt="Mohand khaled - Data Collector Photo"
+                                            class="w-32 h-32 rounded-full border-4 border-indigo-500 mb-4 object-cover">
+                                        <h3 class="text-xl font-semibold text-gray-800 dark:text-gray-100">Mohand khaled
+                                        </h3>
+                                        <p class="text-md text-gray-500 dark:text-gray-400">Year 2 Helper</p>
+                                    </div>
+                                </div>
+                                <!-- Add more Year 2 helpers here -->
+                            </div>
+                        </div>
 
                         <!-- Call to Action -->
                         <div class="mt-12 text-center">
                             <p class="text-gray-600 dark:text-gray-300 text-lg">
-                                Interested in joining our team? Visit our <a href="#careers"
-                                    class="text-indigo-600 dark:text-indigo-400 hover:text-indigo-500 transform hover:scale-110 transition duration-200">Careers
-                                    Page</a> for exciting opportunities!
+                                Interested in joining our team? Call us on WhatsApp
+                                <a href="https://wa.me/201090952790?text=Hello%20Team%20Shoky%2C%20I%20am%20interested%20in%20joining%20your%20team."
+                                    class="text-indigo-600 dark:text-indigo-400 hover:text-indigo-500 transform hover:scale-110 transition duration-200">
+                                    <i class="fab fa-whatsapp"></i> WhatsApp
+                                </a> for exciting opportunities!
                             </p>
                         </div>
                     </div>
@@ -1177,6 +1373,393 @@
 
     <script>
         document.addEventListener('DOMContentLoaded', function () {
+            // Add this to your existing script, inside the DOMContentLoaded event listener
+            const tour = new Shepherd.Tour({
+                defaultStepOptions: {
+                    cancelIcon: {
+                        enabled: true
+                    },
+                    classes: 'shadow-md bg-purple-50',
+                    scrollTo: { behavior: 'smooth', block: 'center' }
+                },
+                useModalOverlay: true
+            });
+
+            // Add tour steps
+            tour.addStep({
+                id: 'welcome',
+                text: 'اهلا بيك يا صديقي هاخدك لفه افهمك اي الموقع دا وعباره عن اي جاهز ؟!',
+                attachTo: {
+                    element: '.content-area',
+                    on: 'top'
+                },
+                classes: 'shepherd-theme-custom',
+                buttons: [
+                    {
+                        text: 'Skip Tour',
+                        classes: 'shepherd-button-cancel',
+                        action: tour.complete
+                    },
+                    {
+                        text: 'Next',
+                        classes: 'shepherd-button-primary',
+                        action: tour.next
+                    }
+                ]
+            });
+
+
+            tour.addStep({
+                id: 'upcoming-lectures',
+                text: 'هنا هتشوف المحاضارات الجايه ',
+                attachTo: {
+                    element: '#upcoming-lectures',
+                    on: 'bottom'
+                },
+                classes: 'shepherd-theme-custom',
+
+                buttons: [
+                    {
+                        text: 'Back',
+                        classes: 'shepherd-button-secondary',
+                        action: tour.back
+                    },
+                    {
+                        text: 'Next',
+                        classes: 'shepherd-button-primary',
+                        action: tour.next
+                    }
+                ]
+            });
+
+            tour.addStep({
+                id: 'recent-materials',
+                text: 'تقدر تشوف هنا اخر الماتريال الي اتضافت',
+                attachTo: {
+                    element: '#recent-materials',
+                    on: 'down'
+                },
+                classes: 'shepherd-theme-custom',
+                buttons: [
+                    {
+                        text: 'Back',
+                        classes: 'shepherd-button-secondary',
+                        action: tour.back
+                    },
+                    {
+                        text: 'Next',
+                        classes: 'shepherd-button-primary',
+                        action: tour.next
+                    }
+                ]
+            });
+
+            // Sidebar Step
+            tour.addStep({
+                id: 'navigation',
+                text: 'دا اهم حاجه تقدر بقي تتنقل منه سواء لصفحه الاخبار , تشوف الكورسات , و تعرف عننا اكتر , تعدل معلوماتك ',
+                attachTo: {
+                    element: '#sidebar',
+                    on: 'right'
+                },
+                beforeShowPromise: function () {
+                    return new Promise(function (resolve) {
+                        if (window.innerWidth < 1024) {
+                            // Open the sidebar
+                            document.getElementById('sidebar').classList.remove('sidebar-collapsed');
+                            setTimeout(() => {
+                                resolve();
+                            }, 300); // Ensure animation completes before proceeding
+                        } else {
+                            resolve();
+                        }
+                    });
+                },
+                classes: 'shepherd-theme-custom',
+                buttons: [
+                    {
+                        text: 'Back',
+                        classes: 'shepherd-button-secondary',
+                        action: tour.back
+                    },
+                    {
+                        text: 'Next',
+                        classes: 'shepherd-button-primary',
+                        action: tour.next // Move to next step WITHOUT closing sidebar
+                    }
+                ],
+                modalOverlayOpeningPadding: 5,
+                canClickTarget: false,
+                popperOptions: {
+                    modifiers: [
+                        {
+                            name: 'preventOverflow',
+                            options: {
+                                padding: 10
+                            }
+                        }
+                    ]
+                }
+            });
+            // Install App Step (Fixed)
+            tour.addStep({
+                id: 'install-app',
+                text: 'لو عايز تشغل الموقع اوفلاين ويبقي عندك علي جهازك دوس هنا وثبته',
+                attachTo: {
+                    element: '#install-app-button',
+                    on: 'left'
+                },
+                beforeShowPromise: function () {
+                    return new Promise(function (resolve) {
+                        if (window.innerWidth < 1024) {
+                            // Ensure sidebar stays open for mobile
+                            document.getElementById('sidebar').classList.remove('sidebar-collapsed');
+                        }
+                        setTimeout(resolve, 300);
+                    });
+                },
+                classes: 'shepherd-theme-custom',
+                buttons: [
+                    {
+                        text: 'Back',
+                        classes: 'shepherd-button-secondary',
+                        action: tour.back
+                    },
+                    {
+                        text: 'Next',
+                        classes: 'shepherd-button-primary',
+                        action: tour.next // Just go to next step without closing sidebar
+                    }
+                ]
+            });
+
+            // Theme Toggle Step
+            tour.addStep({
+                id: 'theme-toggle',
+                text: 'تقدر تغير مبين الوضع الفاتح والداكن وتشوف الافضل ليك اي ',
+                attachTo: {
+                    element: '#theme-toggle',
+                    on: 'top'
+                },
+                beforeShowPromise: function () {
+                    return new Promise(function (resolve) {
+                        if (window.innerWidth < 1024) {
+                            // Ensure sidebar stays open for theme toggle step
+                            document.getElementById('sidebar').classList.remove('sidebar-collapsed');
+                            setTimeout(() => {
+                                resolve();
+                            }, 300);
+                        } else {
+                            resolve();
+                        }
+                    });
+                },
+                classes: 'shepherd-theme-custom',
+                buttons: [
+                    {
+                        text: 'Back',
+                        classes: 'shepherd-button-secondary',
+                        action: tour.back
+                    },
+                    {
+                        text: 'Next',
+                        classes: 'shepherd-button-primary',
+                        action: () => {
+                            if (window.innerWidth < 1024) {
+                                // Close sidebar after theme toggle step
+                                setTimeout(() => {
+                                    document.getElementById('sidebar').classList.add('sidebar-collapsed');
+                                }, 100);
+                            }
+                            tour.next();
+                        }
+                    }
+                ]
+            });
+
+
+            tour.addStep({
+                id: 'courses-section',
+                text: 'تصفح الكورسات اللي مسجل فيها هنا. كل كارت كورس بيعرض كود الكورس، العنوان، اسم المدرس، وعدد الفصول.',
+                attachTo: {
+                    element: '#courses-container',
+                    on: 'top'
+                },
+                beforeShowPromise: function () {
+                    return new Promise(function (resolve) {
+                        // Navigate to courses page first
+                        app.navigateTo('courses');
+                        setTimeout(resolve, 300); // Give time for transition
+                    });
+                },
+                classes: 'shepherd-theme-custom',
+                buttons: [
+                    {
+                        text: 'Back',
+                        classes: 'shepherd-button-secondary',
+                        action: tour.back
+                    },
+                    {
+                        text: 'Next',
+                        classes: 'shepherd-button-primary',
+                        action: tour.next
+                    }
+                ]
+            });
+
+            tour.addStep({
+                id: 'course-search',
+                text: 'بسرعة تقدر تلاقي الكورسات بالبحث عن العناوين أو أسماء المدرسين.',
+                attachTo: {
+                    element: '#course-search',
+                    on: 'bottom'
+                },
+                classes: 'shepherd-theme-custom',
+                buttons: [
+                    {
+                        text: 'Back',
+                        classes: 'shepherd-button-secondary',
+                        action: tour.back
+                    },
+                    {
+                        text: 'Next',
+                        classes: 'shepherd-button-primary',
+                        action: tour.next
+                    }
+                ]
+            });
+
+            tour.addStep({
+                id: 'course-details',
+                text: 'اضغط على "view course" علشان تدخل على تفاصيل الكورس، زي الفصول والمواد اللي ممكن تحملها.',
+                attachTo: {
+                    element: '.view-course-btn',
+                    on: 'bottom'
+                },
+                beforeShowPromise: function () {
+                    return new Promise(function (resolve) {
+                        // Navigate to courses page first
+                        app.navigateTo('courses');
+
+                        // Select the first course
+                        app.state.selectedCourse = app.mockData.courses[0];
+
+                        setTimeout(resolve, 300);
+                    });
+                },
+                classes: 'shepherd-theme-custom',
+                buttons: [
+                    {
+                        text: 'Back',
+                        classes: 'shepherd-button-secondary',
+                        action: tour.back
+                    },
+                    {
+                        text: 'Next',
+                        classes: 'shepherd-button-primary',
+                        action: tour.next
+                    }
+                ]
+            });
+            tour.addStep({
+                id: 'course-overview',
+                text: 'هنا تقدر تشوف معلومات مفصلة عن الكورس، زي اسم المدرس ووصف الكورس.',
+                attachTo: {
+                    element: '#course-details-content > div',
+                    on: 'bottom'
+                },
+                beforeShowPromise: function () {
+                    return new Promise(function (resolve) {
+                        // First, ensure we have a selected course
+                        if (!app.state.selectedCourse) {
+                            // Select the first course if none is selected
+                            app.state.selectedCourse = app.mockData.courses[0];
+                        }
+
+                        // Navigate to course details and render content
+                        app.navigateTo('course-details');
+
+                        // Give time for the content to render
+                        setTimeout(() => {
+                            resolve();
+                        }, 500);
+                    });
+                },
+                classes: 'shepherd-theme-custom',
+                buttons: [
+                    {
+                        text: 'Back',
+                        classes: 'shepherd-button-secondary',
+                        action: tour.back
+                    },
+                    {
+                        text: 'Next',
+                        classes: 'shepherd-button-primary',
+                        action: tour.next
+                    }
+                ]
+            });
+
+            tour.addStep({
+                id: 'course-chapters',
+                text: 'كل فصل بيحتوي على مواد محاضرات، زي ملفات PDF، فيديوهات، وواجبات. اضغط على الفصل علشان تكبره وتدخل على المحتوى بتاعه.',
+                attachTo: {
+                    element: '#chapters-container',
+                    on: 'bottom'
+                },
+                beforeShowPromise: function () {
+                    return new Promise(function (resolve) {
+                        // Open first chapter to show content
+                        const firstChapterHeader = document.querySelector('.chapter-header');
+                        const firstChapterContent = document.querySelector('.chapter-content');
+                        const icon = firstChapterHeader.querySelector('i');
+
+                        firstChapterContent.classList.remove('hidden');
+                        icon.classList.add('rotate-180');
+
+                        setTimeout(resolve, 300);
+                    });
+                },
+                classes: 'shepherd-theme-custom',
+                buttons: [
+                    {
+                        text: 'Back',
+                        classes: 'shepherd-button-secondary',
+                        action: tour.back
+                    },
+                    {
+                        text: 'Next',
+                        classes: 'shepherd-button-primary',
+                        action: tour.next
+                    }
+                ]
+            });
+
+            tour.addStep({
+                id: 'course-materials',
+                text: 'حمل مواد الكورس بالضغط على الأزرار دي. اللون بيوضح نوع المحتوى: أحمر لملفات PDF، أزرق للفيديوهات، وأخضر للواجبات',
+                attachTo: {
+                    element: '.download-btn',
+                    on: 'left'
+                },
+                classes: 'shepherd-theme-custom',
+                buttons: [
+                    {
+                        text: 'Back',
+                        classes: 'shepherd-button-secondary',
+                        action: tour.back
+                    },
+                    {
+                        text: 'Done',
+                        classes: 'shepherd-button-done',
+                        action: tour.complete
+                    }
+                ]
+            });
+
+
+
+
             // static dataset for lectureData
 
             const lectureData = [
@@ -1336,6 +1919,10 @@
 
                 // Initialize Application
                 init: function () {
+                    // Add this at the beginning of init
+                    if (checkIfMobile()) {
+                        document.getElementById('sidebar').classList.add('sidebar-collapsed');
+                    }
                     this.loadUserData();
                     this.setupEventListeners();
                     this.setupFullCalendar();
@@ -1419,6 +2006,15 @@
 
                 // Setup Event Listeners
                 setupEventListeners: function () {
+                    // Add this at the beginning of setupEventListeners
+                    window.addEventListener('resize', () => {
+                        const sidebar = document.getElementById('sidebar');
+                        if (checkIfMobile()) {
+                            sidebar.classList.add('sidebar-collapsed');
+                        } else {
+                            sidebar.classList.remove('sidebar-collapsed');
+                        }
+                    });
                     // User Info Form Submission
                     document.getElementById('user-info-form').addEventListener('submit', this.handleUserInfoSubmit.bind(this));
 
@@ -1575,7 +2171,7 @@
 
                     // Hide modal
                     document.getElementById('welcome-modal').classList.add('hidden');
-
+                    tour.start();
                     // Reload mock data based on new user info
                     this.loadMockData();
                 },
@@ -2004,7 +2600,7 @@
                                 <i class="fas fa-book text-4xl text-white opacity-75"></i>
                             </div>
                             <div class="p-5">
-                                <h3 class="text-xl font-semibold mb-2">${course.title}</h3>
+                                <h3 class="text-xl font-semibold mb-2">${course.id} : ${course.title}</h3>
                                 <p class="text-gray-600 dark:text-gray-300 mb-4">${course.instructor}</p>
                                 <div class="flex justify-between items-center">
                                     <span class="text-sm text-gray-500 dark:text-gray-400">${course.chapters.length} Chapters</span>
@@ -2381,7 +2977,9 @@
                     return string.charAt(0).toUpperCase() + string.slice(1);
                 }
             };
-
+            function checkIfMobile() {
+                return window.innerWidth < 1024;
+            }
             // Initialize the application
             app.init();
         });
