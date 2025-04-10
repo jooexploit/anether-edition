@@ -1006,14 +1006,48 @@
                     </div>
 
                     <div class="relative">
+                        <!-- User Profile Button -->
                         <div class="flex items-center">
-                            <div class="w-8 h-8 rounded-full bg-indigo-600 flex items-center justify-center text-white">
+                            <button id="user-menu-button"
+                                class="w-8 h-8 rounded-full bg-indigo-600 flex items-center justify-center text-white focus:outline-none">
                                 <span id="nav-user-initials">U</span>
-                            </div>
+                            </button>
                             <span id="nav-user-name" class="ml-2 text-sm font-medium hidden sm:inline-block">User
                                 Name</span>
                         </div>
+
+                        <!-- Dropdown Panel -->
+                        <div id="user-dropdown"
+                            class="absolute right-0 mt-2 w-40 bg-white dark:bg-gray-800 shadow-lg rounded-lg p-2 hidden">
+                            <a
+                                class="block px-4 py-2 text-sm text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700">hi
+                                : <span id="dropdown_usrname">User</span> </a>
+                                <hr class="my-1 border-gray-300 dark:border-gray-600">
+                            <a data-page="settings"
+                                class="block px-4 py-2 text-sm text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700">Settings</a>
+                        </div>
                     </div>
+
+                    <!-- JavaScript for Toggle -->
+                    <script>
+                        document.addEventListener("DOMContentLoaded", function () {
+                            const userButton = document.getElementById("user-menu-button");
+                            const dropdown = document.getElementById("user-dropdown");
+
+                            userButton.addEventListener("click", function (event) {
+                                dropdown.classList.toggle("hidden");
+                                event.stopPropagation(); // Prevents click from closing immediately
+                            });
+
+                            // Close dropdown when clicking outside
+                            document.addEventListener("click", function (event) {
+                                if (!dropdown.contains(event.target) && event.target !== userButton) {
+                                    dropdown.classList.add("hidden");
+                                }
+                            });
+                        });
+                    </script>
+
                 </div>
             </header>
 
@@ -2403,6 +2437,7 @@
 
                     if (userData.name) {
                         document.getElementById('sidebar-user-name').textContent = userData.name;
+                        document.getElementById('dropdown_usrname').textContent = userData.name;
                         document.getElementById('nav-user-name').textContent = userData.name;
                         document.getElementById('dashboard-user-name').textContent = userData.name;
                         document.getElementById('settings-name').value = userData.name;
