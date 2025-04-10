@@ -835,6 +835,13 @@
                             </button>
                         </li>
                         <li>
+                            <button data-page="tools"
+                                class="nav-link w-full flex items-center px-3 py-2 rounded-md font-medium hover:bg-indigo-700 transition-colors">
+                                <i class="fas fa-tools w-6"></i>
+                                <span>Tools</span>
+                            </button>
+                        </li>
+                        <li>
                             <button data-page="settings"
                                 class="nav-link w-full flex items-center px-3 py-2 rounded-md font-medium hover:bg-indigo-700 transition-colors">
                                 <i class="fas fa-cog w-6"></i>
@@ -1177,6 +1184,64 @@
                             <p class="text-gray-600 dark:text-gray-300">
                                 Version 1.0.0 - Last Updated: April 5, 2025
                             </p>
+                        </div>
+                    </div>
+
+                    <!-- Tools Page -->
+                    <div id="tools-page" class="page-container hidden animate-fadeIn">
+                        <h1 class="text-2xl font-bold mb-6">Student Tools</h1>
+
+                        <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                            <!-- Todo List -->
+                            <div class="bg-white dark:bg-gray-800 rounded-xl shadow-md p-6 card-hover">
+                                <div class="flex justify-between items-center mb-4">
+                                    <h2 class="text-xl font-semibold">Todo List</h2>
+                                    <button id="add-todo"
+                                        class="p-2 rounded-full bg-indigo-100 dark:bg-indigo-900 text-indigo-600 dark:text-indigo-300 hover:bg-indigo-200 dark:hover:bg-indigo-800">
+                                        <i class="fas fa-plus"></i>
+                                    </button>
+                                </div>
+
+                                <div id="todo-input-container" class="hidden mb-4">
+                                    <input type="text" id="new-todo" placeholder="Add a new task..."
+                                        class="w-full px-3 py-2 border border-gray-300 dark:border-gray-700 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 bg-white dark:bg-gray-900">
+                                    <div class="flex justify-end mt-2 space-x-2">
+                                        <button id="cancel-todo"
+                                            class="px-3 py-1 text-sm text-gray-600 dark:text-gray-300 hover:text-gray-800 dark:hover:text-gray-100">Cancel</button>
+                                        <button id="save-todo"
+                                            class="px-3 py-1 text-sm bg-indigo-600 text-white rounded-md hover:bg-indigo-700">Add</button>
+                                    </div>
+                                </div>
+
+                                <ul id="todo-list" class="space-y-2">
+                                    <!-- Todo items will be added here dynamically -->
+                                </ul>
+                            </div>
+
+                            <!-- Sticky Notes -->
+                            <div class="bg-white dark:bg-gray-800 rounded-xl shadow-md p-6 card-hover">
+                                <div class="flex justify-between items-center mb-4">
+                                    <h2 class="text-xl font-semibold">Sticky Notes</h2>
+                                    <div class="flex space-x-2">
+                                        <button class="color-picker p-2 rounded-full bg-yellow-200 hover:bg-yellow-300"
+                                            data-color="yellow"></button>
+                                        <button class="color-picker p-2 rounded-full bg-blue-200 hover:bg-blue-300"
+                                            data-color="blue"></button>
+                                        <button class="color-picker p-2 rounded-full bg-green-200 hover:bg-green-300"
+                                            data-color="green"></button>
+                                        <button class="color-picker p-2 rounded-full bg-pink-200 hover:bg-pink-300"
+                                            data-color="pink"></button>
+                                        <button id="add-note"
+                                            class="p-2 rounded-full bg-indigo-100 dark:bg-indigo-900 text-indigo-600 dark:text-indigo-300 hover:bg-indigo-200 dark:hover:bg-indigo-800">
+                                            <i class="fas fa-plus"></i>
+                                        </button>
+                                    </div>
+                                </div>
+
+                                <div id="notes-container" class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                                    <!-- Sticky notes will be added here dynamically -->
+                                </div>
+                            </div>
                         </div>
                     </div>
 
@@ -1560,6 +1625,24 @@
                                         <p class="text-md text-gray-500 dark:text-gray-400">Year 2 Helper</p>
                                     </div>
                                 </div>
+                                <!-- Mostafa Nour card  -->
+                                <div
+                                    class="bg-white dark:bg-gray-800 rounded-xl shadow-xl transform hover:scale-105 transition duration-300 ease-in-out p-8">
+                                    <div class="flex flex-col items-center">
+                                        <img src="Mostafa_nour.jpg" alt="Mostafa Nour - Data Collector Photo"
+                                            class="w-32 h-32 rounded-full border-4 border-indigo-500 mb-4 object-cover">
+                                        <h3 class="text-xl font-semibold text-gray-800 dark:text-gray-100">Mostafa Nour
+                                        </h3>
+                                        <p class="text-md text-gray-500 dark:text-gray-400">Year 2 Helper</p>
+                                        <div class="flex space-x-4 mt-6">
+                                            <a href="https://www.facebook.com/share/16HiyfdoMD/"
+                                                class="text-indigo-600 dark:text-indigo-400 hover:text-indigo-500 transform hover:scale-110 transition duration-200"
+                                                target="_blank" rel="noopener noreferrer">
+                                                <i class="fab fa-facebook fa-2x"></i>
+                                            </a>
+                                        </div>
+                                    </div>
+                                </div>
                                 <!-- Add more Year 2 helpers here -->
                             </div>
                         </div>
@@ -1600,6 +1683,30 @@
 
     <script>
         document.addEventListener('DOMContentLoaded', function () {
+            // Sticky Note Template
+            const noteTemplate = (color, content = '', id = Date.now()) => `
+                <div class="note p-4 rounded-lg shadow-md h-40 flex flex-col bg-${color}-100 dark:bg-${color}-800" data-id="${id}">
+                    <div class="flex justify-between items-start mb-2">
+                        <button class="delete-note text-gray-500 hover:text-gray-700 dark:hover:text-gray-300">
+                            <i class="fas fa-times"></i>
+                        </button>
+                    </div>
+                    <textarea class="flex-1 w-full bg-transparent resize-none focus:outline-none" placeholder="Write your note...">${content}</textarea>
+                </div>
+            `;
+
+            // Todo Item Template
+            const todoTemplate = (text, completed = false, id = Date.now()) => `
+                <li class="flex items-center justify-between p-2 hover:bg-gray-50 dark:hover:bg-gray-700 rounded-md" data-id="${id}">
+                    <div class="flex items-center">
+                        <input type="checkbox" ${completed ? 'checked' : ''} class="todo-checkbox h-4 w-4 text-indigo-600 focus:ring-indigo-500 border-gray-300 rounded">
+                        <span class="ml-3 ${completed ? 'line-through text-gray-400 dark:text-gray-500' : 'text-gray-700 dark:text-gray-300'}">${text}</span>
+                    </div>
+                    <button class="delete-todo text-red-500 hover:text-red-700 dark:hover:text-red-400">
+                        <i class="fas fa-trash-alt"></i>
+                    </button>
+                </li>
+            `;
             // Add this to your existing script, inside the DOMContentLoaded event listener
             const tour = new Shepherd.Tour({
                 defaultStepOptions: {
@@ -3230,6 +3337,156 @@
             }
             // Initialize the application
             app.init();
+
+            // Todo List Functionality
+            document.getElementById('add-todo').addEventListener('click', () => {
+                document.getElementById('todo-input-container').classList.remove('hidden');
+                document.getElementById('new-todo').focus();
+            });
+
+            document.getElementById('cancel-todo').addEventListener('click', () => {
+                document.getElementById('todo-input-container').classList.add('hidden');
+                document.getElementById('new-todo').value = '';
+            });
+
+            document.getElementById('save-todo').addEventListener('click', () => {
+                const todoText = document.getElementById('new-todo').value.trim();
+                if (todoText) {
+                    const todoList = document.getElementById('todo-list');
+                    todoList.insertAdjacentHTML('beforeend', todoTemplate(todoText));
+
+                    // Save to localStorage
+                    const todos = JSON.parse(localStorage.getItem('todos')) || [];
+                    todos.push({ id: Date.now(), text: todoText, completed: false });
+                    localStorage.setItem('todos', JSON.stringify(todos));
+
+                    document.getElementById('new-todo').value = '';
+                    document.getElementById('todo-input-container').classList.add('hidden');
+                }
+            });
+
+            // Sticky Notes Functionality
+            document.getElementById('add-note').addEventListener('click', () => {
+                const notesContainer = document.getElementById('notes-container');
+                notesContainer.insertAdjacentHTML('afterbegin', noteTemplate(selectedColor));
+
+                // Save to localStorage
+                const notes = JSON.parse(localStorage.getItem('notes')) || [];
+                notes.push({ id: Date.now(), color: selectedColor, content: '' });
+                localStorage.setItem('notes', JSON.stringify(notes));
+            });
+
+            // Event delegation for todo list
+            document.getElementById('todo-list').addEventListener('click', (e) => {
+                if (e.target.classList.contains('delete-todo') || e.target.closest('.delete-todo')) {
+                    const todoItem = e.target.closest('li');
+                    const todoId = todoItem.dataset.id;
+
+                    // Remove from localStorage
+                    let todos = JSON.parse(localStorage.getItem('todos')) || [];
+                    todos = todos.filter(todo => todo.id != todoId);
+                    localStorage.setItem('todos', JSON.stringify(todos));
+
+                    todoItem.remove();
+                } else if (e.target.classList.contains('todo-checkbox')) {
+                    const todoItem = e.target.closest('li');
+                    const todoId = todoItem.dataset.id;
+                    const isCompleted = e.target.checked;
+
+                    // Update in localStorage
+                    let todos = JSON.parse(localStorage.getItem('todos')) || [];
+                    const todo = todos.find(t => t.id == todoId);
+                    if (todo) {
+                        todo.completed = isCompleted;
+                        localStorage.setItem('todos', JSON.stringify(todos));
+                    }
+
+                    // Update UI
+                    const textSpan = todoItem.querySelector('span');
+                    if (isCompleted) {
+                        textSpan.classList.add('line-through', 'text-gray-400', 'dark:text-gray-500');
+                    } else {
+                        textSpan.classList.remove('line-through', 'text-gray-400', 'dark:text-gray-500');
+                    }
+                }
+            });
+
+            // Event delegation for sticky notes
+            document.getElementById('notes-container').addEventListener('click', (e) => {
+                if (e.target.classList.contains('delete-note') || e.target.closest('.delete-note')) {
+                    const note = e.target.closest('.note');
+                    const noteId = note.dataset.id;
+
+                    // Remove from localStorage
+                    let notes = JSON.parse(localStorage.getItem('notes')) || [];
+                    notes = notes.filter(n => n.id != noteId);
+                    localStorage.setItem('notes', JSON.stringify(notes));
+
+                    note.remove();
+                }
+            });
+
+            // Save note content when changed
+            document.getElementById('notes-container').addEventListener('input', (e) => {
+                if (e.target.tagName === 'TEXTAREA') {
+                    const note = e.target.closest('.note');
+                    const noteId = note.dataset.id;
+                    const content = e.target.value;
+
+                    // Update in localStorage
+                    let notes = JSON.parse(localStorage.getItem('notes')) || [];
+                    const noteObj = notes.find(n => n.id == noteId);
+                    if (noteObj) {
+                        noteObj.content = content;
+                        localStorage.setItem('notes', JSON.stringify(notes));
+                    }
+                }
+            });
+
+            // Track selected color
+            let selectedColor = 'yellow';
+
+            // Color picker for notes
+            document.querySelectorAll('.color-picker').forEach(button => {
+                button.addEventListener('click', (e) => {
+                    selectedColor = e.target.dataset.color;
+
+                    // Update active state
+                    document.querySelectorAll('.color-picker').forEach(btn => {
+                        btn.classList.remove('ring-2', 'ring-indigo-500');
+                    });
+                    e.target.classList.add('ring-2', 'ring-indigo-500');
+                });
+            });
+
+            // Set initial active color
+            document.querySelector('.color-picker[data-color="yellow"]').classList.add('ring-2', 'ring-indigo-500');
+
+            // Load saved todos and notes
+            function loadSavedItems() {
+                // Load todos
+                const todos = JSON.parse(localStorage.getItem('todos')) || [];
+                const todoList = document.getElementById('todo-list');
+                todoList.innerHTML = '';
+                todos.forEach(todo => {
+                    todoList.insertAdjacentHTML('beforeend', todoTemplate(todo.text, todo.completed, todo.id));
+                });
+
+                // Load notes
+                const notes = JSON.parse(localStorage.getItem('notes')) || [];
+                const notesContainer = document.getElementById('notes-container');
+                notesContainer.innerHTML = '';
+                notes.forEach(note => {
+                    notesContainer.insertAdjacentHTML('beforeend', noteTemplate(note.color, note.content, note.id));
+                });
+            }
+
+            // Call load when tools page is shown
+            document.addEventListener('click', (e) => {
+                if (e.target.dataset.page === 'tools' || e.target.closest('[data-page="tools"]')) {
+                    loadSavedItems();
+                }
+            });
         });
     </script>
 </body>
