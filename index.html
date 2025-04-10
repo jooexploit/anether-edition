@@ -8,7 +8,7 @@
     <meta name="description"
         content="Team Shoky Helper - A modern web application for college students to access courses, lecture schedules, and university news.">
     <meta name="keywords"
-        content="Team Shoky Helper, college student app, university courses, lecture schedules, university news">
+        content="Team Shoky Helper, college student app, university courses, lecture schedules, university news, student portal">
     <meta name="author" content="Team Shoky">
     <meta name="robots" content="index, follow">
     <meta property="og:title" content="Team Shoky Helper - Your College Companion">
@@ -828,6 +828,13 @@
                             </button>
                         </li>
                         <li>
+                            <button data-page="communities"
+                                class="nav-link w-full flex items-center px-3 py-2 rounded-md font-medium hover:bg-indigo-700 transition-colors">
+                                <i class="fas fa-users w-6"></i>
+                                <span>Communities</span>
+                            </button>
+                        </li>
+                        <li>
                             <button data-page="settings"
                                 class="nav-link w-full flex items-center px-3 py-2 rounded-md font-medium hover:bg-indigo-700 transition-colors">
                                 <i class="fas fa-cog w-6"></i>
@@ -1170,6 +1177,152 @@
                             <p class="text-gray-600 dark:text-gray-300">
                                 Version 1.0.0 - Last Updated: April 5, 2025
                             </p>
+                        </div>
+                    </div>
+
+                    <!-- Communities Page -->
+                    <div id="communities-page" class="page-container hidden animate-fadeIn">
+                        <h1 class="text-3xl font-bold mb-6 text-center text-gray-800 dark:text-gray-100">University
+                            Communities</h1>
+                        <p class="text-lg text-gray-600 dark:text-gray-300 text-center mb-8 max-w-2xl mx-auto">
+                            Discover and join vibrant communities at HTI University. Expand your network, develop new
+                            skills, and enhance your college experience.
+                        </p>
+
+                        <!-- Communities Grid -->
+                        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8" id="communities-container">
+                            <!-- CyberCrew Card -->
+                            <div
+                                class="bg-white dark:bg-gray-800 rounded-xl shadow-xl overflow-hidden transform hover:scale-105 transition duration-300 ease-in-out">
+                                <div class="h-40 bg-gradient-to-r from-blue-600 to-cyan-500 relative">
+                                    <div class="absolute inset-0 flex items-center justify-center">
+                                        <i class="fas fa-shield-alt text-6xl text-white opacity-80"></i>
+                                    </div>
+                                </div>
+                                <div class="p-6">
+                                    <div class="flex justify-between items-start">
+                                        <h3 class="text-2xl font-semibold text-gray-800 dark:text-gray-100">CyberCrew
+                                        </h3>
+                                        <span
+                                            class="bg-blue-100 text-blue-800 text-xs font-medium px-2.5 py-0.5 rounded dark:bg-blue-900 dark:text-blue-300">Security</span>
+                                    </div>
+                                    <p class="text-gray-600 dark:text-gray-300 mt-4">
+                                        HTI's cybersecurity community focused on ethical hacking, network security, and
+                                        digital forensics. Join us to develop security skills through workshops, CTF
+                                        competitions, and hands-on projects.
+                                    </p>
+                                    <div class="mt-6 flex justify-between items-center">
+                                        <span class="text-sm text-gray-500 dark:text-gray-400"><i
+                                                class="fas fa-users mr-2"></i>X+ members</span>
+                                        <a href="https://linktr.ee/cyber_crew" target="_blank"
+                                            class="px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 transition-colors">Join
+                                            Community</a>
+                                    </div>
+                                    <!-- Social Media Links -->
+                                    <div class="mt-4 pt-4 border-t border-gray-200 dark:border-gray-700">
+                                        <p class="text-sm text-gray-500 dark:text-gray-400 mb-2">Connect with us:</p>
+                                        <div class="flex space-x-3">
+                                            <a href="https://chat.whatsapp.com/GJ1QtxlvLAb8sEGZj2cHVV" target="_blank"
+                                                class="flex items-center justify-center w-10 h-10 rounded-full bg-green-100 dark:bg-green-900 text-green-600 dark:text-green-400 hover:bg-green-200 dark:hover:bg-green-800 transition-colors">
+                                                <i class="fab fa-whatsapp fa-lg"></i>
+                                            </a>
+                                            <a href="https://www.facebook.com/CyberCrewHTI" target="_blank"
+                                                class="flex items-center justify-center w-10 h-10 rounded-full bg-blue-100 dark:bg-blue-900 text-blue-600 dark:text-blue-400 hover:bg-blue-200 dark:hover:bg-blue-800 transition-colors">
+                                                <i class="fab fa-facebook fa-lg"></i>
+                                            </a>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- IEEE HTI Card -->
+                            <div
+                                class="bg-white dark:bg-gray-800 rounded-xl shadow-xl overflow-hidden transform hover:scale-105 transition duration-300 ease-in-out">
+                                <div class="h-40 bg-gradient-to-r from-indigo-600 to-blue-500 relative">
+                                    <div class="absolute inset-0 flex items-center justify-center">
+                                        <i class="fas fa-microchip text-6xl text-white opacity-80"></i>
+                                    </div>
+                                </div>
+                                <div class="p-6">
+                                    <div class="flex justify-between items-start">
+                                        <h3 class="text-2xl font-semibold text-gray-800 dark:text-gray-100">IEEE HTI
+                                        </h3>
+                                        <span
+                                            class="bg-indigo-100 text-indigo-800 text-xs font-medium px-2.5 py-0.5 rounded dark:bg-indigo-900 dark:text-indigo-300">Engineering</span>
+                                    </div>
+                                    <p class="text-gray-600 dark:text-gray-300 mt-4">
+                                        The IEEE HTI Student Branch connects you with a global network of professionals.
+                                        Participate in technical workshops, leadership training, and innovative projects
+                                        to enhance your engineering career.
+                                    </p>
+                                    <div class="mt-6 flex justify-between items-center">
+                                        <span class="text-sm text-gray-500 dark:text-gray-400"><i
+                                                class="fas fa-users mr-2"></i>X+ members</span>
+                                        <a href="#"
+                                            class="px-4 py-2 bg-indigo-600 text-white rounded-md hover:bg-indigo-700 transition-colors">Join
+                                            Community</a>
+                                    </div>
+                                    <!-- Social Media Links -->
+                                    <div class="mt-4 pt-4 border-t border-gray-200 dark:border-gray-700">
+                                        <p class="text-sm text-gray-500 dark:text-gray-400 mb-2">Connect with us:</p>
+                                        <div class="flex space-x-3">
+                                            <a href="#" target="_blank"
+                                                class="flex items-center justify-center w-10 h-10 rounded-full bg-green-100 dark:bg-green-900 text-green-600 dark:text-green-400 hover:bg-green-200 dark:hover:bg-green-800 transition-colors">
+                                                <i class="fab fa-whatsapp fa-lg"></i>
+                                            </a>
+                                            <a href="https://www.facebook.com/IEEEHTISB1" target="_blank"
+                                                class="flex items-center justify-center w-10 h-10 rounded-full bg-blue-100 dark:bg-blue-900 text-blue-600 dark:text-blue-400 hover:bg-blue-200 dark:hover:bg-blue-800 transition-colors">
+                                                <i class="fab fa-facebook fa-lg"></i>
+                                            </a>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- ICPC Card -->
+                            <div
+                                class="bg-white dark:bg-gray-800 rounded-xl shadow-xl overflow-hidden transform hover:scale-105 transition duration-300 ease-in-out">
+                                <div class="h-40 bg-gradient-to-r from-purple-600 to-pink-500 relative">
+                                    <div class="absolute inset-0 flex items-center justify-center">
+                                        <i class="fas fa-code text-6xl text-white opacity-80"></i>
+                                    </div>
+                                </div>
+                                <div class="p-6">
+                                    <div class="flex justify-between items-start">
+                                        <h3 class="text-2xl font-semibold text-gray-800 dark:text-gray-100">ICPC HTI
+                                        </h3>
+                                        <span
+                                            class="bg-purple-100 text-purple-800 text-xs font-medium px-2.5 py-0.5 rounded dark:bg-purple-900 dark:text-purple-300">Competitive
+                                            Programming</span>
+                                    </div>
+                                    <p class="text-gray-600 dark:text-gray-300 mt-4">
+                                        The International Collegiate Programming Contest team at HTI. Sharpen your
+                                        problem-solving and coding skills through regular training sessions and compete
+                                        in regional and international programming competitions.
+                                    </p>
+                                    <div class="mt-6 flex justify-between items-center">
+                                        <span class="text-sm text-gray-500 dark:text-gray-400"><i
+                                                class="fas fa-users mr-2"></i>X+ members</span>
+                                        <a href="#"
+                                            class="px-4 py-2 bg-purple-600 text-white rounded-md hover:bg-purple-700 transition-colors">Join
+                                            Community</a>
+                                    </div>
+                                    <!-- Social Media Links -->
+                                    <div class="mt-4 pt-4 border-t border-gray-200 dark:border-gray-700">
+                                        <p class="text-sm text-gray-500 dark:text-gray-400 mb-2">Connect with us:</p>
+                                        <div class="flex space-x-3">
+                                            <a href="#" target="_blank"
+                                                class="flex items-center justify-center w-10 h-10 rounded-full bg-green-100 dark:bg-green-900 text-green-600 dark:text-green-400 hover:bg-green-200 dark:hover:bg-green-800 transition-colors">
+                                                <i class="fab fa-whatsapp fa-lg"></i>
+                                            </a>
+                                            <a href="https://www.facebook.com/icpchti" target="_blank"
+                                                class="flex items-center justify-center w-10 h-10 rounded-full bg-blue-100 dark:bg-blue-900 text-blue-600 dark:text-blue-400 hover:bg-blue-200 dark:hover:bg-blue-800 transition-colors">
+                                                <i class="fab fa-facebook fa-lg"></i>
+                                            </a>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
                         </div>
                     </div>
 
