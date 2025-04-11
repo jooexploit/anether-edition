@@ -880,7 +880,7 @@
         <div id="sidebar"
             class="sidebar bg-indigo-800 text-white h-screen flex-shrink-0 fixed left-0 top-0 bottom-0 z-30 transition-transform duration-300 ease-in-out transform">
             <div class="p-4 flex items-center justify-between">
-                <h1 class="text-xl font-bold">Team Shoky Helper</h1>
+                <h1 class="text-xl font-bold" style="cursor: pointer;"> <a href="">Team Shoky Helper</a></h1>
                 <button id="close-sidebar" class="lg:hidden text-white focus:outline-none">
                     <i class="fas fa-times"></i>
                 </button>
@@ -910,7 +910,7 @@
                             <button data-page="dashboard"
                                 class="nav-link w-full flex items-center px-3 py-2 rounded-md font-medium hover:bg-indigo-700 transition-colors">
                                 <i class="fas fa-home w-6"></i>
-                                <span>Dashboard</span>
+                                <span>Home</span>
                             </button>
                         </li>
                         <li>
@@ -1019,11 +1019,11 @@
                         <!-- Dropdown Panel -->
                         <div id="user-dropdown"
                             class="absolute right-0 mt-2 w-40 bg-white dark:bg-gray-800 shadow-lg rounded-lg p-2 hidden">
-                            <a
+                            <a style="cursor: pointer;"
                                 class="block px-4 py-2 text-sm text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700">hi
                                 : <span id="dropdown_usrname">User</span> </a>
-                                <hr class="my-1 border-gray-300 dark:border-gray-600">
-                            <a data-page="settings"
+                            <hr class="my-1 border-gray-300 dark:border-gray-600">
+                            <a data-page="settings" style="cursor: pointer;"
                                 class="block px-4 py-2 text-sm text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700">Settings</a>
                         </div>
                     </div>
@@ -1056,7 +1056,7 @@
                 <div id="tab-content" class="tab-content">
                     <!-- Dashboard Page -->
                     <div id="dashboard-page" class="page-container animate-fadeIn">
-                        <h1 class="text-2xl font-bold mb-6">Dashboard</h1>
+                        <h1 class="text-2xl font-bold mb-6">Home</h1>
 
                         <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-8">
                             <!-- Welcome Card -->
@@ -1698,39 +1698,9 @@
                         <h2 class="text-2xl font-semibold mb-6 mt-12 text-gray-800 dark:text-gray-100">Our Data
                             Collectors</h2>
 
-                        <!-- Year 1 Helpers -->
-                        <div class="mb-8">
-                            <h3 class="text-xl font-semibold mb-4 text-indigo-600 dark:text-indigo-400">Year 1 Helpers
-                            </h3>
-                            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">
-                                <!-- Nare Mohammed Card -->
-                                <div
-                                    class="bg-white dark:bg-gray-800 rounded-xl shadow-xl transform hover:scale-105 transition duration-300 ease-in-out p-8">
-                                    <div class="flex flex-col items-center">
-                                        <img src="Nare Mohammed.jpg" alt="Nare Mohammed - Data Collector Photo"
-                                            class="w-32 h-32 rounded-full border-4 border-indigo-500 mb-4 object-cover">
-                                        <h3 class="text-xl font-semibold text-gray-800 dark:text-gray-100">Nare Mohammed
-                                        </h3>
-                                        <p class="text-md text-gray-500 dark:text-gray-400">Year 1 Helper</p>
-                                        <div class="flex space-x-4 mt-6">
-                                            <a href="https://www.linkedin.com/in/naira-elshorbagy-710017330?utm_source=share&utm_campaign=share_via&utm_content=profile&utm_medium=android_app"
-                                                class="text-indigo-600 dark:text-indigo-400 hover:text-indigo-500 transform hover:scale-110 transition duration-200"
-                                                target="_blank" rel="noopener noreferrer">
-                                                <i class="fab fa-linkedin fa-2x"></i>
-                                            </a>
-                                        </div>
-                                    </div>
-                                    <p class="text-gray-600 dark:text-gray-300 mt-4 text-sm">
-                                        AI intern , HTI first year student
-                                    </p>
-                                </div>
-                                <!-- Add more Year 1 helpers here -->
-                            </div>
-                        </div>
-
-                        <!-- Year 2 Helpers -->
+                        <!-- Year 2 Leaders -->
                         <div>
-                            <h3 class="text-xl font-semibold mb-4 text-indigo-600 dark:text-indigo-400">Year 2 Helpers
+                            <h3 class="text-xl font-semibold mb-4 text-indigo-600 dark:text-indigo-400">Year 2 Leaders
                             </h3>
                             <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">
                                 <!-- Ammar Roshdy Card -->
@@ -1787,6 +1757,38 @@
                                 <!-- Add more Year 2 helpers here -->
                             </div>
                         </div>
+                        <br>
+                        <!-- Year 1 Leaders -->
+                        <div class="mb-8">
+                            <h3 class="text-xl font-semibold mb-4 text-indigo-600 dark:text-indigo-400">Year 1 Leaders
+                            </h3>
+                            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">
+                                <!-- Nare Mohammed Card -->
+                                <div
+                                    class="bg-white dark:bg-gray-800 rounded-xl shadow-xl transform hover:scale-105 transition duration-300 ease-in-out p-8">
+                                    <div class="flex flex-col items-center">
+                                        <img src="Nare Mohammed.jpg" alt="Nare Mohammed - Data Collector Photo"
+                                            class="w-32 h-32 rounded-full border-4 border-indigo-500 mb-4 object-cover">
+                                        <h3 class="text-xl font-semibold text-gray-800 dark:text-gray-100">Nare Mohammed
+                                        </h3>
+                                        <p class="text-md text-gray-500 dark:text-gray-400">Year 1 Helper</p>
+                                        <div class="flex space-x-4 mt-6">
+                                            <a href="https://www.linkedin.com/in/naira-elshorbagy-710017330?utm_source=share&utm_campaign=share_via&utm_content=profile&utm_medium=android_app"
+                                                class="text-indigo-600 dark:text-indigo-400 hover:text-indigo-500 transform hover:scale-110 transition duration-200"
+                                                target="_blank" rel="noopener noreferrer">
+                                                <i class="fab fa-linkedin fa-2x"></i>
+                                            </a>
+                                        </div>
+                                    </div>
+                                    <p class="text-gray-600 dark:text-gray-300 mt-4 text-sm">
+                                        AI intern , HTI first year student
+                                    </p>
+                                </div>
+                                <!-- Add more Year 1 helpers here -->
+                            </div>
+                        </div>
+
+                        
 
                         <!-- Call to Action -->
                         <div class="mt-12 text-center">
