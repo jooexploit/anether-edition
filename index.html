@@ -38,7 +38,6 @@
     <link rel="icon" type="image/png" sizes="96x96" href="favicon/favicon-96x96.png">
     <link rel="icon" type="image/png" sizes="16x16" href="favicon/favicon-16x16.png">
     <!-- Add after your existing CSS links -->
-    <link rel="stylesheet" href="style.css">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/shepherd.js@10.0.1/dist/css/shepherd.css" />
     <script src="https://cdn.jsdelivr.net/npm/shepherd.js@10.0.1/dist/js/shepherd.min.js"></script>
     <script type="application/ld+json">
@@ -54,11 +53,11 @@
             "@type": "Organization",
             "name": "Team Shoky"
           },
-          "image": "https://i.ibb.co/bRCWmT9d/Team-Shoky-Helper.jpg",
+          "image": "https://ibb.co/Q7QX033p",
           "offers": {
             "@type": "Offer",
             "price": "0",
-            "priceCurrency": "EGP"
+            "priceCurrency": "USD"
           }
         }
         </script>
@@ -79,10 +78,723 @@
     <link href="https://cdn.jsdelivr.net/npm/fullcalendar@5.10.1/main.min.css" rel="stylesheet">
     <link href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@6.0.0/css/all.min.css" rel="stylesheet">
     <script src="https://cdn.jsdelivr.net/npm/fullcalendar@5.10.1/main.min.js"></script>
+    <script>
+        if ("serviceWorker" in navigator) {
+            navigator.serviceWorker.register("./service-worker.js")
+                .then(() => console.log("Service Worker Registered"))
+                .catch((error) => console.error("Service Worker Registration Failed:", error));
+        }
+        document.addEventListener('DOMContentLoaded', () => {
+            const statusElement = document.getElementById('notification-status'); // Optional
+
+            // Check if push notifications are supported
+            if ('serviceWorker' in navigator && 'PushManager' in window) {
+                navigator.serviceWorker.ready.then(registration => {
+                    // Replace with your public VAPID key
+                    const applicationServerKey = 'BMKGpCMKhbZK013iH-1q3K6Qbmv6Yz6gEwlklT-24GT_pk9f6R2Otq1byR8I2bUmBZmrreyAkkkJplb-M1XEpJs';
+
+                    // Check current permission state
+                    if (Notification.permission === 'granted') {
+                        subscribeUser(registration, applicationServerKey);
+                    } else if (Notification.permission !== 'denied') {
+                        // Request permission immediately
+                        Notification.requestPermission().then(permission => {
+                            if (permission === 'granted') {
+                                subscribeUser(registration, applicationServerKey);
+                            } else {
+                                if (statusElement) statusElement.textContent = 'Notification permission denied.';
+                                console.log('User denied notification permission');
+                            }
+                        });
+                    } else {
+                        if (statusElement) statusElement.textContent = 'Notifications blocked by user.';
+                        console.log('Notifications already denied');
+                    }
+                });
+            } else {
+                if (statusElement) statusElement.textContent = 'Push notifications not supported.';
+                console.log('Push notifications not supported in this browser');
+            }
+        });
+
+        // Function to subscribe the user
+        function subscribeUser(registration, applicationServerKey) {
+            const subscribeOptions = {
+                userVisibleOnly: true,
+                applicationServerKey: urlBase64ToUint8Array(applicationServerKey)
+            };
+
+            registration.pushManager.subscribe(subscribeOptions)
+                .then(subscription => {
+                    console.log('User subscribed:', subscription);
+                    const statusElement = document.getElementById('notification-status');
+                    if (statusElement) statusElement.textContent = 'Subscribed to notifications!';
+
+                    // Send subscription to your server
+                    fetch('https://push-notfication-server-production.up.railway.app/subscribe', { // Replace with your server URL
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify(subscription)
+                    })
+                        .then(response => response.json())
+                        .then(data => console.log('Subscription saved:', data))
+                        .catch(error => console.error('Error saving subscription:', error));
+                })
+                .catch(error => {
+                    console.error('Subscription failed:', error);
+                    const statusElement = document.getElementById('notification-status');
+                    if (statusElement) statusElement.textContent = 'Failed to subscribe to notifications.';
+                });
+        }
+
+        // Utility function to convert VAPID key
+        function urlBase64ToUint8Array(base64String) {
+            const padding = '='.repeat((4 - base64String.length % 4) % 4);
+            const base64 = (base64String + padding).replace(/-/g, '+').replace(/_/g, '/');
+            const rawData = window.atob(base64);
+            const outputArray = new Uint8Array(rawData.length);
+            for (let i = 0; i < rawData.length; ++i) {
+                outputArray[i] = rawData.charCodeAt(i);
+            }
+            return outputArray;
+        }
+
+        let deferredPrompt;
+
+        document.addEventListener('DOMContentLoaded', () => {
+            const installButtonContainer = document.getElementById('install-app-button-container');
+            const installButton = document.getElementById('install-app-button');
+
+            // Check if the app is already running as a PWA
+            const isRunningAsPWA = window.matchMedia('(display-mode: standalone)').matches || window.navigator.standalone;
+
+            if (isRunningAsPWA) {
+                // Disable the "Download App" button if the app is already running
+                installButton.disabled = true;
+                installButton.textContent = 'App Installed';
+                installButtonContainer.classList.remove('hidden');
+            } else {
+                // Listen for the beforeinstallprompt event
+                window.addEventListener('beforeinstallprompt', (e) => {
+                    // Prevent the mini-infobar from appearing on mobile
+                    e.preventDefault();
+                    // Stash the event so it can be triggered later
+                    deferredPrompt = e;
+
+                    // Show the "Download App" button
+                    installButtonContainer.classList.remove('hidden');
+                });
+
+                if (installButton) {
+                    installButton.addEventListener('click', async () => {
+                        if (deferredPrompt) {
+                            // Show the install prompt
+                            deferredPrompt.prompt();
+
+                            // Wait for the user to respond to the prompt
+                            const { outcome } = await deferredPrompt.userChoice;
+                            if (outcome === 'accepted') {
+                                console.log('User accepted the install prompt');
+                            } else {
+                                console.log('User dismissed the install prompt');
+                            }
+
+                            // Clear the deferredPrompt variable
+                            deferredPrompt = null;
+                        }
+                    });
+                }
+            }
+        });
+    </script>
+    <style>
+        :root {
+            --primary-color: #4F46E5;
+            --secondary-color: #7C3AED;
+            --accent-color: #10B981;
+            --light-bg: #F9FAFB;
+            --dark-bg: #1F2937;
+            --dark-card: #374151;
+            --text-light: #F3F4F6;
+            --text-dark: #1F2937;
+        }
+
+        /* Shepherd Tour Custom Styles */
+        .shepherd-theme-custom {
+            max-width: 90vw !important;
+            /* Ensures it never exceeds viewport width */
+            width: fit-content !important;
+            /* Adapts to content */
+            font-size: 14px !important;
+            z-index: 9999 !important;
+        }
+
+        .shepherd-theme-custom .shepherd-button-primary {
+            background: #4F46E5 !important;
+            color: white !important;
+            border-radius: 0.375rem !important;
+            padding: 0.5rem 1rem !important;
+            font-weight: 500 !important;
+            transition: background-color 0.2s !important;
+        }
+
+        .shepherd-theme-custom .shepherd-button-primary:hover {
+            background: #4338CA !important;
+        }
+
+        .shepherd-theme-custom .shepherd-button-secondary {
+            background: #9CA3AF !important;
+            color: white !important;
+            border-radius: 0.375rem !important;
+            padding: 0.5rem 1rem !important;
+            font-weight: 500 !important;
+            transition: background-color 0.2s !important;
+        }
+
+        .shepherd-theme-custom .shepherd-button-secondary:hover {
+            background: #6B7280 !important;
+        }
+
+        .shepherd-theme-custom .shepherd-button-done {
+            background: #0cd358 !important;
+            color: white !important;
+            border-radius: 0.375rem !important;
+            padding: 0.5rem 1rem !important;
+            font-weight: 500 !important;
+            transition: background-color 0.2s !important;
+        }
+
+        .shepherd-theme-custom .shepherd-button-done:hover {
+            background: #039e20 !important;
+        }
+
+        .shepherd-theme-custom .shepherd-button-cancel {
+            background: #d30c0c !important;
+            color: white !important;
+            border-radius: 0.375rem !important;
+            padding: 0.5rem 1rem !important;
+            font-weight: 500 !important;
+            transition: background-color 0.2s !important;
+        }
+
+        .shepherd-theme-custom .shepherd-button-cancel:hover {
+            background: #9e0303 !important;
+        }
+
+        .shepherd-theme-custom .shepherd-text {
+            font-size: 0.875rem !important;
+            line-height: 1.25rem !important;
+            padding: 1rem !important;
+        }
+
+        /* Make sure the content does not exceed the screen */
+        .shepherd-theme-custom .shepherd-content {
+            border-radius: 12px !important;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06) !important;
+            width: auto !important;
+            /* Adjust width dynamically */
+            max-width: 85vw !important;
+            /* Prevents it from getting too large */
+            word-wrap: break-word !important;
+            /* Prevents text overflow */
+            white-space: normal !important;
+            overflow: hidden !important;
+        }
+
+        /* Ensure text does not overflow */
+        .shepherd-theme-custom .shepherd-text {
+            font-size: 0.875rem !important;
+            line-height: 1.4 !important;
+            padding: 0.75rem !important;
+            width: 100% !important;
+            word-wrap: break-word !important;
+            white-space: normal !important;
+            overflow-wrap: break-word !important;
+        }
+
+        /* Make sure buttons adjust and do not break layout */
+        .shepherd-theme-custom .shepherd-footer {
+            padding: 0.5rem !important;
+            display: flex !important;
+            justify-content: center !important;
+            gap: 0.5rem !important;
+            flex-wrap: wrap !important;
+        }
+
+        /* Buttons should shrink when needed */
+        .shepherd-theme-custom .shepherd-button {
+            font-size: 0.875rem !important;
+            padding: 0.375rem 0.75rem !important;
+            border-radius: 0.375rem !important;
+            font-weight: 500 !important;
+            min-height: 2rem !important;
+            min-width: 4rem !important;
+            max-width: 100% !important;
+            /* Ensures it does not overflow */
+        }
+
+        /* Mobile Optimizations */
+        @media (max-width: 640px) {
+            .shepherd-theme-custom {
+                max-width: 95vw !important;
+                /* Fits inside small screens */
+                font-size: 13px !important;
+                margin: 0 auto !important;
+            }
+
+            .shepherd-theme-custom .shepherd-content {
+                max-width: 90vw !important;
+                /* Prevents cutting on small screens */
+            }
+
+            .shepherd-theme-custom .shepherd-text {
+                padding: 0.5rem !important;
+                font-size: 0.813rem !important;
+                overflow-wrap: break-word !important;
+                word-break: break-word !important;
+            }
+
+            .shepherd-theme-custom .shepherd-button {
+                padding: 0.25rem 0.5rem !important;
+                font-size: 0.813rem !important;
+                min-height: 1.75rem !important;
+            }
+
+            .shepherd-theme-custom .shepherd-footer {
+                padding: 0.375rem !important;
+                justify-content: center !important;
+            }
+        }
+
+        /* Ensure it never goes off the screen */
+        .shepherd-element {
+            position: fixed !important;
+            z-index: 9999 !important;
+            left: 50% !important;
+            transform: translateX(-50%) !important;
+            /* Centers it properly */
+            max-width: 90vw !important;
+        }
+
+        /* Keep it properly positioned over the target */
+        .shepherd-target.shepherd-enabled {
+            position: relative !important;
+            z-index: 9998 !important;
+        }
+
+        .shepherd-modal-overlay-container {
+            z-index: 9997 !important;
+        }
 
 
+        /* Popup animation */
+        @keyframes popup-animation {
+            0% {
+                transform: translate(-50%, -50%) scale(0);
+                opacity: 0;
+            }
+
+            100% {
+                transform: translate(-50%, -50%) scale(1);
+                opacity: 1;
+            }
+        }
+
+        /* Popup close animation */
+        @keyframes popup-close-animation {
+            0% {
+                transform: translate(-50%, -50%) scale(1);
+                opacity: 1;
+            }
+
+            100% {
+                transform: translate(-50%, -50%) scale(0);
+                opacity: 0;
+            }
+        }
+
+        /* Add this to your existing CSS */
+        body.dark .bg-white {
+            background-color: #4B5563;
+            /* Dark background */
+        }
+
+        body.dark {
+            background-color: var(--dark-bg);
+            /* Ensure this is defined in your :root */
+        }
+
+        body.light {
+            background-color: var(--light-bg);
+            /* Ensure this is defined in your :root */
+        }
+
+        /* For Tailwind CSS */
+        body.dark .content-area {
+            background-color: #1F2937;
+            /* Dark background */
+        }
+
+        body.light .content-area {
+            background-color: #F9FAFB;
+            /* Light background */
+        }
+
+        body.dark .text-gray-900 {
+            color: #F3F4F6;
+            /* Light text */
+        }
+
+        body.dark .text-gray-600 {
+            color: #D1D5DB;
+            /* Lighter gray text */
+        }
+
+        body.dark .border-gray-300 {
+            border-color: #374151;
+            /* Darker border */
+        }
+
+        /* Add other necessary styles for dark mode */
+        body {
+            font-family: 'Inter', system-ui, -apple-system, sans-serif;
+            transition: background-color 0.3s, color 0.3s;
+        }
+
+        body.dark {
+            background-color: var(--dark-bg);
+            color: var(--text-light);
+        }
+
+        body.light {
+            background-color: var(--light-bg);
+            color: var(--text-dark);
+        }
+
+        .modal-backdrop {
+            backdrop-filter: blur(5px);
+            background-color: rgba(0, 0, 0, 0.5);
+        }
+
+        .gradient-bg {
+            background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+        }
+
+        .card-hover {
+            transition: transform 0.3s, box-shadow 0.3s;
+        }
+
+        .card-hover:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.1);
+        }
+
+        .sidebar {
+            min-width: 250px;
+            transform: translateX(0);
+            transition: transform 0.3s ease;
+        }
+
+        .content-area {
+            min-height: calc(100vh - 60px);
+        }
+
+        .sidebar-collapsed {
+            transform: translateX(-100%);
+        }
+
+        .news-item {
+            border-left: 4px solid var(--accent-color);
+        }
+
+        .calendar-container {
+            height: 600px;
+        }
+
+        /* Theme toggle switch */
+        .switch {
+            position: relative;
+            display: inline-block;
+            width: 48px;
+            height: 24px;
+        }
+
+        .switch input {
+            opacity: 0;
+            width: 0;
+            height: 0;
+        }
+
+        .slider {
+            position: absolute;
+            cursor: pointer;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-color: #ccc;
+            transition: .4s;
+            border-radius: 24px;
+        }
+
+        .slider:before {
+            position: absolute;
+            content: "";
+            height: 16px;
+            width: 16px;
+            left: 4px;
+            bottom: 4px;
+            background-color: white;
+            transition: .4s;
+            border-radius: 50%;
+        }
+
+        input:checked+.slider {
+            background-color: #4F46E5;
+        }
+
+        input:checked+.slider:before {
+            transform: translateX(24px);
+        }
+
+        /* Animations */
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+            }
+
+            to {
+                opacity: 1;
+            }
+        }
+
+        @keyframes slideUp {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        @keyframes scaleIn {
+            from {
+                opacity: 0;
+                transform: scale(0.95);
+            }
+
+            to {
+                opacity: 1;
+                transform: scale(1);
+            }
+        }
+
+        @keyframes pulse {
+            0% {
+                transform: scale(0.95);
+                box-shadow: 0 0 0 0 rgba(79, 70, 229, 0.7);
+            }
+
+            70% {
+                transform: scale(1);
+                box-shadow: 0 0 0 10px rgba(79, 70, 229, 0);
+            }
+
+            100% {
+                transform: scale(0.95);
+                box-shadow: 0 0 0 0 rgba(79, 70, 229, 0);
+            }
+        }
+
+        .animate-fadeIn {
+            animation: fadeIn 0.5s ease-out;
+        }
+
+        .animate-slideUp {
+            animation: slideUp 0.6s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+
+        .animate-scaleIn {
+            animation: scaleIn 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
+        }
+
+        .animate-delay-100 {
+            animation-delay: 100ms;
+        }
+
+        .animate-delay-200 {
+            animation-delay: 200ms;
+        }
+
+        .animate-delay-300 {
+            animation-delay: 300ms;
+        }
+
+        .pulse-badge {
+            animation: pulse 2s infinite;
+        }
+
+        /* Hover animations */
+        .hover-scale {
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+
+        .hover-scale:hover {
+            transform: translateY(-2px) scale(1.02);
+            box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.1);
+        }
+
+        /* Button animations */
+        .btn-animate {
+            transition: all 0.3s ease;
+            transform-origin: center;
+        }
+
+        .btn-animate:hover {
+            transform: translateY(-2px) scale(1.05);
+        }
+
+        .btn-animate:active {
+            transform: translateY(1px) scale(0.98);
+        }
+
+        /* Page transitions */
+        .page-transition {
+            animation: fadeIn 0.3s ease-out;
+        }
+
+        /* Loading skeleton */
+        @keyframes shimmer {
+            0% {
+                background-position: -200% 0;
+            }
+
+            100% {
+                background-position: 200% 0;
+            }
+        }
+
+        .animate-shimmer {
+            background: linear-gradient(90deg, #f3f4f6 25%, #e5e7eb 50%, #f3f4f6 75%);
+            background-size: 200% 100%;
+            animation: shimmer 1.5s infinite;
+        }
+
+        @keyframes pulse {
+            0% {
+                transform: scale(0.95);
+                box-shadow: 0 0 0 0 rgba(79, 70, 229, 0.7);
+            }
+
+            70% {
+                transform: scale(1);
+                box-shadow: 0 0 0 10px rgba(79, 70, 229, 0);
+            }
+
+            100% {
+                transform: scale(0.95);
+                box-shadow: 0 0 0 0 rgba(79, 70, 229, 0);
+            }
+        }
+
+        .breadcrumb-item::after {
+            content: '/';
+            margin: 0 0.5rem;
+            color: #9CA3AF;
+        }
+
+        .breadcrumb-item:last-child::after {
+            content: '';
+        }
+
+
+        /* PDF Optimization */
+        @media print {
+
+            .sidebar,
+            .navbar {
+                display: none;
+            }
+
+            .content-area {
+                margin-left: 0 !important;
+                width: 100% !important;
+            }
+
+            .hidden-print {
+                display: none !important;
+            }
+
+            .page-container {
+                display: block !important;
+            }
+
+            .tab-content>div {
+                display: block !important;
+                opacity: 1 !important;
+                height: auto !important;
+            }
+
+            html,
+            body {
+                width: 100%;
+                margin: 0;
+                padding: 0;
+            }
+        }
+
+        @media (min-width: 1024px) {
+            .sidebar-collapsed {
+                transform: translateX(0);
+            }
+        }
+    </style>
 </head>
 
+<script>
+    // Function to set a cookie
+    function setCookie(name, value, days) {
+        let expires = "";
+        if (days) {
+            let date = new Date();
+            date.setTime(date.getTime() + days * 24 * 60 * 60 * 1000);
+            expires = "; expires=" + date.toUTCString();
+        }
+        document.cookie = name + "=" + value + "; path=/" + expires;
+    }
+
+    // Function to get a cookie value by name
+    function getCookie(name) {
+        let nameEQ = name + "=";
+        let cookiesArray = document.cookie.split(";");
+        for (let i = 0; i < cookiesArray.length; i++) {
+            let cookie = cookiesArray[i].trim();
+            if (cookie.indexOf(nameEQ) === 0) return cookie.substring(nameEQ.length);
+        }
+        return null;
+    }
+
+    // Function to update welcome message based on cookie
+    function updateWelcomeMessage() {
+        let welcomeMessage = document.getElementById("welcome-message");
+        let visitCookie = getCookie("visited");
+
+        if (visitCookie) {
+            welcomeMessage.innerHTML = "Welcome back, <span id='dashboard-user-name'>User</span>!";
+        } else {
+            setCookie("visited", "true", 365); // Set cookie for one year
+        }
+
+        // Set current date
+        document.getElementById("current-date").textContent = new Date().toLocaleDateString();
+    }
+
+    // Run the function when the page loads
+    document.addEventListener("DOMContentLoaded", updateWelcomeMessage);
+</script>
 
 <body class="light">
     <!-- Welcome Modal (First Visit) -->
@@ -315,6 +1027,26 @@
                                 class="block px-4 py-2 text-sm text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700">Settings</a>
                         </div>
                     </div>
+
+                    <!-- JavaScript for Toggle -->
+                    <script>
+                        document.addEventListener("DOMContentLoaded", function () {
+                            const userButton = document.getElementById("user-menu-button");
+                            const dropdown = document.getElementById("user-dropdown");
+
+                            userButton.addEventListener("click", function (event) {
+                                dropdown.classList.toggle("hidden");
+                                event.stopPropagation(); // Prevents click from closing immediately
+                            });
+
+                            // Close dropdown when clicking outside
+                            document.addEventListener("click", function (event) {
+                                if (!dropdown.contains(event.target) && event.target !== userButton) {
+                                    dropdown.classList.add("hidden");
+                                }
+                            });
+                        });
+                    </script>
 
                 </div>
             </header>
@@ -1300,7 +2032,1681 @@
         </div>
     </div>
 
-    <script src="script.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            // Sticky Note Template
+            const noteTemplate = (color, content = '', id = Date.now()) => `
+                <div class="note p-4 rounded-lg shadow-md h-40 flex flex-col bg-${color}-100 dark:bg-${color}-800" data-id="${id}">
+                    <div class="flex justify-between items-start mb-2">
+                        <button class="delete-note text-gray-500 hover:text-gray-700 dark:hover:text-gray-300">
+                            <i class="fas fa-times"></i>
+                        </button>
+                    </div>
+                    <textarea class="flex-1 w-full bg-transparent resize-none focus:outline-none" placeholder="Write your note...">${content}</textarea>
+                </div>
+            `;
+
+            // Todo Item Template
+            const todoTemplate = (text, completed = false, id = Date.now()) => `
+                <li class="flex items-center justify-between p-2 hover:bg-gray-50 dark:hover:bg-gray-700 rounded-md" data-id="${id}">
+                    <div class="flex items-center">
+                        <input type="checkbox" ${completed ? 'checked' : ''} class="todo-checkbox h-4 w-4 text-indigo-600 focus:ring-indigo-500 border-gray-300 rounded">
+                        <span class="ml-3 ${completed ? 'line-through text-gray-400 dark:text-gray-500' : 'text-gray-700 dark:text-gray-300'}">${text}</span>
+                    </div>
+                    <button class="delete-todo text-red-500 hover:text-red-700 dark:hover:text-red-400">
+                        <i class="fas fa-trash-alt"></i>
+                    </button>
+                </li>
+            `;
+            // Add this to your existing script, inside the DOMContentLoaded event listener
+            const tour = new Shepherd.Tour({
+                defaultStepOptions: {
+                    cancelIcon: {
+                        enabled: true
+                    },
+                    classes: 'shadow-md bg-purple-50',
+                    scrollTo: { behavior: 'smooth', block: 'center' }
+                },
+                useModalOverlay: true
+            });
+
+            // Add tour steps
+            tour.addStep({
+                id: 'welcome',
+                text: 'اهلا بيك يا صديقي هاخدك لفه افهمك اي الموقع دا وعباره عن اي جاهز ؟!',
+                attachTo: {
+                    element: '.content-area',
+                    on: 'top'
+                },
+                classes: 'shepherd-theme-custom',
+                buttons: [
+                    {
+                        text: 'Skip Tour',
+                        classes: 'shepherd-button-cancel',
+                        action: tour.complete
+                    },
+                    {
+                        text: 'Next',
+                        classes: 'shepherd-button-primary',
+                        action: tour.next
+                    }
+                ]
+            });
+
+
+            tour.addStep({
+                id: 'upcoming-lectures',
+                text: 'هنا هتشوف المحاضارات الجايه ',
+                attachTo: {
+                    element: '#upcoming-lectures',
+                    on: 'bottom'
+                },
+                classes: 'shepherd-theme-custom',
+
+                buttons: [
+                    {
+                        text: 'Back',
+                        classes: 'shepherd-button-secondary',
+                        action: tour.back
+                    },
+                    {
+                        text: 'Next',
+                        classes: 'shepherd-button-primary',
+                        action: tour.next
+                    }
+                ]
+            });
+
+            tour.addStep({
+                id: 'recent-materials',
+                text: 'تقدر تشوف هنا اخر الماتريال الي اتضافت',
+                attachTo: {
+                    element: '#recent-materials',
+                    on: 'down'
+                },
+                classes: 'shepherd-theme-custom',
+                buttons: [
+                    {
+                        text: 'Back',
+                        classes: 'shepherd-button-secondary',
+                        action: tour.back
+                    },
+                    {
+                        text: 'Next',
+                        classes: 'shepherd-button-primary',
+                        action: tour.next
+                    }
+                ]
+            });
+
+            // Sidebar Step
+            tour.addStep({
+                id: 'navigation',
+                text: 'دا اهم حاجه تقدر بقي تتنقل منه سواء لصفحه الاخبار , تشوف الكورسات , و تعرف عننا اكتر , تعدل معلوماتك ',
+                attachTo: {
+                    element: '#sidebar',
+                    on: 'right'
+                },
+                beforeShowPromise: function () {
+                    return new Promise(function (resolve) {
+                        if (window.innerWidth < 1024) {
+                            // Open the sidebar
+                            document.getElementById('sidebar').classList.remove('sidebar-collapsed');
+                            setTimeout(() => {
+                                resolve();
+                            }, 300); // Ensure animation completes before proceeding
+                        } else {
+                            resolve();
+                        }
+                    });
+                },
+                classes: 'shepherd-theme-custom',
+                buttons: [
+                    {
+                        text: 'Back',
+                        classes: 'shepherd-button-secondary',
+                        action: tour.back
+                    },
+                    {
+                        text: 'Next',
+                        classes: 'shepherd-button-primary',
+                        action: tour.next // Move to next step WITHOUT closing sidebar
+                    }
+                ],
+                modalOverlayOpeningPadding: 5,
+                canClickTarget: false,
+                popperOptions: {
+                    modifiers: [
+                        {
+                            name: 'preventOverflow',
+                            options: {
+                                padding: 10
+                            }
+                        }
+                    ]
+                }
+            });
+            // Install App Step (Fixed)
+            tour.addStep({
+                id: 'install-app',
+                text: 'لو عايز تشغل الموقع اوفلاين ويبقي عندك علي جهازك دوس هنا وثبته',
+                attachTo: {
+                    element: '#install-app-button',
+                    on: 'left'
+                },
+                beforeShowPromise: function () {
+                    return new Promise(function (resolve) {
+                        if (window.innerWidth < 1024) {
+                            // Ensure sidebar stays open for mobile
+                            document.getElementById('sidebar').classList.remove('sidebar-collapsed');
+                        }
+                        setTimeout(resolve, 300);
+                    });
+                },
+                classes: 'shepherd-theme-custom',
+                buttons: [
+                    {
+                        text: 'Back',
+                        classes: 'shepherd-button-secondary',
+                        action: tour.back
+                    },
+                    {
+                        text: 'Next',
+                        classes: 'shepherd-button-primary',
+                        action: tour.next // Just go to next step without closing sidebar
+                    }
+                ]
+            });
+
+            // Theme Toggle Step
+            tour.addStep({
+                id: 'theme-toggle',
+                text: 'تقدر تغير مبين الوضع الفاتح والداكن وتشوف الافضل ليك اي ',
+                attachTo: {
+                    element: '#theme-toggle',
+                    on: 'top'
+                },
+                beforeShowPromise: function () {
+                    return new Promise(function (resolve) {
+                        if (window.innerWidth < 1024) {
+                            // Ensure sidebar stays open for theme toggle step
+                            document.getElementById('sidebar').classList.remove('sidebar-collapsed');
+                            setTimeout(() => {
+                                resolve();
+                            }, 300);
+                        } else {
+                            resolve();
+                        }
+                    });
+                },
+                classes: 'shepherd-theme-custom',
+                buttons: [
+                    {
+                        text: 'Back',
+                        classes: 'shepherd-button-secondary',
+                        action: tour.back
+                    },
+                    {
+                        text: 'Next',
+                        classes: 'shepherd-button-primary',
+                        action: () => {
+                            if (window.innerWidth < 1024) {
+                                // Close sidebar after theme toggle step
+                                setTimeout(() => {
+                                    document.getElementById('sidebar').classList.add('sidebar-collapsed');
+                                }, 100);
+                            }
+                            tour.next();
+                        }
+                    }
+                ]
+            });
+
+
+            tour.addStep({
+                id: 'courses-section',
+                text: 'تصفح الكورسات اللي مسجل فيها هنا. كل كارت كورس بيعرض كود الكورس، العنوان، اسم المدرس، وعدد الفصول.',
+                attachTo: {
+                    element: '#courses-container',
+                    on: 'top'
+                },
+                beforeShowPromise: function () {
+                    return new Promise(function (resolve) {
+                        // Navigate to courses page first
+                        app.navigateTo('courses');
+                        setTimeout(resolve, 300); // Give time for transition
+                    });
+                },
+                classes: 'shepherd-theme-custom',
+                buttons: [
+                    {
+                        text: 'Back',
+                        classes: 'shepherd-button-secondary',
+                        action: tour.back
+                    },
+                    {
+                        text: 'Next',
+                        classes: 'shepherd-button-primary',
+                        action: tour.next
+                    }
+                ]
+            });
+
+            tour.addStep({
+                id: 'course-search',
+                text: 'بسرعة تقدر تلاقي الكورسات بالبحث عن العناوين أو أسماء المدرسين.',
+                attachTo: {
+                    element: '#course-search',
+                    on: 'bottom'
+                },
+                classes: 'shepherd-theme-custom',
+                buttons: [
+                    {
+                        text: 'Back',
+                        classes: 'shepherd-button-secondary',
+                        action: tour.back
+                    },
+                    {
+                        text: 'Next',
+                        classes: 'shepherd-button-primary',
+                        action: tour.next
+                    }
+                ]
+            });
+
+            tour.addStep({
+                id: 'course-details',
+                text: 'اضغط على "view course" علشان تدخل على تفاصيل الكورس، زي الفصول والمواد اللي ممكن تحملها.',
+                attachTo: {
+                    element: '.view-course-btn',
+                    on: 'bottom'
+                },
+                beforeShowPromise: function () {
+                    return new Promise(function (resolve) {
+                        // Navigate to courses page first
+                        app.navigateTo('courses');
+
+                        // Select the first course
+                        app.state.selectedCourse = app.mockData.courses[0];
+
+                        setTimeout(resolve, 300);
+                    });
+                },
+                classes: 'shepherd-theme-custom',
+                buttons: [
+                    {
+                        text: 'Back',
+                        classes: 'shepherd-button-secondary',
+                        action: tour.back
+                    },
+                    {
+                        text: 'Next',
+                        classes: 'shepherd-button-primary',
+                        action: tour.next
+                    }
+                ]
+            });
+            tour.addStep({
+                id: 'course-overview',
+                text: 'هنا تقدر تشوف معلومات مفصلة عن الكورس، زي اسم المدرس ووصف الكورس.',
+                attachTo: {
+                    element: '#course-details-content > div',
+                    on: 'bottom'
+                },
+                beforeShowPromise: function () {
+                    return new Promise(function (resolve) {
+                        // First, ensure we have a selected course
+                        if (!app.state.selectedCourse) {
+                            // Select the first course if none is selected
+                            app.state.selectedCourse = app.mockData.courses[0];
+                        }
+
+                        // Navigate to course details and render content
+                        app.navigateTo('course-details');
+
+                        // Give time for the content to render
+                        setTimeout(() => {
+                            resolve();
+                        }, 500);
+                    });
+                },
+                classes: 'shepherd-theme-custom',
+                buttons: [
+                    {
+                        text: 'Back',
+                        classes: 'shepherd-button-secondary',
+                        action: tour.back
+                    },
+                    {
+                        text: 'Next',
+                        classes: 'shepherd-button-primary',
+                        action: tour.next
+                    }
+                ]
+            });
+
+            tour.addStep({
+                id: 'course-chapters',
+                text: 'كل فصل بيحتوي على مواد محاضرات، زي ملفات PDF، فيديوهات، وواجبات. اضغط على الفصل علشان تكبره وتدخل على المحتوى بتاعه.',
+                attachTo: {
+                    element: '#chapters-container',
+                    on: 'bottom'
+                },
+                beforeShowPromise: function () {
+                    return new Promise(function (resolve) {
+                        // Open first chapter to show content
+                        const firstChapterHeader = document.querySelector('.chapter-header');
+                        const firstChapterContent = document.querySelector('.chapter-content');
+                        const icon = firstChapterHeader.querySelector('i');
+
+                        firstChapterContent.classList.remove('hidden');
+                        icon.classList.add('rotate-180');
+
+                        setTimeout(resolve, 300);
+                    });
+                },
+                classes: 'shepherd-theme-custom',
+                buttons: [
+                    {
+                        text: 'Back',
+                        classes: 'shepherd-button-secondary',
+                        action: tour.back
+                    },
+                    {
+                        text: 'Next',
+                        classes: 'shepherd-button-primary',
+                        action: tour.next
+                    }
+                ]
+            });
+
+            tour.addStep({
+                id: 'course-materials',
+                text: 'حمل مواد الكورس بالضغط على الأزرار دي. اللون بيوضح نوع المحتوى: أحمر لملفات PDF، أزرق للفيديوهات، وأخضر للواجبات',
+                attachTo: {
+                    element: '.download-btn',
+                    on: 'left'
+                },
+                classes: 'shepherd-theme-custom',
+                buttons: [
+                    {
+                        text: 'Back',
+                        classes: 'shepherd-button-secondary',
+                        action: tour.back
+                    },
+                    {
+                        text: 'Done',
+                        classes: 'shepherd-button-done',
+                        action: tour.complete
+                    }
+                ]
+            });
+
+
+
+
+            // static dataset for lectureData
+
+            const _0x4488ea=_0x3ebd;(function(_0x5df69b,_0x3a448f){const _0x1e045d=_0x3ebd,_0x536d3e=_0x5df69b();while(!![]){try{const _0x2bb4bb=-parseInt(_0x1e045d(0xb4))/0x1*(parseInt(_0x1e045d(0xe4))/0x2)+parseInt(_0x1e045d(0xdc))/0x3*(parseInt(_0x1e045d(0xb1))/0x4)+-parseInt(_0x1e045d(0xc0))/0x5+-parseInt(_0x1e045d(0xaf))/0x6*(-parseInt(_0x1e045d(0xcc))/0x7)+parseInt(_0x1e045d(0xcd))/0x8+-parseInt(_0x1e045d(0xd4))/0x9+-parseInt(_0x1e045d(0xca))/0xa*(parseInt(_0x1e045d(0xc1))/0xb);if(_0x2bb4bb===_0x3a448f)break;else _0x536d3e['push'](_0x536d3e['shift']());}catch(_0x5f0fb4){_0x536d3e['push'](_0x536d3e['shift']());}}}(_0x5c18,0x2617b));function _0x5c18(){const _0x37b249=['Chapter\x201:\x20QA\x20vs\x20QC','Hall\x20A','Introduction\x20to\x20Computer\x20Science','25302GnSCae','Explore\x20matrices,\x20vectors,\x20and\x20linear\x20transformations.','508KvXVHf','Chapter\x202:\x20Data\x20Structures','pdf','950ztUaRt','https://drive.google.com/file/d/1NWUGW1wM5ze6gHqGlAwg3_NzgM69cQIV/view?usp=drive_link','Learn\x20about\x20arrays,\x20lists,\x20and\x20more.','2025-01-10','CS101:\x20Introduction\x20to\x20Computer\x20Science\x20','This\x20course\x20covers\x20the\x20fundamentals\x20of\x20Quality\x20Control\x20(QC)\x20and\x20Quality\x20Assurance\x20(QA)\x20in\x20various\x20industries.\x20You\x20will\x20learn\x20how\x20to\x20ensure\x20product\x20and\x20service\x20quality,\x20detect\x20defects,\x20and\x20improve\x20processes.\x20Topics\x20include\x20quality\x20standards,\x20inspection\x20methods,\x20testing\x20techniques,\x20and\x20continuous\x20improvement\x20strategies.\x20By\x20the\x20end,\x20you’ll\x20understand\x20how\x20to\x20maintain\x20high-quality\x20standards\x20and\x20enhance\x20customer\x20satisfaction.','Lecture\x202\x20Notes','2025-01-12','Dr.\x20Nelly','Introduction\x20to\x20matrices\x20and\x20operations.','Lecture\x202\x20Presentation','H204','665395eXppvO','11svgNXH','Matrix\x20Operations\x20Video','Room\x20101','Quality\x20Control\x20and\x20Quality\x20Assurance','Linear\x20Algebra','Dr.\x20Sarah\x20Johnson','MATH201:\x20Linear\x20Algebra\x20-\x20Lecture\x202','Chapter\x201:\x20Matrices','2025-02-10','209390EeEeGf','Chapter\x203:\x20The\x20Quality\x20Assurance/Quality\x20Control\x20(QA/QC)\x20Plan','315meMySd','2392568RxFuQX','Learn\x20the\x20basics\x20of\x20computer\x20science\x20and\x20programming.','Lecture\x201\x20Presentation','Lecture\x203\x20Presentation','MATH201','12:30:00','2025-04-05','946818HCWUGN','Lecture\x203\x20Summary\x20(Video)','Lecture\x201\x20Notes','2025-02-12','2025-04-06','10:00:00','Lecture\x201\x20Summary','/files/lecture2-notes.pdf','4029uGVxGs','This\x20chapter\x20covers\x20the\x20QA/QC\x20Plan,\x20a\x20structured\x20approach\x20to\x20maintaining\x20high-quality\x20standards.\x20QA\x20Plan:\x20Focuses\x20on\x20setting\x20procedures,\x20guidelines,\x20and\x20best\x20practices\x20to\x20prevent\x20defects\x20before\x20production.\x20QC\x20Plan:\x20Involves\x20inspection,\x20testing,\x20and\x20corrective\x20actions\x20to\x20detect\x20and\x20fix\x20defects\x20in\x20the\x20final\x20product.\x20A\x20strong\x20QA/QC\x20Plan\x20ensures\x20consistency,\x20reduces\x20errors,\x20and\x20improves\x20customer\x20satisfaction\x20by\x20aligning\x20with\x20quality\x20standards\x20and\x20continuous\x20improvement\x20strategies.','Chapter\x202:\x20Quality\x20Blueprint\x20-\x20Improve\x20Customer\x20Satisfaction\x20&\x20Conform\x20to\x20Specification','Programming\x20Basics\x20Video','https://drive.google.com/drive/folders/1N_7egmJg4PHEMVYlpUXXAdAhOyuJshVa','This\x20section\x20focuses\x20on\x20creating\x20a\x20Quality\x20Blueprint\x20that\x20helps\x20businesses\x20improve\x20customer\x20satisfaction\x20and\x20ensure\x20products\x20conform\x20to\x20specifications.\x20A\x20Quality\x20Blueprint\x20outlines\x20the\x20standards\x20and\x20processes\x20required\x20to\x20meet\x20customer\x20expectations\x20and\x20industry\x20standards.\x20By\x20following\x20this\x20blueprint,\x20companies\x20can\x20systematically\x20ensure\x20that\x20their\x20products\x20are\x20consistent,\x20reliable,\x20and\x20meet\x20all\x20required\x20specifications,\x20leading\x20to\x20higher\x20customer\x20satisfaction\x20and\x20fewer\x20defects.\x20The\x20blueprint\x20also\x20includes\x20methods\x20for\x20continuous\x20improvement\x20and\x20feedback\x20loops\x20to\x20adapt\x20to\x20changing\x20customer\x20needs.','2025-01-18','CS101','514XLwdUg','video','Lecture\x201\x20Summary\x20(Video)','assignment','Introduction\x20to\x20programming\x20concepts.'];_0x5c18=function(){return _0x37b249;};return _0x5c18();}function _0x3ebd(_0x260617,_0x3bd50b){const _0x5c1840=_0x5c18();return _0x3ebd=function(_0x3ebdc5,_0xaef98c){_0x3ebdc5=_0x3ebdc5-0xac;let _0x4dbc34=_0x5c1840[_0x3ebdc5];return _0x4dbc34;},_0x3ebd(_0x260617,_0x3bd50b);}const lectureData=[{'id':0x1,'title':_0x4488ea(0xb8),'date':_0x4488ea(0xd3),'time':_0x4488ea(0xd9),'location':_0x4488ea(0xad),'instructor':_0x4488ea(0xc6)},{'id':0x2,'title':_0x4488ea(0xc7),'date':'2025-04-06','time':_0x4488ea(0xd2),'location':_0x4488ea(0xc3),'instructor':'Prof.\x20Michael\x20Chen'}],courseData={0x1:[{'id':_0x4488ea(0xe3),'title':_0x4488ea(0xae),'instructor':_0x4488ea(0xc6),'description':_0x4488ea(0xce),'chapters':[{'title':'Chapter\x201:\x20Basics\x20of\x20Programming','description':_0x4488ea(0xe8),'materials':[{'title':_0x4488ea(0xd6),'type':'pdf','date':_0x4488ea(0xb7),'link':_0x4488ea(0xdb)},{'title':_0x4488ea(0xdf),'type':_0x4488ea(0xe5),'date':_0x4488ea(0xbb),'link':'/files/lecture2-notes.mp4'}]},{'title':_0x4488ea(0xb2),'description':_0x4488ea(0xb6),'materials':[{'title':_0x4488ea(0xba),'type':'pdf','date':'2025-01-20','link':_0x4488ea(0xdb)},{'title':'Data\x20Structures\x20Assignment','type':_0x4488ea(0xe7),'date':_0x4488ea(0xe2),'link':_0x4488ea(0xdb)}]}]}],0x2:[{'id':_0x4488ea(0xd1),'title':_0x4488ea(0xc5),'instructor':'Prof.\x20Michael\x20Chen','description':_0x4488ea(0xb0),'chapters':[{'title':_0x4488ea(0xc8),'description':_0x4488ea(0xbd),'materials':[{'title':_0x4488ea(0xd6),'type':_0x4488ea(0xb3),'date':_0x4488ea(0xc9),'link':'/files/lecture2-notes.pdf'},{'title':_0x4488ea(0xc2),'type':_0x4488ea(0xe5),'date':_0x4488ea(0xd7),'link':_0x4488ea(0xdb)}]}]},{'id':_0x4488ea(0xbf),'title':_0x4488ea(0xc4),'instructor':_0x4488ea(0xbc),'description':_0x4488ea(0xb9),'chapters':[{'title':_0x4488ea(0xac),'description':'This\x20chapter\x20explains\x20the\x20difference\x20between\x20Quality\x20Assurance\x20(QA)\x20and\x20Quality\x20Control\x20(QC).\x20QA\x20focuses\x20on\x20preventing\x20defects\x20by\x20improving\x20processes\x20and\x20ensuring\x20standards\x20are\x20followed.\x20It\x27s\x20proactive.\x20QC\x20is\x20about\x20identifying\x20and\x20fixing\x20defects\x20in\x20the\x20final\x20product\x20through\x20inspection\x20and\x20testing.\x20It\x27s\x20reactive.\x20Both\x20aim\x20to\x20ensure\x20high-quality\x20products,\x20but\x20QA\x20works\x20on\x20the\x20process,\x20while\x20QC\x20works\x20on\x20the\x20product.','materials':[{'title':_0x4488ea(0xcf),'type':_0x4488ea(0xb3),'date':'2025-04-06','link':'https://drive.google.com/drive/folders/1NTzFvRFOto4yxDIrGFthVNo9SiiN7Sdn'},{'title':_0x4488ea(0xda),'type':_0x4488ea(0xb3),'date':_0x4488ea(0xd8),'link':'https://drive.google.com/drive/folders/1NTzFvRFOto4yxDIrGFthVNo9SiiN7Sdn'},{'title':_0x4488ea(0xe6),'type':_0x4488ea(0xe5),'date':_0x4488ea(0xd8),'link':_0x4488ea(0xb5)}]},{'title':_0x4488ea(0xde),'description':_0x4488ea(0xe1),'materials':[{'title':_0x4488ea(0xbe),'type':_0x4488ea(0xb3),'date':_0x4488ea(0xd8),'link':_0x4488ea(0xe0)},{'title':'Lecture\x202\x20Summary','type':_0x4488ea(0xb3),'date':_0x4488ea(0xd8),'link':_0x4488ea(0xe0)}]},{'title':_0x4488ea(0xcb),'description':_0x4488ea(0xdd),'materials':[{'title':_0x4488ea(0xd0),'type':_0x4488ea(0xb3),'date':_0x4488ea(0xd8),'link':'https://drive.google.com/drive/folders/1NdfkI6ELR5SwhkNX0HmHHo5xkA1M8EkA'},{'title':_0x4488ea(0xd5),'type':_0x4488ea(0xe5),'date':_0x4488ea(0xd8),'link':'https://drive.google.com/file/d/1UUu4bvSG9hCrWWVTFazfCh4p10ZRAHdZ/view?usp=drive_link'}]}]}]}; 
+
+
+            // Initialize Application
+            const app = {
+
+                // State Management
+                state: {
+                    darkMode: false,
+                    currentPage: 'dashboard',
+                    notifications: true,
+                    selectedCourse: null,
+                    userData: {
+                        name: null,
+                        university: null,
+                        universityName: null,
+                        year: null,
+                        group: null
+                    }
+                },
+
+                // Initialize Application
+                init: function () {
+                    // Add this at the beginning of init
+                    if (checkIfMobile()) {
+                        document.getElementById('sidebar').classList.add('sidebar-collapsed');
+                    }
+                    this.loadUserData();
+                    this.setupEventListeners();
+                    this.setupFullCalendar();
+                    this.loadMockData();
+                    this.renderCurrentPage();
+                    this.updateUIWithUserData();
+                    this.renderNotifications();
+
+                    // Check theme preference
+                    const savedDarkMode = localStorage.getItem('darkMode');
+                    if (savedDarkMode === 'true') {
+                        this.toggleDarkMode(true);
+                    }
+
+                    // Show welcome modal if first visit
+                    if (!this.state.userData.name) {
+                        document.getElementById('welcome-modal').classList.remove('hidden');
+                    }
+
+                    // Set current date
+                    const dateOptions = { year: 'numeric', month: 'long', day: 'numeric' };
+                    document.getElementById('current-date').textContent = new Date().toLocaleDateString('en-US', dateOptions);
+                },
+
+                // Load User Data from Cookies
+                loadUserData: function () {
+                    this.state.userData.name = this.getCookie('userName');
+                    this.state.userData.university = this.getCookie('university');
+                    this.state.userData.universityName = this.getCookie('universityName');
+                    this.state.userData.year = this.getCookie('academicYear');
+                    this.state.userData.group = this.getCookie('group');
+                },
+
+                // Update UI with User Data
+                updateUIWithUserData: function () {
+                    const userData = this.state.userData;
+
+                    if (userData.name) {
+                        document.getElementById('sidebar-user-name').textContent = userData.name;
+                        document.getElementById('dropdown_usrname').textContent = userData.name;
+                        document.getElementById('nav-user-name').textContent = userData.name;
+                        document.getElementById('dashboard-user-name').textContent = userData.name;
+                        document.getElementById('settings-name').value = userData.name;
+
+                        // Set user initials
+                        const initials = userData.name.split(' ').map(name => name[0]).join('');
+                        document.getElementById('user-initials').textContent = initials;
+                        document.getElementById('nav-user-initials').textContent = initials;
+                    }
+
+                    if (userData.university) {
+                        const universityText = userData.universityName || this.getUniversityNameFromCode(userData.university);
+                        document.getElementById('sidebar-university').textContent = universityText;
+                        document.getElementById('settings-university').value = userData.university;
+
+                        if (userData.university === 'other' && userData.universityName) {
+                            document.getElementById('settings-other-university-container').classList.remove('hidden');
+                            document.getElementById('settings-other-university').value = userData.universityName;
+                        }
+                    }
+
+                    if (userData.year) {
+                        document.getElementById('sidebar-year').textContent = userData.year;
+                        document.getElementById('settings-year').value = userData.year;
+                    }
+
+                    if (userData.group) {
+                        document.getElementById('sidebar-group').textContent = userData.group;
+                        document.getElementById('settings-group').value = userData.group;
+                    }
+                },
+
+                // Utility: Get University Name from Code
+                getUniversityNameFromCode: function (code) {
+                    const universities = {
+                        'hti': 'HTI University',
+                        'other': 'Other University'
+                    };
+
+                    return universities[code] || 'University';
+                },
+
+                // Setup Event Listeners
+                setupEventListeners: function () {
+                    // Add this at the beginning of setupEventListeners
+                    window.addEventListener('resize', () => {
+                        const sidebar = document.getElementById('sidebar');
+                        if (checkIfMobile()) {
+                            sidebar.classList.add('sidebar-collapsed');
+                        } else {
+                            sidebar.classList.remove('sidebar-collapsed');
+                        }
+                    });
+                    // User Info Form Submission
+                    document.getElementById('user-info-form').addEventListener('submit', this.handleUserInfoSubmit.bind(this));
+
+                    // University Selection Change
+                    document.getElementById('university').addEventListener('change', function (e) {
+                        const otherContainer = document.getElementById('other-university-container');
+                        if (e.target.value === 'other') {
+                            otherContainer.classList.remove('hidden');
+                        } else {
+                            otherContainer.classList.add('hidden');
+                        }
+                    });
+
+                    // Settings Form Submission
+                    document.getElementById('settings-form').addEventListener('submit', this.handleSettingsSubmit.bind(this));
+
+                    // Settings University Selection Change
+                    document.getElementById('settings-university').addEventListener('change', function (e) {
+                        const otherContainer = document.getElementById('settings-other-university-container');
+                        if (e.target.value === 'other') {
+                            otherContainer.classList.remove('hidden');
+                        } else {
+                            otherContainer.classList.add('hidden');
+                        }
+                    });
+                    document.querySelectorAll('[data-page]').forEach(link => {
+                        link.addEventListener('click', (e) => {
+                            console.log('Navigating to:', e.currentTarget.dataset.page); // Debugging
+                            const page = e.currentTarget.dataset.page;
+                            app.navigateTo(page);
+                        });
+                    });
+                    // Navigation Links
+                    document.querySelectorAll('.nav-link').forEach(link => {
+                        link.addEventListener('click', (e) => {
+                            const page = e.currentTarget.dataset.page;
+                            this.navigateTo(page);
+
+                            // Close sidebar on mobile after navigation
+                            if (window.innerWidth < 1024) {
+                                document.getElementById('sidebar').classList.add('sidebar-collapsed');
+                            }
+                        });
+                    });
+
+                    // Sidebar Toggle (Mobile)
+                    document.getElementById('open-sidebar').addEventListener('click', () => {
+                        document.getElementById('sidebar').classList.remove('sidebar-collapsed');
+                    });
+
+                    document.getElementById('close-sidebar').addEventListener('click', () => {
+                        document.getElementById('sidebar').classList.add('sidebar-collapsed');
+                    });
+
+                    // Theme Toggle
+                    document.getElementById('theme-toggle').addEventListener('click', () => {
+                        this.toggleDarkMode();
+                    });
+
+                    document.getElementById('settings-theme-toggle').addEventListener('change', (e) => {
+                        this.toggleDarkMode(e.target.checked);
+                    });
+
+                    // Notification Toggle
+                    document.getElementById('notification-button').addEventListener('click', async function () {
+                        // Check if push notifications are supported
+                        if ('serviceWorker' in navigator && 'PushManager' in window) {
+                            try {
+                                const registration = await navigator.serviceWorker.ready;
+                                const permission = await Notification.requestPermission();
+
+                                if (permission === 'granted') {
+                                    const applicationServerKey = 'BMKGpCMKhbZK013iH-1q3K6Qbmv6Yz6gEwlklT-24GT_pk9f6R2Otq1byR8I2bUmBZmrreyAkkkJplb-M1XEpJs';
+                                    subscribeUser(registration, applicationServerKey);
+                                } else {
+                                    console.log('Notification permission denied');
+                                }
+                            } catch (error) {
+                                console.error('Error requesting notification permission:', error);
+                            }
+                        } else {
+                            console.log('Push notifications not supported');
+                        }
+
+                        // Keep existing dropdown toggle functionality
+                        document.getElementById('notification-dropdown').classList.toggle('hidden');
+                    }); document.getElementById('clear-notifications').addEventListener('click', this.clearNotifications.bind(this));
+
+                    // Back to Courses Button
+                    document.getElementById('back-to-courses').addEventListener('click', () => {
+                        this.navigateTo('courses');
+                    });
+
+                    // Lecture View Toggles
+                    document.getElementById('view-calendar').addEventListener('click', () => {
+                        document.getElementById('calendar-view').classList.remove('hidden');
+                        document.getElementById('list-view').classList.add('hidden');
+                        document.getElementById('view-calendar').classList.remove('bg-gray-200', 'dark:bg-gray-700', 'text-gray-800', 'dark:text-white', 'hover:bg-gray-300', 'dark:hover:bg-gray-600');
+                        document.getElementById('view-calendar').classList.add('bg-indigo-600', 'text-white', 'hover:bg-indigo-700');
+                        document.getElementById('view-list').classList.remove('bg-indigo-600', 'text-white', 'hover:bg-indigo-700');
+                        document.getElementById('view-list').classList.add('bg-gray-200', 'dark:bg-gray-700', 'text-gray-800', 'dark:text-white', 'hover:bg-gray-300', 'dark:hover:bg-gray-600');
+                        this.calendar.render();
+                    });
+
+                    document.getElementById('view-list').addEventListener('click', () => {
+                        document.getElementById('calendar-view').classList.add('hidden');
+                        document.getElementById('list-view').classList.remove('hidden');
+                        document.getElementById('view-list').classList.remove('bg-gray-200', 'dark:bg-gray-700', 'text-gray-800', 'dark:text-white', 'hover:bg-gray-300', 'dark:hover:bg-gray-600');
+                        document.getElementById('view-list').classList.add('bg-indigo-600', 'text-white', 'hover:bg-indigo-700');
+                        document.getElementById('view-calendar').classList.remove('bg-indigo-600', 'text-white', 'hover:bg-indigo-700');
+                        document.getElementById('view-calendar').classList.add('bg-gray-200', 'dark:bg-gray-700', 'text-gray-800', 'dark:text-white', 'hover:bg-gray-300', 'dark:hover:bg-gray-600');
+                    });
+
+                    // Course Search
+                    document.getElementById('course-search').addEventListener('input', (e) => {
+                        const searchTerm = e.target.value.toLowerCase();
+                        this.filterCourses(searchTerm);
+                    });
+
+                    // Close notification dropdown when clicking outside
+                    document.addEventListener('click', (e) => {
+                        const dropdown = document.getElementById('notification-dropdown');
+                        const button = document.getElementById('notification-button');
+
+                        if (!dropdown.contains(e.target) && !button.contains(e.target) && !dropdown.classList.contains('hidden')) {
+                            dropdown.classList.add('hidden');
+                        }
+                    });
+
+                    // Logout Button Event Listener
+                    document.getElementById('logout-button').addEventListener('click', function () {
+                        // Clear user-related cookies
+                        document.cookie.split(";").forEach(function (c) {
+                            document.cookie = c.trim().split("=")[0] + "=;expires=Thu, 01 Jan 1970 00:00:00 UTC;path=/";
+                        });
+
+                        // Redirect to login or welcome page
+                        location.reload();
+                    });
+                },
+
+                // Handle User Info Form Submission
+                handleUserInfoSubmit: function (e) {
+                    e.preventDefault();
+
+                    const name = document.getElementById('userName').value;
+                    const university = document.getElementById('university').value;
+                    const year = document.getElementById('academicYear').value;
+                    const group = document.getElementById('group').value;
+
+                    let universityName = null;
+                    if (university === 'other') {
+                        universityName = document.getElementById('otherUniversity').value;
+                    }
+
+                    // Set cookies
+                    this.setCookie('userName', name, 365);
+                    this.setCookie('university', university, 365);
+                    this.setCookie('academicYear', year, 365);
+                    this.setCookie('group', group, 365);
+
+                    if (universityName) {
+                        this.setCookie('universityName', universityName, 365);
+                    }
+
+                    // Update application state
+                    this.state.userData.name = name;
+                    this.state.userData.university = university;
+                    this.state.userData.year = year;
+                    this.state.userData.group = group;
+                    this.state.userData.universityName = universityName;
+
+                    // Update UI
+                    this.updateUIWithUserData();
+
+                    // Hide modal
+                    document.getElementById('welcome-modal').classList.add('hidden');
+                    tour.start();
+                    // Reload mock data based on new user info
+                    this.loadMockData();
+                },
+
+                // Handle Settings Form Submission
+                handleSettingsSubmit: function (e) {
+                    e.preventDefault();
+
+                    const name = document.getElementById('settings-name').value;
+                    const university = document.getElementById('settings-university').value;
+                    const year = document.getElementById('settings-year').value;
+                    const group = document.getElementById('settings-group').value;
+
+                    let universityName = null;
+                    if (university === 'other') {
+                        universityName = document.getElementById('settings-other-university').value;
+                    }
+
+                    // Set cookies
+                    this.setCookie('userName', name, 365);
+                    this.setCookie('university', university, 365);
+                    this.setCookie('academicYear', year, 365);
+                    this.setCookie('group', group, 365);
+
+                    if (universityName) {
+                        this.setCookie('universityName', universityName, 365);
+                    } else {
+                        this.eraseCookie('universityName');
+                    }
+
+                    // Update application state
+                    this.state.userData.name = name;
+                    this.state.userData.university = university;
+                    this.state.userData.year = year;
+                    this.state.userData.group = group;
+                    this.state.userData.universityName = universityName;
+
+                    // Update UI
+                    this.updateUIWithUserData();
+
+                    // Show notification
+                    this.addNotification('Settings Updated', 'Your personal information has been updated successfully.');
+
+                    // Reload mock data based on new user info
+                    this.loadMockData();
+                },
+
+                // Navigate to Page
+                navigateTo: function (page) {
+                    // If it's a course details page
+                    if (page === 'course-details') {
+                        document.getElementById('courses-page').classList.add('hidden');
+                        document.getElementById('course-details-page').classList.remove('hidden');
+                        this.renderCourseDetails();
+                    } else if (page === 'about-us') {
+                        document.querySelectorAll('.page-container').forEach(pageEl => {
+                            pageEl.classList.add('hidden');
+                        });
+                        document.getElementById('about-us-page').classList.remove('hidden');
+                        document.getElementById('current-page-breadcrumb').textContent = 'About Us';
+                        this.state.currentPage = page;
+                        return;
+                    } else {
+                        // Hide all pages
+                        document.querySelectorAll('.page-container').forEach(pageEl => {
+                            pageEl.classList.add('hidden');
+                        });
+
+                        // Show selected page
+                        document.getElementById(`${page}-page`).classList.remove('hidden');
+
+                        // Update breadcrumbs
+                        document.getElementById('current-page-breadcrumb').textContent = this.capitalizeFirstLetter(page);
+
+                        // Update state
+                        this.state.currentPage = page;
+
+                        // Special handling for calendar view
+                        if (page === 'lectures' && !document.getElementById('calendar-view').classList.contains('hidden')) {
+                            this.calendar.render();
+                        }
+                    }
+                },
+
+                // Toggle Dark Mode
+                toggleDarkMode: function (forcedState) {
+                    const newState = forcedState !== undefined ? forcedState : !this.state.darkMode;
+
+                    if (newState) {
+                        document.body.classList.remove('light');
+                        document.body.classList.add('dark');
+                        document.getElementById('theme-toggle').innerHTML = '<i class="fas fa-sun"></i>';
+
+                        // Add dark mode classes to elements that need them
+                        document.querySelectorAll('.bg-white').forEach(el => {
+                            el.classList.add('dark:bg-gray-800');
+                        });
+
+                        document.querySelectorAll('.text-gray-900').forEach(el => {
+                            el.classList.add('dark:text-white');
+                        });
+
+                        document.querySelectorAll('.text-gray-600, .text-gray-700').forEach(el => {
+                            el.classList.add('dark:text-gray-300');
+                        });
+
+                        document.querySelectorAll('.text-gray-500').forEach(el => {
+                            el.classList.add('dark:text-gray-400');
+                        });
+
+                        document.querySelectorAll('.bg-gray-100').forEach(el => {
+                            el.classList.add('dark:bg-gray-900');
+                        });
+
+                        document.querySelectorAll('.bg-gray-200').forEach(el => {
+                            el.classList.add('dark:bg-gray-700');
+                        });
+
+                        document.querySelectorAll('.border-gray-300').forEach(el => {
+                            el.classList.add('dark:border-gray-700');
+                        });
+
+                        document.querySelectorAll('.text-indigo-600').forEach(el => {
+                            el.classList.remove('text-indigo-600');
+                            el.classList.add('dark:text-indigo-400');
+                        });
+                    } else {
+                        document.body.classList.remove('dark');
+                        document.body.classList.add('light');
+                        document.getElementById('theme-toggle').innerHTML = '<i class="fas fa-moon"></i>';
+                    }
+
+                    // Update checkbox state
+                    document.getElementById('settings-theme-toggle').checked = newState;
+
+                    // Save preference
+                    localStorage.setItem('darkMode', newState);
+
+                    // Update state
+                    this.state.darkMode = newState;
+
+                    // Re-render calendar if visible
+                    if (this.state.currentPage === 'lectures' && !document.getElementById('calendar-view').classList.contains('hidden')) {
+                        this.calendar.render();
+                    }
+                },
+
+                // Toggle Notification Dropdown
+                toggleNotificationDropdown: function () {
+                    const dropdown = document.getElementById('notification-dropdown');
+                    dropdown.classList.toggle('hidden');
+                },
+
+                addNotification: function (title, message) {
+                    const notificationList = document.getElementById('notification-list');
+                    const notificationBadge = document.getElementById('notification-badge');
+
+                    // Create notification object
+                    const notification = {
+                        title,
+                        message,
+                        timestamp: new Date().toISOString()
+                    };
+
+                    // Save notification to localStorage
+                    const notifications = JSON.parse(localStorage.getItem('notifications')) || [];
+                    notifications.unshift(notification);
+                    localStorage.setItem('notifications', JSON.stringify(notifications));
+
+                    // Render notification
+                    this.renderNotifications();
+
+                    // Update badge
+                    notificationBadge.textContent = notifications.length;
+                    notificationBadge.classList.remove('hidden');
+                },
+
+                clearNotifications: function () {
+                    // Clear notifications from localStorage
+                    localStorage.removeItem('notifications');
+
+                    // Clear notification list in the UI
+                    document.getElementById('notification-list').innerHTML = '<p class="p-4 text-center text-gray-500 dark:text-gray-400">No notifications</p>';
+                    document.getElementById('notification-badge').textContent = '0';
+                    document.getElementById('notification-badge').classList.add('hidden');
+                    document.getElementById('notification-dropdown').classList.add('hidden');
+                },
+
+                renderNotifications: function () {
+                    const notificationList = document.getElementById('notification-list');
+                    const notifications = JSON.parse(localStorage.getItem('notifications')) || [];
+
+                    if (notifications.length === 0) {
+                        notificationList.innerHTML = '<p class="p-4 text-center text-gray-500 dark:text-gray-400">No notifications</p>';
+                        return;
+                    }
+
+                    notificationList.innerHTML = '';
+                    notifications.forEach(notification => {
+                        const notificationEl = document.createElement('div');
+                        notificationEl.className = 'p-3 hover:bg-gray-100 dark:hover:bg-gray-700 border-b border-gray-200 dark:border-gray-700 animate-fadeIn';
+                        notificationEl.innerHTML = `
+            <h4 class="font-medium text-gray-900 dark:text-white">${notification.title}</h4>
+            <p class="text-sm text-gray-600 dark:text-gray-300">${notification.message}</p>
+            <p class="text-xs text-gray-500 dark:text-gray-400 mt-1">${new Date(notification.timestamp).toLocaleString()}</p>
+        `;
+                        notificationList.appendChild(notificationEl);
+                    });
+
+                    // Update badge
+                    const notificationBadge = document.getElementById('notification-badge');
+                    notificationBadge.textContent = notifications.length;
+                    notificationBadge.classList.remove('hidden');
+                },
+
+                // Setup FullCalendar
+                setupFullCalendar: function () {
+                    const calendarEl = document.getElementById('calendar-view');
+
+                    this.calendar = new FullCalendar.Calendar(calendarEl, {
+                        initialView: 'dayGridMonth',
+                        headerToolbar: {
+                            left: 'prev,next today',
+                            center: 'title',
+                            right: 'dayGridMonth,timeGridWeek,timeGridDay'
+                        },
+                        events: [],
+                        themeSystem: 'standard',
+                        height: 'auto',
+                        eventClick: info => {
+                            this.addNotification('Lecture Reminder', `${info.event.title} starting at ${info.event.start.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })} in ${info.event.extendedProps.location}`);
+                        }
+                    });
+                },
+
+                // Load Mock Data for the Application
+                loadMockData: function () {
+                    // Load data based on user's year and university
+                    const year = this.state.userData.year || '1';
+
+                    // Generate courses for the user's year
+                    this.mockData = {
+                        courses: this.generateMockCourses(year),
+                        lectures: this.generateMockLectures(year),
+                        news: this.generateMockNews()
+                    };
+
+                    // Render data
+                    this.renderDashboard();
+                    this.renderCourses();
+                    this.renderLectures();
+                    this.renderNews();
+                    this.populateCalendar();
+                },
+
+                // Render Current Page
+                renderCurrentPage: function () {
+                    this.navigateTo(this.state.currentPage);
+                },
+
+                // Render Dashboard
+                renderDashboard: function () {
+                    this.renderUpcomingLectures();
+                    this.renderRecentMaterials();
+                    this.renderDashboardNews();
+                },
+
+                // Render Upcoming Lectures on Dashboard
+                renderUpcomingLectures: function () {
+                    const container = document.getElementById('upcoming-lectures');
+                    container.innerHTML = '';
+
+                    // Get upcoming lectures (next 7 days)
+                    const now = new Date();
+                    const nextWeek = new Date(now);
+                    nextWeek.setDate(now.getDate() + 7);
+
+                    const upcomingLectures = this.mockData.lectures
+                        .filter(lecture => {
+                            const lectureDate = new Date(lecture.date + 'T' + lecture.time);
+                            return lectureDate >= now && lectureDate <= nextWeek;
+                        })
+                        .sort((a, b) => {
+                            const dateA = new Date(a.date + 'T' + a.time);
+                            const dateB = new Date(b.date + 'T' + b.time);
+                            return dateA - dateB;
+                        })
+                        .slice(0, 3);
+
+                    if (upcomingLectures.length === 0) {
+                        container.innerHTML = '<p class="text-gray-500 dark:text-gray-400 text-center p-4">Will be available soon</p>';
+                        return;
+                    }
+
+                    upcomingLectures.forEach(lecture => {
+                        const lectureDate = new Date(lecture.date + 'T' + lecture.time);
+                        const formattedDate = lectureDate.toLocaleDateString('en-US', { weekday: 'short', month: 'short', day: 'numeric' });
+                        const formattedTime = lectureDate.toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit' });
+
+                        const lectureEl = document.createElement('div');
+                        lectureEl.className = 'flex items-start p-2 rounded-lg hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors';
+                        lectureEl.innerHTML = `
+                            <div class="flex-shrink-0 w-10 h-10 rounded-md bg-indigo-100 dark:bg-indigo-900 flex items-center justify-center text-indigo-600 dark:text-indigo-300 mr-3">
+                                <i class="fas fa-clock"></i>
+                            </div>
+                            <div>
+                                <h4 class="font-medium text-gray-900 dark:text-white">${lecture.title}</h4>
+                                <p class="text-sm text-gray-600 dark:text-gray-300">${formattedDate} at ${formattedTime}</p>
+                                <p class="text-xs text-gray-500 dark:text-gray-400">Location: ${lecture.location}</p>
+                            </div>
+                        `;
+
+                        container.appendChild(lectureEl);
+                    });
+                },
+
+                // Render Recent Materials on Dashboard
+                renderRecentMaterials: function () {
+                    const container = document.getElementById('recent-materials');
+                    container.innerHTML = '';
+
+                    // Collect all materials from courses
+                    const allMaterials = [];
+                    this.mockData.courses.forEach(course => {
+                        course.chapters.forEach(chapter => {
+                            chapter.materials.forEach(material => {
+                                allMaterials.push({
+                                    title: material.title,
+                                    type: material.type,
+                                    course: course.title,
+                                    chapter: chapter.title,
+                                    date: material.date
+                                });
+                            });
+                        });
+                    });
+
+                    // Sort materials by date (newest first)
+                    allMaterials.sort((a, b) => new Date(b.date) - new Date(a.date));
+
+                    // Take the most recent 3 materials
+                    const displayMaterials = allMaterials.slice(0, 3);
+
+                    if (displayMaterials.length === 0) {
+                        container.innerHTML = '<p class="text-gray-500 dark:text-gray-400 text-center p-4">No recent materials available</p>';
+                        return;
+                    }
+
+                    displayMaterials.forEach(material => {
+                        const materialDate = new Date(material.date);
+                        const formattedDate = materialDate.toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
+
+                        let icon = 'fa-file-pdf';
+                        let bgColor = 'bg-red-100 dark:bg-red-900 text-red-600 dark:text-red-300';
+
+                        if (material.type === 'video') {
+                            icon = 'fa-video';
+                            bgColor = 'bg-blue-100 dark:bg-blue-900 text-blue-600 dark:text-blue-300';
+                        } else if (material.type === 'assignment') {
+                            icon = 'fa-tasks';
+                            bgColor = 'bg-green-100 dark:bg-green-900 text-green-600 dark:text-green-300';
+                        }
+
+                        const materialEl = document.createElement('div');
+                        materialEl.className = 'flex items-start p-2 rounded-lg hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors';
+                        materialEl.innerHTML = `
+                    <div class="flex-shrink-0 w-10 h-10 rounded-md ${bgColor} flex items-center justify-center mr-3">
+                        <i class="fas ${icon}"></i>
+                    </div>
+                    <div class="flex-1">
+                        <div class="flex justify-between">
+                            <h4 class="font-medium text-gray-900 dark:text-white">${material.title}</h4>
+                            <span class="text-xs text-gray-500 dark:text-gray-400">${formattedDate}</span>
+                        </div>
+                        <p class="text-sm text-gray-600 dark:text-gray-300">${material.course} - ${material.chapter}</p>
+                    </div>
+                `;
+
+                        container.appendChild(materialEl);
+                    });
+                },
+
+                // Render Dashboard News
+                renderDashboardNews: function () {
+                    const container = document.getElementById('dashboard-news');
+                    container.innerHTML = '';
+
+                    // Sort news by date (most recent first)
+                    const topNews = this.mockData.news
+                        .slice(0, 3)
+                        .sort((a, b) => new Date(b.date) - new Date(a.date));
+
+                    if (topNews.length === 0) {
+                        container.innerHTML = '<p class="text-gray-500 dark:text-gray-400 text-center p-4">No news available</p>';
+                        return;
+                    }
+
+                    topNews.forEach(news => {
+                        const newsDate = new Date(news.date);
+                        const formattedDate = newsDate.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' });
+
+                        const newsEl = document.createElement('div');
+                        newsEl.className = 'p-2 rounded-lg hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors news-item';
+                        newsEl.innerHTML = `
+            <div class="flex justify-between mb-1">
+                <h4 class="font-medium text-gray-900 dark:text-white">${news.title}</h4>
+                <span class="text-xs text-gray-500 dark:text-gray-400">${formattedDate}</span>
+            </div>
+            <p class="text-sm text-gray-600 dark:text-gray-300 line-clamp-2">${news.content.substring(0, 100)}...</p>
+        `;
+
+                        container.appendChild(newsEl);
+                    });
+                },
+
+                // Render Courses
+                renderCourses: function () {
+                    const container = document.getElementById('courses-container');
+                    container.innerHTML = '';
+
+                    this.mockData.courses.forEach(course => {
+                        const courseEl = document.createElement('div');
+                        courseEl.className = 'bg-white dark:bg-gray-800 rounded-xl shadow-md overflow-hidden card-hover';
+                        courseEl.innerHTML = `
+                            <div class="h-24 gradient-bg flex items-center justify-center">
+                                <i class="fas fa-book text-4xl text-white opacity-75"></i>
+                            </div>
+                            <div class="p-5">
+                                <h3 class="text-xl font-semibold mb-2">${course.id} : ${course.title}</h3>
+                                <p class="text-gray-600 dark:text-gray-300 mb-4">${course.instructor}</p>
+                                <div class="flex justify-between items-center">
+                                    <span class="text-sm text-gray-500 dark:text-gray-400">${course.chapters.length} Chapters</span>
+                                    <button data-course-id="${course.id}" class="view-course-btn px-4 py-2 rounded-md bg-indigo-600 text-white text-sm hover:bg-indigo-700 transition-colors">View Course</button>
+                                </div>
+                            </div>
+                        `;
+
+                        container.appendChild(courseEl);
+                    });
+
+                    // Add event listeners to view-course-buttons
+                    document.querySelectorAll('.view-course-btn').forEach(button => {
+                        button.addEventListener('click', (e) => {
+                            const courseId = e.target.dataset.courseId;
+                            this.state.selectedCourse = this.mockData.courses.find(course => course.id === courseId);
+                            this.navigateTo('course-details');
+                        });
+                    });
+                },
+
+                // Filter Courses by Search Term
+                filterCourses: function (searchTerm) {
+                    document.querySelectorAll('#courses-container > div').forEach(courseEl => {
+                        const title = courseEl.querySelector('h3').textContent.toLowerCase();
+                        const instructor = courseEl.querySelector('p').textContent.toLowerCase();
+
+                        if (title.includes(searchTerm) || instructor.includes(searchTerm)) {
+                            courseEl.classList.remove('hidden');
+                        } else {
+                            courseEl.classList.add('hidden');
+                        }
+                    });
+                },
+
+                // Render Course Details
+                renderCourseDetails: function () {
+                    const container = document.getElementById('course-details-content');
+                    const course = this.state.selectedCourse;
+
+                    if (!course) {
+                        this.navigateTo('courses');
+                        return;
+                    }
+
+                    container.innerHTML = `
+                        <div class="bg-white dark:bg-gray-800 rounded-xl shadow-md overflow-hidden mb-6">
+                            <div class="p-6">
+                                <h1 class="text-2xl font-bold mb-2">${course.title}</h1>
+                                <p class="text-gray-600 dark:text-gray-300 mb-4">Instructor: ${course.instructor}</p>
+                                <p class="text-gray-700 dark:text-gray-300">${course.description}</p>
+                            </div>
+                        </div>
+                        
+                        <h2 class="text-xl font-semibold mb-4">Course Chapters</h2>
+                        <div id="chapters-container" class="space-y-4">
+                            ${course.chapters.map((chapter, index) => `
+                                <div class="bg-white dark:bg-gray-800 rounded-xl shadow-md overflow-hidden">
+                                    <div class="p-4 bg-gray-50 dark:bg-gray-700 flex justify-between items-center cursor-pointer chapter-header" data-chapter-index="${index}">
+                                        <h3 class="font-medium">${chapter.title}</h3>
+                                        <i class="fas fa-chevron-down text-gray-500 dark:text-gray-400 transform transition-transform duration-300"></i>
+                                    </div>
+                                    <div class="chapter-content p-4 hidden">
+                                        <p class="text-gray-600 dark:text-gray-300 mb-4">${chapter.description}</p>
+                                        
+                                        <h4 class="font-medium mb-2">Materials</h4>
+                                        <div class="space-y-2">
+                                            ${chapter.materials.map(material => {
+                        let icon = 'fa-file-pdf';
+                        let color = 'text-red-600 dark:text-red-400';
+
+                        if (material.type === 'video') {
+                            icon = 'fa-video';
+                            color = 'text-blue-600 dark:text-blue-400';
+                        } else if (material.type === 'assignment') {
+                            icon = 'fa-tasks';
+                            color = 'text-green-600 dark:text-green-400';
+                        }
+
+                        return `
+                                                <div class="flex items-center p-2 hover:bg-gray-50 dark:hover:bg-gray-700 rounded-md">
+                                                    <i class="fas ${icon} ${color} mr-3"></i>
+                                                    <div class="flex-1">
+                                                        <p class="font-medium">${material.title}</p>
+                                                        <p class="text-xs text-gray-500 dark:text-gray-400">Added: ${new Date(material.date).toLocaleDateString()}</p>
+                                                    </div>
+                                                    <a href="${material.link}" target="_blank" class="px-3 py-1 rounded-md bg-gray-200 dark:bg-gray-600 text-gray-800 dark:text-white text-sm hover:bg-gray-300 dark:hover:bg-gray-500 transition-colors download-btn">
+                                                        <i class="fas fa-download mr-1"></i> Download
+                                                    </a>
+                                                </div>
+                                            `;
+                    }).join('')}
+                                        </div>
+                                    </div>
+                                </div>
+                            `).join('')}
+                        </div>
+                    `;
+
+                    // Add event listeners to chapter headers
+                    document.querySelectorAll('.chapter-header').forEach(header => {
+                        header.addEventListener('click', () => {
+                            const content = header.nextElementSibling;
+                            const icon = header.querySelector('i');
+
+                            content.classList.toggle('hidden');
+                            icon.classList.toggle('rotate-180');
+                        });
+                    });
+                },
+
+                // Render Lectures
+                renderLectures: function () {
+                    const tbody = document.getElementById('lecture-list');
+                    tbody.innerHTML = '';
+
+                    this.mockData.lectures.forEach(lecture => {
+                        const lectureDate = new Date(lecture.date + 'T' + lecture.time);
+                        const formattedDate = lectureDate.toLocaleDateString('en-US', { weekday: 'long', month: 'long', day: 'numeric' });
+                        const formattedTime = lectureDate.toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit' });
+
+                        const row = document.createElement('tr');
+                        row.innerHTML = `
+                            <td class="px-6 py-4 whitespace-nowrap">
+                                <div class="text-sm font-medium text-gray-900 dark:text-white">${formattedDate}</div>
+                                <div class="text-sm text-gray-500 dark:text-gray-400">${formattedTime}</div>
+                            </td>
+                            <td class="px-6 py-4 whitespace-nowrap">
+                                <div class="text-sm text-gray-900 dark:text-white">${lecture.title}</div>
+                            </td>
+                            <td class="px-6 py-4 whitespace-nowrap">
+                                <div class="text-sm text-gray-900 dark:text-white">${lecture.location}</div>
+                            </td>
+                            <td class="px-6 py-4 whitespace-nowrap">
+                                <div class="text-sm text-gray-900 dark:text-white">${lecture.instructor}</div>
+                            </td>
+                        `;
+
+                        tbody.appendChild(row);
+                    });
+                },
+
+                // Populate Calendar
+                populateCalendar: function () {
+                    // Clear existing events
+                    this.calendar.removeAllEvents();
+
+                    // Add lectures as events
+                    this.mockData.lectures.forEach(lecture => {
+                        const eventColor = this.getRandomColor();
+
+                        this.calendar.addEvent({
+                            title: lecture.title,
+                            start: `${lecture.date}T${lecture.time}`,
+                            end: this.calculateEndTime(lecture.date, lecture.time),
+                            extendedProps: {
+                                location: lecture.location,
+                                instructor: lecture.instructor
+                            },
+                            backgroundColor: eventColor,
+                            borderColor: eventColor
+                        });
+                    });
+
+                    // Render calendar
+                    this.calendar.render();
+                },
+
+                // Calculate End Time (1 hour after start)
+                calculateEndTime: function (date, time) {
+                    const startTime = new Date(`${date}T${time}`);
+                    const endTime = new Date(startTime.getTime() + 60 * 60 * 1000);
+
+                    return endTime.toISOString();
+                },
+
+                // Get Random Color for Calendar Events
+                getRandomColor: function () {
+                    const colors = [
+                        '#4F46E5', // Indigo
+                        '#7C3AED', // Purple
+                        '#10B981', // Green
+                        '#EF4444', // Red
+                        '#F59E0B', // Amber
+                        '#3B82F6', // Blue
+                        '#EC4899'  // Pink
+                    ];
+
+                    return colors[Math.floor(Math.random() * colors.length)];
+                },
+
+                // Render News
+                renderNews: function () {
+                    const container = document.getElementById('news-container');
+                    container.innerHTML = '';
+
+                    // Sort news by date (latest first)
+                    const sortedNews = this.mockData.news.sort((a, b) => new Date(b.date) - new Date(a.date));
+
+                    sortedNews.forEach(news => {
+                        const newsDate = new Date(news.date);
+                        const formattedDate = newsDate.toLocaleDateString('en-US', { weekday: 'long', month: 'long', day: 'numeric', year: 'numeric' });
+
+                        const newsEl = document.createElement('div');
+                        newsEl.className = 'bg-white dark:bg-gray-800 rounded-xl shadow-md overflow-hidden news-item';
+                        newsEl.innerHTML = `
+            <div class="p-6">
+                <div class="flex justify-between items-start mb-4">
+                    <h3 class="text-xl font-semibold">${news.title}</h3>
+                    <span class="text-sm text-gray-500 dark:text-gray-400">${formattedDate}</span>
+                </div>
+                
+                <div class="news-content">
+                    <p class="text-gray-600 dark:text-gray-300">${news.content}</p>
+                </div>
+                
+                <div class="mt-4 flex items-center text-sm">
+                    <span class="text-gray-500 dark:text-gray-400">Source: ${news.source}</span>
+                </div>
+            </div>
+        `;
+
+                        container.appendChild(newsEl);
+                    });
+                },
+
+                // Updated function to load courses from the dataset
+                generateMockCourses: function (year) {
+                    const yearNum = parseInt(year);
+                    return courseData[yearNum] || [];
+                },
+
+                // Generate Mock Lectures
+                generateMockLectures: function () {
+                    return lectureData; // Use the static dataset
+                },
+
+                // Generate Mock News
+                generateMockNews: function () {
+                    const news = [
+                        {
+                            id: 1,
+                            title: 'Spring 2025 Semester Updates',
+                            date: '2025-04-01',
+                            content: 'We are excited to announce updates to the Spring 2025 semester schedule. The academic calendar has been revised to include additional study days before final exams. This change is in response to student feedback and aims to provide more preparation time. Additionally, the library will extend its hours during the final exam period.',
+                            source: 'University Administration'
+                        },
+                        {
+                            id: 2,
+                            title: 'New AI Research Center Opening',
+                            date: '2026-03-28',
+                            content: 'The university is proud to announce the opening of our new Artificial Intelligence Research Center. This state-of-the-art facility will bring together faculty and students from Computer Science, Mathematics, and Engineering to collaborate on cutting-edge AI projects. The center will feature advanced computing resources, dedicated research spaces, and opportunities for undergraduate research assistantships.',
+                            source: 'Research Department'
+                        },
+                        {
+                            id: 3,
+                            title: 'Campus Sustainability Initiative',
+                            date: '2025-03-25',
+                            content: 'As part of our commitment to environmental responsibility, the university is launching a comprehensive sustainability initiative. This program includes installing solar panels on campus buildings, implementing water conservation systems, and expanding recycling facilities. Students are encouraged to join the new Sustainability Club to participate in campus-wide green projects.',
+                            source: 'Campus Operations'
+                        },
+                        {
+                            id: 4,
+                            title: 'International Exchange Program Expansion',
+                            date: '2025-03-20',
+                            content: 'The International Studies department is pleased to announce an expansion of our exchange program. New partnerships with universities in Singapore, Brazil, and Germany will provide additional opportunities for students to study abroad. An information session will be held next week for interested students to learn about application requirements and scholarship options.',
+                            source: 'International Studies Department'
+                        },
+                        {
+                            id: 5,
+                            title: 'Student Government Elections',
+                            date: '2025-03-15',
+                            content: 'Student Government Association elections will be held from April 10-12. All enrolled students are eligible to vote for representatives who will advocate for student interests during the 2025-2026 academic year. Candidates will present their platforms at a town hall meeting on April 8. Online voting will be available through the student portal.',
+                            source: 'Student Affairs'
+                        }
+                    ];
+
+                    return news;
+                },
+
+                // Helper: Get Course Title
+                getCourseTitle: function (prefix, number) {
+                    const titles = {
+                        'CS': ['Introduction to Computer Science', 'Data Structures and Algorithms', 'Web Development', 'Database Systems', 'Computer Networks', 'Operating Systems'],
+                        'MATH': ['Calculus I', 'Linear Algebra', 'Discrete Mathematics', 'Differential Equations', 'Statistics', 'Mathematical Modeling'],
+                        'ENG': ['English Composition', 'Technical Writing', 'Literature', 'Communication Skills'],
+                        'PHYS': ['Physics I', 'Mechanics', 'Electromagnetism', 'Modern Physics'],
+                        'STAT': ['Probability Theory', 'Statistical Methods', 'Data Analysis'],
+                        'ECON': ['Microeconomics', 'Macroeconomics', 'Economic Theory'],
+                        'SE': ['Software Engineering', 'Requirements Engineering', 'Software Testing', 'Project Management'],
+                        'AI': ['Artificial Intelligence', 'Machine Learning', 'Natural Language Processing', 'Computer Vision'],
+                        'DB': ['Database Design', 'Big Data Analytics', 'Data Warehousing'],
+                        'NET': ['Network Security', 'Cloud Computing', 'Distributed Systems']
+                    };
+
+                    const availableTitles = titles[prefix];
+                    return prefix + number + ': ' + availableTitles[Math.floor(Math.random() * availableTitles.length)];
+                },
+
+                // Helper: Get Chapter Title
+                getChapterTitle: function (prefix) {
+                    const titles = {
+                        'CS': ['Programming Fundamentals', 'Object-Oriented Design', 'Data Structures', 'Algorithms', 'Web Technologies', 'Security Principles'],
+                        'MATH': ['Functions and Limits', 'Derivatives', 'Integrals', 'Series and Sequences', 'Vectors', 'Matrices'],
+                        'ENG': ['Essay Writing', 'Grammar and Style', 'Critical Analysis', 'Research Methods'],
+                        'PHYS': ['Newton\'s Laws', 'Work and Energy', 'Electric Fields', 'Magnetic Fields', 'Relativity'],
+                        'STAT': ['Probability Distributions', 'Hypothesis Testing', 'Regression Analysis', 'ANOVA'],
+                        'ECON': ['Supply and Demand', 'Market Structures', 'Fiscal Policy', 'Monetary Policy'],
+                        'SE': ['Agile Methodologies', 'Design Patterns', 'Testing Strategies', 'CI/CD Pipelines'],
+                        'AI': ['Search Algorithms', 'Neural Networks', 'Reinforcement Learning', 'Natural Language Processing'],
+                        'DB': ['Relational Model', 'SQL', 'NoSQL Systems', 'Query Optimization'],
+                        'NET': ['Network Protocols', 'Routing Algorithms', 'Cloud Services', 'Cybersecurity']
+                    };
+
+                    const defaultTitles = ['Introduction', 'Basic Concepts', 'Advanced Topics', 'Applications', 'Case Studies'];
+
+                    const availableTitles = titles[prefix] || defaultTitles;
+                    return availableTitles[Math.floor(Math.random() * availableTitles.length)];
+                },
+
+                // Helper: Get Material Title
+                getMaterialTitle: function (type, chapter, item) {
+                    if (type === 'pdf') {
+                        return `Lecture ${chapter}.${item} Notes`;
+                    } else if (type === 'video') {
+                        return `Video Tutorial ${chapter}.${item}`;
+                    } else {
+                        return `Assignment ${chapter}.${item}`;
+                    }
+                },
+
+                // Helper: Get Random Instructor
+                getRandomInstructor: function () {
+                    const instructors = [
+                        'Dr. Sarah Johnson',
+                        'Prof. Michael Chen',
+                        'Dr. Emily Rodriguez',
+                        'Prof. David Williams',
+                        'Dr. Jessica Thompson',
+                        'Prof. Robert Kim',
+                        'Dr. Lisa Patel',
+                        'Prof. James Wilson'
+                    ];
+
+                    return instructors[Math.floor(Math.random() * instructors.length)];
+                },
+
+                // Utility: Set Cookie
+                setCookie: function (name, value, days) {
+                    const expires = new Date();
+                    expires.setTime(expires.getTime() + days * 24 * 60 * 60 * 1000);
+                    document.cookie = name + '=' + encodeURIComponent(value) + ';expires=' + expires.toUTCString() + ';path=/';
+                },
+
+                // Utility: Get Cookie
+                getCookie: function (name) {
+                    const nameEQ = name + '=';
+                    const ca = document.cookie.split(';');
+                    for (let i = 0; i < ca.length; i++) {
+                        let c = ca[i];
+                        while (c.charAt(0) === ' ') c = c.substring(1, c.length);
+                        if (c.indexOf(nameEQ) === 0) return decodeURIComponent(c.substring(nameEQ.length, c.length));
+                    }
+                    return null;
+                },
+
+                // Utility: Erase Cookie
+                eraseCookie: function (name) {
+                    document.cookie = name + '=;Max-Age=-99999999;path=/';
+                },
+
+                // Utility: Capitalize First Letter
+                capitalizeFirstLetter: function (string) {
+                    return string.charAt(0).toUpperCase() + string.slice(1);
+                }
+            };
+            function checkIfMobile() {
+                return window.innerWidth < 1024;
+            }
+            // Initialize the application
+            app.init();
+
+            // Todo List Functionality
+            document.getElementById('add-todo').addEventListener('click', () => {
+                document.getElementById('todo-input-container').classList.remove('hidden');
+                document.getElementById('new-todo').focus();
+            });
+
+            document.getElementById('cancel-todo').addEventListener('click', () => {
+                document.getElementById('todo-input-container').classList.add('hidden');
+                document.getElementById('new-todo').value = '';
+            });
+
+            document.getElementById('save-todo').addEventListener('click', () => {
+                const todoText = document.getElementById('new-todo').value.trim();
+                if (todoText) {
+                    const todoList = document.getElementById('todo-list');
+                    todoList.insertAdjacentHTML('beforeend', todoTemplate(todoText));
+
+                    // Save to localStorage
+                    const todos = JSON.parse(localStorage.getItem('todos')) || [];
+                    todos.push({ id: Date.now(), text: todoText, completed: false });
+                    localStorage.setItem('todos', JSON.stringify(todos));
+
+                    document.getElementById('new-todo').value = '';
+                    document.getElementById('todo-input-container').classList.add('hidden');
+                }
+            });
+
+            // Sticky Notes Functionality
+            document.getElementById('add-note').addEventListener('click', () => {
+                const notesContainer = document.getElementById('notes-container');
+                notesContainer.insertAdjacentHTML('afterbegin', noteTemplate(selectedColor));
+
+                // Save to localStorage
+                const notes = JSON.parse(localStorage.getItem('notes')) || [];
+                notes.push({ id: Date.now(), color: selectedColor, content: '' });
+                localStorage.setItem('notes', JSON.stringify(notes));
+            });
+
+            // Event delegation for todo list
+            document.getElementById('todo-list').addEventListener('click', (e) => {
+                if (e.target.classList.contains('delete-todo') || e.target.closest('.delete-todo')) {
+                    const todoItem = e.target.closest('li');
+                    const todoId = todoItem.dataset.id;
+
+                    // Remove from localStorage
+                    let todos = JSON.parse(localStorage.getItem('todos')) || [];
+                    todos = todos.filter(todo => todo.id != todoId);
+                    localStorage.setItem('todos', JSON.stringify(todos));
+
+                    todoItem.remove();
+                } else if (e.target.classList.contains('todo-checkbox')) {
+                    const todoItem = e.target.closest('li');
+                    const todoId = todoItem.dataset.id;
+                    const isCompleted = e.target.checked;
+
+                    // Update in localStorage
+                    let todos = JSON.parse(localStorage.getItem('todos')) || [];
+                    const todo = todos.find(t => t.id == todoId);
+                    if (todo) {
+                        todo.completed = isCompleted;
+                        localStorage.setItem('todos', JSON.stringify(todos));
+                    }
+
+                    // Update UI
+                    const textSpan = todoItem.querySelector('span');
+                    if (isCompleted) {
+                        textSpan.classList.add('line-through', 'text-gray-400', 'dark:text-gray-500');
+                    } else {
+                        textSpan.classList.remove('line-through', 'text-gray-400', 'dark:text-gray-500');
+                    }
+                }
+            });
+
+            // Event delegation for sticky notes
+            document.getElementById('notes-container').addEventListener('click', (e) => {
+                if (e.target.classList.contains('delete-note') || e.target.closest('.delete-note')) {
+                    const note = e.target.closest('.note');
+                    const noteId = note.dataset.id;
+
+                    // Remove from localStorage
+                    let notes = JSON.parse(localStorage.getItem('notes')) || [];
+                    notes = notes.filter(n => n.id != noteId);
+                    localStorage.setItem('notes', JSON.stringify(notes));
+
+                    note.remove();
+                }
+            });
+
+            // Save note content when changed
+            document.getElementById('notes-container').addEventListener('input', (e) => {
+                if (e.target.tagName === 'TEXTAREA') {
+                    const note = e.target.closest('.note');
+                    const noteId = note.dataset.id;
+                    const content = e.target.value;
+
+                    // Update in localStorage
+                    let notes = JSON.parse(localStorage.getItem('notes')) || [];
+                    const noteObj = notes.find(n => n.id == noteId);
+                    if (noteObj) {
+                        noteObj.content = content;
+                        localStorage.setItem('notes', JSON.stringify(notes));
+                    }
+                }
+            });
+
+            // Track selected color
+            let selectedColor = 'yellow';
+
+            // Color picker for notes
+            document.querySelectorAll('.color-picker').forEach(button => {
+                button.addEventListener('click', (e) => {
+                    selectedColor = e.target.dataset.color;
+
+                    // Update active state
+                    document.querySelectorAll('.color-picker').forEach(btn => {
+                        btn.classList.remove('ring-2', 'ring-indigo-500');
+                    });
+                    e.target.classList.add('ring-2', 'ring-indigo-500');
+                });
+            });
+
+            // Set initial active color
+            document.querySelector('.color-picker[data-color="yellow"]').classList.add('ring-2', 'ring-indigo-500');
+
+            // Load saved todos and notes
+            function loadSavedItems() {
+                // Load todos
+                const todos = JSON.parse(localStorage.getItem('todos')) || [];
+                const todoList = document.getElementById('todo-list');
+                todoList.innerHTML = '';
+                todos.forEach(todo => {
+                    todoList.insertAdjacentHTML('beforeend', todoTemplate(todo.text, todo.completed, todo.id));
+                });
+
+                // Load notes
+                const notes = JSON.parse(localStorage.getItem('notes')) || [];
+                const notesContainer = document.getElementById('notes-container');
+                notesContainer.innerHTML = '';
+                notes.forEach(note => {
+                    notesContainer.insertAdjacentHTML('beforeend', noteTemplate(note.color, note.content, note.id));
+                });
+            }
+
+            // Call load when tools page is shown
+            document.addEventListener('click', (e) => {
+                if (e.target.dataset.page === 'tools' || e.target.closest('[data-page="tools"]')) {
+                    loadSavedItems();
+                }
+            });
+        });
+    </script>
 </body>
 
 </html>
