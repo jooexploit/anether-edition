@@ -1,0 +1,1306 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="theme-color" content="#4F46E5">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description"
+        content="Team Shoky Helper - A modern web application for college students to access courses, lecture schedules, and university news.">
+    <meta name="keywords"
+        content="Team Shoky Helper, college student app, university courses, lecture schedules, university news, student portal">
+    <meta name="author" content="Team Shoky">
+    <meta name="robots" content="index, follow">
+    <meta property="og:title" content="Team Shoky Helper - Your College Companion">
+    <meta property="og:description"
+        content="Access your courses, lecture schedules, and university news with Team Shoky Helper.">
+    <meta property="og:image" content="https://i.ibb.co/bRCWmT9d/Team-Shoky-Helper.jpg">
+    <meta property="og:url" content="https://teamshoky.or-g.net/">
+    <meta property="og:type" content="website">
+    <meta property="og:site_name" content="Team Shoky Helper">
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:title" content="Team Shoky Helper - Your College Companion">
+    <meta name="twitter:description"
+        content="Access your courses, lecture schedules, and university news with Team Shoky Helper.">
+    <meta name="twitter:image" content="https://i.ibb.co/bRCWmT9d/Team-Shoky-Helper.jpg">
+    <meta name="twitter:site" content="@yousefsrour13">
+    <link rel="apple-touch-icon" sizes="57x57" href="favicon/apple-icon-57x57.png">
+    <link rel="apple-touch-icon" sizes="60x60" href="favicon/apple-icon-60x60.png">
+    <link rel="apple-touch-icon" sizes="72x72" href="favicon/apple-icon-72x72.png">
+    <link rel="apple-touch-icon" sizes="76x76" href="favicon/apple-icon-76x76.png">
+    <link rel="apple-touch-icon" sizes="114x114" href="favicon/apple-icon-114x114.png">
+    <link rel="apple-touch-icon" sizes="120x120" href="favicon/apple-icon-120x120.png">
+    <link rel="apple-touch-icon" sizes="144x144" href="favicon/apple-icon-144x144.png">
+    <link rel="apple-touch-icon" sizes="152x152" href="favicon/apple-icon-152x152.png">
+    <link rel="apple-touch-icon" sizes="180x180" href="favicon/apple-icon-180x180.png">
+    <link rel="icon" type="image/png" sizes="192x192" href="favicon/android-icon-192x192.png">
+    <link rel="icon" type="image/png" sizes="32x32" href="favicon/favicon-32x32.png">
+    <link rel="icon" type="image/png" sizes="96x96" href="favicon/favicon-96x96.png">
+    <link rel="icon" type="image/png" sizes="16x16" href="favicon/favicon-16x16.png">
+    <!-- Add after your existing CSS links -->
+    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/shepherd.js@10.0.1/dist/css/shepherd.css" />
+    <script src="https://cdn.jsdelivr.net/npm/shepherd.js@10.0.1/dist/js/shepherd.min.js"></script>
+    <script type="application/ld+json">
+        {
+          "@context": "https://schema.org",
+          "@type": "WebApplication",
+          "name": "Team Shoky Helper",
+          "url": "https://teamshoky.or-g.net/",
+          "description": "A modern web application for college students to access courses, lecture schedules, and university news.",
+          "applicationCategory": "EducationApplication",
+          "operatingSystem": "All",
+          "author": {
+            "@type": "Organization",
+            "name": "Team Shoky"
+          },
+          "image": "https://i.ibb.co/bRCWmT9d/Team-Shoky-Helper.jpg",
+          "offers": {
+            "@type": "Offer",
+            "price": "0",
+            "priceCurrency": "EGP"
+          }
+        }
+        </script>
+    <!-- Google tag (gtag.js) -->
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-7JJ4FT0GJ2"></script>
+    <script>
+        window.dataLayer = window.dataLayer || [];
+        function gtag() { dataLayer.push(arguments); }
+        gtag('js', new Date());
+
+        gtag('config', 'G-7JJ4FT0GJ2');
+    </script>
+    <title>Team Shoky Helper - Your College Companion</title>
+    <link rel="canonical" href="https://teamshoky.or-g.net/">
+    <link rel="manifest" href="manifest.json">
+    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@6.0.0/css/all.min.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/fullcalendar@5.10.1/main.min.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@6.0.0/css/all.min.css" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/fullcalendar@5.10.1/main.min.js"></script>
+
+
+</head>
+
+
+<body class="light">
+    <!-- Welcome Modal (First Visit) -->
+    <div id="welcome-modal" class="fixed inset-0 z-50 flex items-center justify-center modal-backdrop hidden">
+        <div class="bg-white dark:bg-gray-800 rounded-lg shadow-xl p-6 w-full max-w-md mx-4 animate-fadeIn">
+            <h2 class="text-2xl font-bold text-gray-900 dark:text-white mb-4">Welcome to Team Shoky Helper!</h2>
+            <p class="text-gray-600 dark:text-gray-300 mb-6">Please tell us a bit about yourself to personalize your
+                experience.</p>
+
+            <form id="user-info-form">
+                <div class="mb-4">
+                    <label for="userName" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Your
+                        Name</label>
+                    <input type="text" placeholder="Yousef Tamer" id="userName"
+                        class="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500"
+                        required>
+                </div>
+
+                <div class="mb-4">
+                    <label for="university"
+                        class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">University</label>
+                    <select id="university"
+                        class="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500"
+                        required>
+                        <option value="" disabled selected>Select your university</option>
+                        <option value="hti">HTI University</option>
+                        <option value="other">Other</option>
+                    </select>
+                </div>
+
+                <div id="other-university-container" class="mb-4 hidden">
+                    <label for="otherUniversity"
+                        class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">University Name</label>
+                    <input type="text" placeholder="this will be avillable soon no data here just test"
+                        id="otherUniversity"
+                        class="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500">
+                </div>
+
+                <div class="mb-4">
+                    <label for="academicYear"
+                        class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Academic Year</label>
+                    <select id="academicYear"
+                        class="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500"
+                        required>
+                        <option value="" disabled selected>Select your academic year</option>
+                        <option value="1">Year 1</option>
+                        <option value="2">Year 2</option>
+                        <option value="3">Year 3</option>
+                        <option value="4">Year 4</option>
+                    </select>
+                </div>
+
+                <div class="mb-6">
+                    <label for="group"
+                        class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Group</label>
+                    <select id="group"
+                        class="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500"
+                        required>
+                        <option value="" disabled selected>Select your group</option>
+                        <option value="1">Group 1</option>
+                        <option value="2">Group 2</option>
+                        <option value="3">Group 3</option>
+                        <option value="4">Group 4</option>
+                        <option value="5">Group 5</option>
+                        <option value="6">Group 6</option>
+                        <option value="7">Group 7</option>
+                        <option value="8">Group 8</option>
+                        <option value="100">Group 100</option>
+                    </select>
+                </div>
+
+                <button type="submit"
+                    class="w-full py-2 px-4 gradient-bg text-white font-medium rounded-md shadow-sm hover:opacity-90 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500">
+                    Get Started
+                </button>
+            </form>
+        </div>
+    </div>
+
+    <!-- Main Application Container -->
+    <div class="flex h-screen overflow-hidden relative">
+        <!-- Sidebar -->
+        <div id="sidebar"
+            class="sidebar bg-indigo-800 text-white h-screen flex-shrink-0 fixed left-0 top-0 bottom-0 z-30 transition-transform duration-300 ease-in-out transform">
+            <div class="p-4 flex items-center justify-between">
+                <h1 class="text-xl font-bold" style="cursor: pointer;"> <a href="">Team Shoky Helper</a></h1>
+                <button id="close-sidebar" class="lg:hidden text-white focus:outline-none">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+
+            <div class="mt-6 px-3">
+                <div id="user-info" class="mb-8 px-3 py-4 bg-indigo-700 rounded-lg">
+                    <div class="flex items-center mb-3">
+                        <div
+                            class="w-10 h-10 rounded-full bg-indigo-500 flex items-center justify-center text-lg font-semibold mr-3">
+                            <span id="user-initials">U</span>
+                        </div>
+                        <div>
+                            <h3 id="sidebar-user-name" class="font-medium">User Name</h3>
+                            <p id="sidebar-university" class="text-xs text-indigo-200">University</p>
+                        </div>
+                    </div>
+                    <div class="flex justify-between text-xs text-indigo-200">
+                        <span>Year: <span id="sidebar-year">-</span></span>
+                        <span>Group: <span id="sidebar-group">-</span></span>
+                    </div>
+                </div>
+
+                <nav>
+                    <ul class="space-y-2">
+                        <li>
+                            <button data-page="dashboard"
+                                class="nav-link w-full flex items-center px-3 py-2 rounded-md font-medium hover:bg-indigo-700 transition-colors">
+                                <i class="fas fa-home w-6"></i>
+                                <span>Home</span>
+                            </button>
+                        </li>
+                        <li>
+                            <button data-page="courses"
+                                class="nav-link w-full flex items-center px-3 py-2 rounded-md font-medium hover:bg-indigo-700 transition-colors">
+                                <i class="fas fa-book w-6"></i>
+                                <span>Courses</span>
+                            </button>
+                        </li>
+                        <li>
+                            <button data-page="news"
+                                class="nav-link w-full flex items-center px-3 py-2 rounded-md font-medium hover:bg-indigo-700 transition-colors">
+                                <i class="fas fa-newspaper w-6"></i>
+                                <span>News</span>
+                            </button>
+                        </li>
+                        <li>
+                            <button data-page="about-us"
+                                class="nav-link w-full flex items-center px-3 py-2 rounded-md font-medium hover:bg-indigo-700 transition-colors">
+                                <i class="fas fa-info-circle w-6"></i>
+                                <span>About Us</span>
+                            </button>
+                        </li>
+                        <li>
+                            <button data-page="communities"
+                                class="nav-link w-full flex items-center px-3 py-2 rounded-md font-medium hover:bg-indigo-700 transition-colors">
+                                <i class="fas fa-users w-6"></i>
+                                <span>Communities</span>
+                            </button>
+                        </li>
+                        <li>
+                            <button data-page="tools"
+                                class="nav-link w-full flex items-center px-3 py-2 rounded-md font-medium hover:bg-indigo-700 transition-colors">
+                                <i class="fas fa-tools w-6"></i>
+                                <span>Tools</span>
+                            </button>
+                        </li>
+                        <li>
+                            <button data-page="settings"
+                                class="nav-link w-full flex items-center px-3 py-2 rounded-md font-medium hover:bg-indigo-700 transition-colors">
+                                <i class="fas fa-cog w-6"></i>
+                                <span>Settings</span>
+                            </button>
+                        </li>
+                        <li id="install-app-button-container">
+                            <button id="install-app-button"
+                                class="nav-link w-full flex items-center px-3 py-2 rounded-md font-medium hover:bg-indigo-700 transition-colors">
+                                <i class="fas fa-download w-6"></i>
+                                <span>Download App</span>
+                            </button>
+                        </li>
+                    </ul>
+                </nav>
+            </div>
+
+            <div class="absolute bottom-4 left-0 right-0 px-4">
+                <div class="flex justify-between items-center text-indigo-200 text-sm">
+                    <span>© 2025 Team Shoky</span>
+                    <button id="theme-toggle" class="hover:text-white">
+                        <i class="fas fa-moon"></i>
+                    </button>
+                </div>
+                <button id="logout-button"
+                    class="w-full mt-4 py-2 px-4 bg-red-600 text-white font-medium rounded-md shadow-sm hover:bg-red-700 transition-colors">
+                    Logout
+                </button>
+            </div>
+        </div>
+
+        <!-- Main Content -->
+        <div class="flex-1 flex flex-col ml-0 lg:ml-64 transition-all duration-300">
+            <!-- Navbar -->
+            <header class="bg-white dark:bg-gray-800 shadow-sm h-16 flex items-center px-4 sticky top-0 z-20">
+                <button id="open-sidebar" class="lg:hidden mr-4 text-gray-600 dark:text-gray-300 focus:outline-none">
+                    <i class="fas fa-bars"></i>
+                </button>
+
+                <div class="flex-1 flex items-center">
+                    <div id="breadcrumbs" class="hidden sm:flex items-center text-sm text-gray-500 dark:text-gray-400">
+                        <span class="breadcrumb-item">Team Shoky Helper</span>
+                        <span id="current-page-breadcrumb"
+                            class="breadcrumb-item text-indigo-600 dark:text-indigo-400">Dashboard</span>
+                    </div>
+                </div>
+
+                <div class="flex items-center space-x-4">
+                    <div class="relative">
+                        <button id="notification-button" class="text-gray-600 dark:text-gray-300 focus:outline-none">
+                            <i class="fas fa-bell"></i>
+                            <span id="notification-badge"
+                                class="absolute -top-1 -right-1 bg-red-500 text-white rounded-full w-4 h-4 flex items-center justify-center text-xs pulse-badge">0</span>
+                        </button>
+                    </div>
+
+                    <div class="relative">
+                        <!-- User Profile Button -->
+                        <div class="flex items-center">
+                            <button id="user-menu-button"
+                                class="w-8 h-8 rounded-full bg-indigo-600 flex items-center justify-center text-white focus:outline-none">
+                                <span id="nav-user-initials">U</span>
+                            </button>
+                            <span id="nav-user-name" class="ml-2 text-sm font-medium hidden sm:inline-block">User
+                                Name</span>
+                        </div>
+
+                        <!-- Dropdown Panel -->
+                        <div id="user-dropdown"
+                            class="absolute right-0 mt-2 w-40 bg-white dark:bg-gray-800 shadow-lg rounded-lg p-2 hidden">
+                            <a style="cursor: pointer;"
+                                class="block px-4 py-2 text-sm text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700">hi
+                                : <span id="dropdown_usrname">User</span> </a>
+                            <hr class="my-1 border-gray-300 dark:border-gray-600">
+                            <a data-page="settings" style="cursor: pointer;"
+                                class="block px-4 py-2 text-sm text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700">Settings</a>
+                        </div>
+                    </div>
+
+                </div>
+            </header>
+
+            <!-- Content Area -->
+            <main class="flex-1 overflow-x-hidden overflow-y-auto bg-gray-100 dark:bg-gray-900 p-4 md:p-6 content-area">
+                <div id="tab-content" class="tab-content">
+                    <!-- Dashboard Page -->
+                    <div id="dashboard-page" class="page-container animate-fadeIn">
+                        <h1 class="text-2xl font-bold mb-6">Home</h1>
+
+                        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-8">
+                            <!-- Welcome Card -->
+                            <div
+                                class="bg-gradient-to-r from-indigo-600 to-purple-600 rounded-xl text-white p-6 shadow-lg col-span-full lg:col-span-2">
+                                <div class="flex items-center">
+                                    <div>
+                                        <h2 class="text-xl font-semibold" id="welcome-message">Welcome, <span
+                                                id="dashboard-user-name">User</span>!</h2>
+                                        <p class="mt-2 opacity-90">Today is <span id="current-date"></span></p>
+                                        <div class="mt-4">
+                                            <button data-page="settings"
+                                                class="bg-white text-indigo-600 px-4 py-2 rounded-md text-sm font-medium hover:bg-opacity-90 transition-colors">
+                                                Edit Your Profile
+                                            </button>
+                                        </div>
+                                    </div>
+                                    <div class="ml-auto hidden md:block">
+                                        <i class="fas fa-user-graduate text-6xl opacity-80"></i>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Upcoming Lectures Card -->
+                            <div class="bg-white dark:bg-gray-800 rounded-xl p-6 shadow-md card-hover">
+                                <div class="flex items-center justify-between mb-4">
+                                    <h3 class="text-lg font-semibold">Upcoming Lectures</h3>
+                                    <span
+                                        class="text-xs bg-indigo-100 dark:bg-indigo-900 text-indigo-800 dark:text-indigo-200 px-2 py-1 rounded-full">Next
+                                        7 days</span>
+                                </div>
+                                <div id="upcoming-lectures" class="space-y-3">
+                                    <!-- Dynamically populated -->
+                                </div>
+
+                            </div>
+                        </div>
+
+                        <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+                            <!-- Recent Materials -->
+                            <div class="bg-white dark:bg-gray-800 rounded-xl p-6 shadow-md lg:col-span-2 card-hover">
+                                <div class="flex items-center justify-between mb-4">
+                                    <h3 class="text-lg font-semibold">Recent Materials</h3>
+                                    <span
+                                        class="text-xs bg-green-100 dark:bg-green-900 text-green-800 dark:text-green-200 px-2 py-1 rounded-full">New</span>
+                                </div>
+
+                                <div id="recent-materials" class="space-y-4">
+                                    <!-- Dynamically populated -->
+                                </div>
+
+                                <button data-page="courses"
+                                    class="nav-link mt-4 text-sm text-indigo-600 dark:text-indigo-400 hover:underline w-full text-center">
+                                    View All Courses
+                                </button>
+                            </div>
+
+                            <!-- Latest News -->
+                            <div class="bg-white dark:bg-gray-800 rounded-xl p-6 shadow-md card-hover">
+                                <div class="flex items-center justify-between mb-4">
+                                    <h3 class="text-lg font-semibold">Latest News</h3>
+                                </div>
+
+                                <div id="dashboard-news" class="space-y-4">
+                                    <!-- Dynamically populated -->
+                                </div>
+
+                                <button data-page="news"
+                                    class="nav-link mt-4 text-sm text-indigo-600 dark:text-indigo-400 hover:underline w-full text-center">
+                                    View All News
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Courses Page -->
+                    <div id="courses-page" class="page-container hidden animate-fadeIn">
+                        <div class="flex justify-between items-center mb-6">
+                            <h1 class="text-2xl font-bold">My Courses</h1>
+
+                            <div class="relative">
+                                <input type="text" id="course-search" placeholder="Search courses..."
+                                    class="w-full sm:w-64 pl-10 pr-4 py-2 border border-gray-300 dark:border-gray-700 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500 bg-white dark:bg-gray-800">
+                                <div class="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400">
+                                    <i class="fas fa-search"></i>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div id="courses-container" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                            <!-- Dynamically populated -->
+                        </div>
+                    </div>
+
+                    <!-- Course Details Page -->
+                    <div id="course-details-page" class="page-container hidden animate-fadeIn">
+                        <button id="back-to-courses"
+                            class="flex items-center text-indigo-600 dark:text-indigo-400 mb-4 hover:underline">
+                            <i class="fas fa-arrow-left mr-2"></i> Back to Courses
+                        </button>
+
+                        <div id="course-details-content">
+                            <!-- Dynamically populated -->
+                        </div>
+                    </div>
+
+                    <!-- Lectures Page -->
+                    <div id="lectures-page" class="page-container hidden animate-fadeIn">
+                        <h1 class="text-2xl font-bold mb-6">Lecture Schedule</h1>
+
+                        <div class="bg-white dark:bg-gray-800 rounded-xl shadow-md p-4 mb-6">
+                            <div class="flex flex-wrap items-center gap-4">
+                                <button id="view-calendar"
+                                    class="px-4 py-2 rounded-md bg-indigo-600 text-white hover:bg-indigo-700">Calendar
+                                    View</button>
+                                <button id="view-list"
+                                    class="px-4 py-2 rounded-md bg-gray-200 dark:bg-gray-700 text-gray-800 dark:text-white hover:bg-gray-300 dark:hover:bg-gray-600">List
+                                    View</button>
+                            </div>
+                        </div>
+
+                        <div id="calendar-view"
+                            class="bg-white dark:bg-gray-800 rounded-xl shadow-md p-4 calendar-container">
+                            <!-- FullCalendar will be mounted here -->
+                        </div>
+
+                        <div id="list-view" class="bg-white dark:bg-gray-800 rounded-xl shadow-md p-4 hidden">
+                            <div class="overflow-x-auto">
+                                <table class="min-w-full divide-y divide-gray-200 dark:divide-gray-700">
+                                    <thead>
+                                        <tr>
+                                            <th
+                                                class="px-6 py-3 bg-gray-50 dark:bg-gray-900 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">
+                                                Date & Time</th>
+                                            <th
+                                                class="px-6 py-3 bg-gray-50 dark:bg-gray-900 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">
+                                                Course</th>
+                                            <th
+                                                class="px-6 py-3 bg-gray-50 dark:bg-gray-900 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">
+                                                Location</th>
+                                            <th
+                                                class="px-6 py-3 bg-gray-50 dark:bg-gray-900 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">
+                                                Instructor</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody id="lecture-list"
+                                        class="bg-white dark:bg-gray-800 divide-y divide-gray-200 dark:divide-gray-700">
+                                        <!-- Dynamically populated -->
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- News Page -->
+                    <div id="news-page" class="page-container hidden animate-fadeIn">
+                        <h1 class="text-2xl font-bold mb-6">University News</h1>
+
+                        <div id="news-container" class="space-y-6">
+                            <!-- Dynamically populated -->
+                        </div>
+                    </div>
+
+                    <!-- Settings Page -->
+                    <div id="settings-page" class="page-container hidden animate-fadeIn">
+                        <h1 class="text-2xl font-bold mb-6">Settings</h1>
+
+                        <div class="bg-white dark:bg-gray-800 rounded-xl shadow-md p-6 mb-6">
+                            <h2 class="text-xl font-semibold mb-4">Personal Information</h2>
+
+                            <form id="settings-form" class="space-y-4">
+                                <div>
+                                    <label for="settings-name"
+                                        class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Your
+                                        Name</label>
+                                    <input type="text" id="settings-name"
+                                        class="w-full px-3 py-2 border border-gray-300 dark:border-gray-700 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 bg-white dark:bg-gray-900">
+                                </div>
+
+                                <div>
+                                    <label for="settings-university"
+                                        class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">University</label>
+                                    <select id="settings-university"
+                                        class="w-full px-3 py-2 border border-gray-300 dark:border-gray-700 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 bg-white dark:bg-gray-900">
+                                        <option value="hti">HTI University</option>
+                                        <option value="other">Other</option>
+                                    </select>
+                                </div>
+
+                                <div id="settings-other-university-container" class="hidden">
+                                    <label for="settings-other-university"
+                                        class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">University
+                                        Name</label>
+                                    <input type="text" id="settings-other-university"
+                                        class="w-full px-3 py-2 border border-gray-300 dark:border-gray-700 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 bg-white dark:bg-gray-900">
+                                </div>
+
+                                <div>
+                                    <label for="settings-year"
+                                        class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Academic
+                                        Year</label>
+                                    <select id="settings-year"
+                                        class="w-full px-3 py-2 border border-gray-300 dark:border-gray-700 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 bg-white dark:bg-gray-900">
+                                        <option value="1">Year 1</option>
+                                        <option value="2">Year 2</option>
+                                        <option value="3">Year 3</option>
+                                        <option value="4">Year 4</option>
+                                    </select>
+                                </div>
+
+                                <div>
+                                    <label for="settings-group"
+                                        class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Group</label>
+                                    <select id="settings-group"
+                                        class="w-full px-3 py-2 border border-gray-300 dark:border-gray-700 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 bg-white dark:bg-gray-900">
+                                        <option value="1">Group 1</option>
+                                        <option value="2">Group 2</option>
+                                    </select>
+                                </div>
+
+                                <button type="submit"
+                                    class="w-full sm:w-auto py-2 px-4 gradient-bg text-white font-medium rounded-md shadow-sm hover:opacity-90 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500">
+                                    Save Changes
+                                </button>
+                            </form>
+                        </div>
+
+                        <div class="bg-white dark:bg-gray-800 rounded-xl shadow-md p-6 mb-6">
+                            <h2 class="text-xl font-semibold mb-4">Preferences</h2>
+
+                            <div class="space-y-4">
+                                <div class="flex items-center justify-between">
+                                    <div>
+                                        <h3 class="font-medium">Dark Mode</h3>
+                                        <p class="text-sm text-gray-500 dark:text-gray-400">Toggle dark/light theme</p>
+                                    </div>
+                                    <label class="switch">
+                                        <input type="checkbox" id="settings-theme-toggle">
+                                        <span class="slider"></span>
+                                    </label>
+                                </div>
+
+                                <div class="flex items-center justify-between">
+                                    <div>
+                                        <h3 class="font-medium">Notifications</h3>
+                                        <p class="text-sm text-gray-500 dark:text-gray-400">Enable in-app notifications
+                                        </p>
+                                    </div>
+                                    <label class="switch">
+                                        <input type="checkbox" id="settings-notifications-toggle" checked>
+                                        <span class="slider"></span>
+                                    </label>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="bg-white dark:bg-gray-800 rounded-xl shadow-md p-6">
+                            <h2 class="text-xl font-semibold mb-4">About Team Shoky Helper</h2>
+
+                            <p class="text-gray-600 dark:text-gray-300 mb-4">
+                                Team Shoky Helper is a modern web application designed for college students to access
+                                their
+                                courses, lecture schedules, and university news.
+                            </p>
+
+                            <p class="text-gray-600 dark:text-gray-300">
+                                Version 1.0.0 - Last Updated: April 5, 2025
+                            </p>
+                        </div>
+                    </div>
+
+                    <!-- Tools Page -->
+                    <div id="tools-page" class="page-container hidden animate-fadeIn">
+                        <h1 class="text-2xl font-bold mb-6">Student Tools</h1>
+
+                        <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                            <!-- Todo List -->
+                            <div class="bg-white dark:bg-gray-800 rounded-xl shadow-md p-6 card-hover">
+                                <div class="flex justify-between items-center mb-4">
+                                    <h2 class="text-xl font-semibold">Todo List</h2>
+                                    <button id="add-todo"
+                                        class="p-2 rounded-full bg-indigo-100 dark:bg-indigo-900 text-indigo-600 dark:text-indigo-300 hover:bg-indigo-200 dark:hover:bg-indigo-800">
+                                        <i class="fas fa-plus"></i>
+                                    </button>
+                                </div>
+
+                                <div id="todo-input-container" class="hidden mb-4">
+                                    <input type="text" id="new-todo" placeholder="Add a new task..."
+                                        class="w-full px-3 py-2 border border-gray-300 dark:border-gray-700 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 bg-white dark:bg-gray-900">
+                                    <div class="flex justify-end mt-2 space-x-2">
+                                        <button id="cancel-todo"
+                                            class="px-3 py-1 text-sm text-gray-600 dark:text-gray-300 hover:text-gray-800 dark:hover:text-gray-100">Cancel</button>
+                                        <button id="save-todo"
+                                            class="px-3 py-1 text-sm bg-indigo-600 text-white rounded-md hover:bg-indigo-700">Add</button>
+                                    </div>
+                                </div>
+
+                                <ul id="todo-list" class="space-y-2">
+                                    <!-- Todo items will be added here dynamically -->
+                                </ul>
+                            </div>
+
+                            <!-- Sticky Notes -->
+                            <div class="bg-white dark:bg-gray-800 rounded-xl shadow-md p-6 card-hover">
+                                <div class="flex justify-between items-center mb-4">
+                                    <h2 class="text-xl font-semibold">Sticky Notes</h2>
+                                    <div class="flex space-x-2">
+                                        <button class="color-picker p-2 rounded-full bg-yellow-200 hover:bg-yellow-300"
+                                            data-color="yellow"></button>
+                                        <button class="color-picker p-2 rounded-full bg-blue-200 hover:bg-blue-300"
+                                            data-color="blue"></button>
+                                        <button class="color-picker p-2 rounded-full bg-green-200 hover:bg-green-300"
+                                            data-color="green"></button>
+                                        <button class="color-picker p-2 rounded-full bg-pink-200 hover:bg-pink-300"
+                                            data-color="pink"></button>
+                                        <button id="add-note"
+                                            class="p-2 rounded-full bg-indigo-100 dark:bg-indigo-900 text-indigo-600 dark:text-indigo-300 hover:bg-indigo-200 dark:hover:bg-indigo-800">
+                                            <i class="fas fa-plus"></i>
+                                        </button>
+                                    </div>
+                                </div>
+
+                                <div id="notes-container" class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                                    <!-- Sticky notes will be added here dynamically -->
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Communities Page -->
+                    <div id="communities-page" class="page-container hidden animate-fadeIn">
+                        <h1 class="text-3xl font-bold mb-6 text-center text-gray-800 dark:text-gray-100">University
+                            Communities</h1>
+                        <p class="text-lg text-gray-600 dark:text-gray-300 text-center mb-8 max-w-2xl mx-auto">
+                            Discover and join vibrant communities at HTI University. Expand your network, develop new
+                            skills, and enhance your college experience.
+                        </p>
+
+                        <!-- Communities Grid -->
+                        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8" id="communities-container">
+                            <!-- CyberCrew Card -->
+                            <div
+                                class="bg-white dark:bg-gray-800 rounded-xl shadow-xl overflow-hidden transform hover:scale-105 transition duration-300 ease-in-out">
+                                <div class="h-40 bg-gradient-to-r from-blue-600 to-cyan-500 relative">
+                                    <div class="absolute inset-0 flex items-center justify-center">
+                                        <i class="fas fa-shield-alt text-6xl text-white opacity-80"></i>
+                                    </div>
+                                </div>
+                                <div class="p-6">
+                                    <div class="flex justify-between items-start">
+                                        <h3 class="text-2xl font-semibold text-gray-800 dark:text-gray-100">CyberCrew
+                                        </h3>
+                                        <span
+                                            class="bg-blue-100 text-blue-800 text-xs font-medium px-2.5 py-0.5 rounded dark:bg-blue-900 dark:text-blue-300">Security</span>
+                                    </div>
+                                    <p class="text-gray-600 dark:text-gray-300 mt-4">
+                                        HTI's cybersecurity community focused on ethical hacking, network security, and
+                                        digital forensics. Join us to develop security skills through workshops, CTF
+                                        competitions, and hands-on projects.
+                                    </p>
+                                    <div class="mt-6 flex justify-between items-center">
+                                        <span class="text-sm text-gray-500 dark:text-gray-400"><i
+                                                class="fas fa-users mr-2"></i>X+ members</span>
+                                        <a href="https://linktr.ee/cyber_crew" target="_blank"
+                                            class="px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 transition-colors">Join
+                                            Community</a>
+                                    </div>
+                                    <!-- Social Media Links -->
+                                    <div class="mt-4 pt-4 border-t border-gray-200 dark:border-gray-700">
+                                        <p class="text-sm text-gray-500 dark:text-gray-400 mb-2">Connect with us:</p>
+                                        <div class="flex space-x-3">
+                                            <a href="https://chat.whatsapp.com/GJ1QtxlvLAb8sEGZj2cHVV" target="_blank"
+                                                class="flex items-center justify-center w-10 h-10 rounded-full bg-green-100 dark:bg-green-900 text-green-600 dark:text-green-400 hover:bg-green-200 dark:hover:bg-green-800 transition-colors">
+                                                <i class="fab fa-whatsapp fa-lg"></i>
+                                            </a>
+                                            <a href="https://www.facebook.com/CyberCrewHTI" target="_blank"
+                                                class="flex items-center justify-center w-10 h-10 rounded-full bg-blue-100 dark:bg-blue-900 text-blue-600 dark:text-blue-400 hover:bg-blue-200 dark:hover:bg-blue-800 transition-colors">
+                                                <i class="fab fa-facebook fa-lg"></i>
+                                            </a>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- IEEE HTI Card -->
+                            <div
+                                class="bg-white dark:bg-gray-800 rounded-xl shadow-xl overflow-hidden transform hover:scale-105 transition duration-300 ease-in-out">
+                                <div class="h-40 bg-gradient-to-r from-indigo-600 to-blue-500 relative">
+                                    <div class="absolute inset-0 flex items-center justify-center">
+                                        <i class="fas fa-microchip text-6xl text-white opacity-80"></i>
+                                    </div>
+                                </div>
+                                <div class="p-6">
+                                    <div class="flex justify-between items-start">
+                                        <h3 class="text-2xl font-semibold text-gray-800 dark:text-gray-100">IEEE HTI
+                                        </h3>
+                                        <span
+                                            class="bg-indigo-100 text-indigo-800 text-xs font-medium px-2.5 py-0.5 rounded dark:bg-indigo-900 dark:text-indigo-300">Engineering</span>
+                                    </div>
+                                    <p class="text-gray-600 dark:text-gray-300 mt-4">
+                                        The IEEE HTI Student Branch connects you with a global network of professionals.
+                                        Participate in technical workshops, leadership training, and innovative projects
+                                        to enhance your engineering career.
+                                    </p>
+                                    <div class="mt-6 flex justify-between items-center">
+                                        <span class="text-sm text-gray-500 dark:text-gray-400"><i
+                                                class="fas fa-users mr-2"></i>X+ members</span>
+                                        <a href="#"
+                                            class="px-4 py-2 bg-indigo-600 text-white rounded-md hover:bg-indigo-700 transition-colors">Join
+                                            Community</a>
+                                    </div>
+                                    <!-- Social Media Links -->
+                                    <div class="mt-4 pt-4 border-t border-gray-200 dark:border-gray-700">
+                                        <p class="text-sm text-gray-500 dark:text-gray-400 mb-2">Connect with us:</p>
+                                        <div class="flex space-x-3">
+                                            <a href="#" target="_blank"
+                                                class="flex items-center justify-center w-10 h-10 rounded-full bg-green-100 dark:bg-green-900 text-green-600 dark:text-green-400 hover:bg-green-200 dark:hover:bg-green-800 transition-colors">
+                                                <i class="fab fa-whatsapp fa-lg"></i>
+                                            </a>
+                                            <a href="https://www.facebook.com/IEEEHTISB1" target="_blank"
+                                                class="flex items-center justify-center w-10 h-10 rounded-full bg-blue-100 dark:bg-blue-900 text-blue-600 dark:text-blue-400 hover:bg-blue-200 dark:hover:bg-blue-800 transition-colors">
+                                                <i class="fab fa-facebook fa-lg"></i>
+                                            </a>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- ICPC Card -->
+                            <div
+                                class="bg-white dark:bg-gray-800 rounded-xl shadow-xl overflow-hidden transform hover:scale-105 transition duration-300 ease-in-out">
+                                <div class="h-40 bg-gradient-to-r from-purple-600 to-pink-500 relative">
+                                    <div class="absolute inset-0 flex items-center justify-center">
+                                        <i class="fas fa-code text-6xl text-white opacity-80"></i>
+                                    </div>
+                                </div>
+                                <div class="p-6">
+                                    <div class="flex justify-between items-start">
+                                        <h3 class="text-2xl font-semibold text-gray-800 dark:text-gray-100">ICPC HTI
+                                        </h3>
+                                        <span
+                                            class="bg-purple-100 text-purple-800 text-xs font-medium px-2.5 py-0.5 rounded dark:bg-purple-900 dark:text-purple-300">Competitive
+                                            Programming</span>
+                                    </div>
+                                    <p class="text-gray-600 dark:text-gray-300 mt-4">
+                                        The International Collegiate Programming Contest team at HTI. Sharpen your
+                                        problem-solving and coding skills through regular training sessions and compete
+                                        in regional and international programming competitions.
+                                    </p>
+                                    <div class="mt-6 flex justify-between items-center">
+                                        <span class="text-sm text-gray-500 dark:text-gray-400"><i
+                                                class="fas fa-users mr-2"></i>X+ members</span>
+                                        <a href="#"
+                                            class="px-4 py-2 bg-purple-600 text-white rounded-md hover:bg-purple-700 transition-colors">Join
+                                            Community</a>
+                                    </div>
+                                    <!-- Social Media Links -->
+                                    <div class="mt-4 pt-4 border-t border-gray-200 dark:border-gray-700">
+                                        <p class="text-sm text-gray-500 dark:text-gray-400 mb-2">Connect with us:</p>
+                                        <div class="flex space-x-3">
+                                            <a href="#" target="_blank"
+                                                class="flex items-center justify-center w-10 h-10 rounded-full bg-green-100 dark:bg-green-900 text-green-600 dark:text-green-400 hover:bg-green-200 dark:hover:bg-green-800 transition-colors">
+                                                <i class="fab fa-whatsapp fa-lg"></i>
+                                            </a>
+                                            <a href="https://www.facebook.com/icpchti" target="_blank"
+                                                class="flex items-center justify-center w-10 h-10 rounded-full bg-blue-100 dark:bg-blue-900 text-blue-600 dark:text-blue-400 hover:bg-blue-200 dark:hover:bg-blue-800 transition-colors">
+                                                <i class="fab fa-facebook fa-lg"></i>
+                                            </a>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- About Us Page -->
+                    <div id="about-us-page" class="page-container hidden animate-fadeIn">
+                        <h1 class="text-3xl font-bold mb-6 text-center text-gray-800 dark:text-gray-100">Meet the
+                            Brilliant Minds Behind Our Platform</h1>
+                        <p class="text-lg text-gray-600 dark:text-gray-300 text-center mb-8 max-w-2xl mx-auto">
+                            Our team of skilled developers, meticulous data collectors, and visionary owners have worked
+                            tirelessly to create this dynamic platform.
+                            Learn more about the individuals who brought this project to life.
+                        </p>
+                        <!-- Owners Section -->
+                        <h2 class="text-2xl font-semibold mb-6 mt-12 text-gray-800 dark:text-gray-100">Team Shoky Owners
+                        </h2>
+                        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">
+                            <!-- 1 Owner Card with Background Cover Photo -->
+                            <div
+                                class="relative bg-white dark:bg-gray-800 rounded-xl shadow-xl overflow-hidden transform hover:scale-105 transition duration-300 ease-in-out p-8">
+                                <!-- Cover Photo -->
+                                <div class="absolute inset-0">
+                                    <img src="youseftamer_profile.jpg" alt="Yousef Tamer - Head of Team Shoky"
+                                        class="w-full h-full object-cover opacity-30">
+                                </div>
+
+                                <!-- Profile Section -->
+                                <div class="relative flex flex-col items-center">
+                                    <div class="w-40 h-40 rounded-full border-4 border-indigo-500 overflow-hidden">
+                                        <img src="youseftamer_profile.jpg" alt="Yousef Tamer - Head of Team Shoky"
+                                            class="w-full h-full object-cover">
+                                    </div>
+                                    <h3 class="text-2xl font-semibold text-gray-800 dark:text-gray-100 mt-4">Yousef
+                                        Tamer</h3>
+                                    <p class="text-lg text-gray-500 dark:text-gray-400">Head of Team Shoky</p>
+                                    <div class="flex space-x-4 mt-4">
+                                        <!-- Mail Icon -->
+                                        <a href="mailto:youseftamereg@gmail.com"
+                                            class="text-indigo-600 dark:text-indigo-400 hover:text-indigo-500 transform hover:scale-110 transition duration-200">
+                                            <i class="fas fa-envelope fa-2x"></i>
+                                        </a>
+                                        <!-- Linktree Icon -->
+                                        <a href="https://linktr.ee/jooexploit" target="_blank"
+                                            class="text-indigo-600 dark:text-indigo-400 hover:text-indigo-500 transform hover:scale-110 transition duration-200">
+                                            <img src="https://cdn.brandfetch.io/id_tNIm05N/theme/dark/symbol.svg"
+                                                alt="Linktree - icon" class="w-8 h-8">
+                                        </a>
+                                    </div>
+                                </div>
+
+                                <p class="text-gray-600 dark:text-gray-300 mt-6 text-sm text-center">
+                                    fullstack dev and bug hunter | non tech lead@ CyberCrew |
+                                    cybersecurity co lead and backend lead@IEEE HTI | frontend dev@Brilliant Trend kSA
+                                </p>
+                            </div>
+                            <!-- 2 Owner Card with Background Cover Photo -->
+                            <div
+                                class="relative bg-white dark:bg-gray-800 rounded-xl shadow-xl overflow-hidden transform hover:scale-105 transition duration-300 ease-in-out p-8">
+                                <!-- Cover Photo -->
+                                <div class="absolute inset-0">
+                                    <img src="diaa.jpeg" alt="Diaa Elsadek - Vice Head of Team Shoky"
+                                        class="w-full h-full object-cover opacity-30">
+                                </div>
+
+                                <!-- Profile Section -->
+                                <div class="relative flex flex-col items-center">
+                                    <div class="w-40 h-40 rounded-full border-4 border-indigo-500 overflow-hidden">
+                                        <img src="diaa.jpeg" alt="Diaa Elsadek - Vice Head of Team Shoky"
+                                            class="w-full h-full object-cover">
+                                    </div>
+                                    <h3 class="text-2xl font-semibold text-gray-800 dark:text-gray-100 mt-4">Diaa
+                                        Elsadek
+                                    </h3>
+                                    <p class="text-lg text-gray-500 dark:text-gray-400">Vice Head of Team Shoky</p>
+                                    <div class="flex space-x-4 mt-4">
+                                        <!-- Mail Icon -->
+                                        <a href="https://wa.me/201117244172"
+                                            class="text-indigo-600 dark:text-indigo-400 hover:text-indigo-500 transform hover:scale-110 transition duration-200">
+                                            <i class="fab fa-whatsapp fa-2x"></i>
+                                        </a>
+                                        <!-- linkedin icon  -->
+                                        <a href="https://www.linkedin.com/in/diaa-elsadek-1b82682a8"
+                                            class="text-indigo-600 dark:text-indigo-400 hover:text-indigo-500 transform hover:scale-110 transition duration-200">
+                                            <i class="fab fa-linkedin fa-2x"></i>
+                                        </a>
+                                        <!-- Linktree Icon -->
+                                        <a href="https://linktr.ee/diaa_elsadek" target="_blank"
+                                            class="text-indigo-600 dark:text-indigo-400 hover:text-indigo-500 transform hover:scale-110 transition duration-200">
+                                            <img src="https://cdn.brandfetch.io/id_tNIm05N/theme/dark/symbol.svg"
+                                                alt="Linktree - icon" class="w-8 h-8">
+                                        </a>
+                                    </div>
+                                </div>
+
+                                <p class="text-gray-600 dark:text-gray-300 mt-6 text-sm text-center">
+                                    Flutter DEV | FrontEnd React | Backend nodejs | Year 3 Leader (2022) </p>
+                            </div>
+                            <!-- Repeat Owner Cards as needed -->
+                        </div>
+                        <br>
+                        <!-- Developers Section -->
+                        <h2 class="text-2xl font-semibold mb-6 text-gray-800 dark:text-gray-100">Meet Our Developers
+                        </h2>
+                        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">
+                            <!-- Developer Card -->
+                            <div
+                                class="relative bg-white dark:bg-gray-800 rounded-xl shadow-xl overflow-hidden transform hover:scale-105 transition duration-300 ease-in-out p-8">
+                                <!-- Cover Photo -->
+                                <div class="absolute inset-0">
+                                    <img src="youseftamer_profile.jpg" alt="Yousef Tamer - Head of Team Shoky"
+                                        class="w-full h-full object-cover opacity-30">
+                                </div>
+
+                                <!-- Profile Section -->
+                                <div class="relative flex flex-col items-center">
+                                    <div class="w-40 h-40 rounded-full border-4 border-indigo-500 overflow-hidden">
+                                        <img src="youseftamer_profile.jpg" alt="Yousef Tamer - Head of Team Shoky"
+                                            class="w-full h-full object-cover">
+                                    </div>
+                                    <h3 class="text-2xl font-semibold text-gray-800 dark:text-gray-100 mt-4">Yousef
+                                        Tamer</h3>
+                                    <p class="text-lg text-gray-500 dark:text-gray-400">Full Stack DEV</p>
+                                    <div class="flex space-x-4 mt-4">
+                                        <!-- Mail Icon -->
+                                        <a href="mailto:youseftamereg@gmail.com"
+                                            class="text-indigo-600 dark:text-indigo-400 hover:text-indigo-500 transform hover:scale-110 transition duration-200">
+                                            <i class="fas fa-envelope fa-2x"></i>
+                                        </a>
+                                        <!-- Linktree Icon -->
+                                        <a href="https://linktr.ee/jooexploit" target="_blank"
+                                            class="text-indigo-600 dark:text-indigo-400 hover:text-indigo-500 transform hover:scale-110 transition duration-200">
+                                            <img src="https://cdn.brandfetch.io/id_tNIm05N/theme/dark/symbol.svg"
+                                                alt="Linktree - icon" class="w-8 h-8">
+                                        </a>
+                                    </div>
+                                </div>
+
+                                <p class="text-gray-600 dark:text-gray-300 mt-6 text-sm text-center">
+                                    fullstack dev and bug hunter | non tech lead@ CyberCrew |
+                                    cybersecurity co lead and backend lead@IEEE HTI | frontend dev@Brilliant Trend kSA
+                                </p>
+                            </div>
+
+                            <!-- Repeat Developer Cards as needed -->
+                        </div>
+
+                        <!-- Data Collectors Section -->
+                        <h2 class="text-2xl font-semibold mb-6 mt-12 text-gray-800 dark:text-gray-100">Our Data
+                            Collectors</h2>
+                        <!-- Year 3 leaders  -->
+                        <div>
+                            <h3 class="text-xl font-semibold mb-4 text-indigo-600 dark:text-indigo-400">Year 3 Leaders
+                            </h3>
+                            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">
+                                <!-- mazen tamer Card -->
+                                <div
+                                    class="bg-white dark:bg-gray-800 rounded-xl shadow-xl transform hover:scale-105 transition duration-300 ease-in-out p-8">
+                                    <div class="flex flex-col items-center">
+                                        <img src="mazen_tamer.jpg" alt="mazen tamer - Data Collector Photo"
+                                            class="w-32 h-32 rounded-full border-4 border-indigo-500 mb-4">
+                                        <h3 class="text-xl font-semibold text-gray-800 dark:text-gray-100">Mazen Tamer
+                                        </h3>
+                                        <div class="flex space-x-4 mt-6">
+                                            <a href="https://wa.me/201097383576"
+                                                class="text-indigo-600 dark:text-indigo-400 hover:text-indigo-500 transform hover:scale-110 transition duration-200"
+                                                target="_blank" rel="noopener noreferrer">
+                                                <i class="fab fa-whatsapp fa-2x"></i>
+                                            </a>
+                                        </div>
+                                    </div>
+                                    <p class="text-gray-600 dark:text-gray-300 mt-4 text-sm">
+                                        Backend DEV nodejs
+                                    </p>
+                                </div>
+                                <!-- Eslam wael card  -->
+                                <div
+                                    class="bg-white dark:bg-gray-800 rounded-xl shadow-xl transform hover:scale-105 transition duration-300 ease-in-out p-8">
+                                    <div class="flex flex-col items-center">
+                                        <img src="islam_wael.jpg" alt="Eslam wael - Data Collector Photo"
+                                            class="w-32 h-32 rounded-full border-4 border-indigo-500 mb-4">
+                                        <h3 class="text-xl font-semibold text-gray-800 dark:text-gray-100">Eslam wael
+                                        </h3>
+                                        <div class="flex space-x-4 mt-6">
+                                            <a href="https://wa.me/201065504033"
+                                                class="text-indigo-600 dark:text-indigo-400 hover:text-indigo-500 transform hover:scale-110 transition duration-200"
+                                                target="_blank" rel="noopener noreferrer">
+                                                <i class="fab fa-whatsapp fa-2x"></i>
+                                            </a>
+                                            <a href="https://www.linkedin.com/in/eslam-amer-5a6b45272/"
+                                                class="text-indigo-600 dark:text-indigo-400 hover:text-indigo-500 transform hover:scale-110 transition duration-200"
+                                                target="_blank" rel="noopener noreferrer">
+                                                <i class="fab fa-linkedin fa-2x"></i>
+                                            </a>
+                                        </div>
+                                    </div>
+                                    <p class="text-gray-600 dark:text-gray-300 mt-4 text-sm">
+                                        Frontend developer React.js
+                                    </p>
+                                </div>
+                                <!-- Mariem Mostafa card  -->
+                                <div
+                                    class="bg-white dark:bg-gray-800 rounded-xl shadow-xl transform hover:scale-105 transition duration-300 ease-in-out p-8">
+                                    <div class="flex flex-col items-center">
+                                        <img src="icon.jpg" alt="Mariem Mostafa - Data Collector Photo"
+                                            class="w-32 h-32 rounded-full border-4 border-indigo-500 mb-4">
+                                        <h3 class="text-xl font-semibold text-gray-800 dark:text-gray-100">Mariem
+                                            Mostafa
+                                        </h3>
+                                        <div class="flex space-x-4 mt-6">
+                                            <a href="https://wa.me/201211375463"
+                                                class="text-indigo-600 dark:text-indigo-400 hover:text-indigo-500 transform hover:scale-110 transition duration-200"
+                                                target="_blank" rel="noopener noreferrer">
+                                                <i class="fab fa-whatsapp fa-2x"></i>
+                                            </a>
+                                            <a href="https://www.linkedin.com/in/mariem-moustafa-b5a7a02b5"
+                                                class="text-indigo-600 dark:text-indigo-400 hover:text-indigo-500 transform hover:scale-110 transition duration-200"
+                                                target="_blank" rel="noopener noreferrer">
+                                                <i class="fab fa-linkedin fa-2x"></i>
+                                            </a>
+                                        </div>
+                                    </div>
+                                    <p class="text-gray-600 dark:text-gray-300 mt-4 text-sm">
+                                        AI Engineer
+                                    </p>
+                                </div>
+                                <!-- Add more Year 3 helpers here -->
+                            </div>
+                        </div>
+                        <br>
+                        <!-- Year 2 Leaders -->
+                        <div>
+                            <h3 class="text-xl font-semibold mb-4 text-indigo-600 dark:text-indigo-400">Year 2 Leaders
+                            </h3>
+                            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">
+                                <!-- Ammar Roshdy Card -->
+                                <div
+                                    class="bg-white dark:bg-gray-800 rounded-xl shadow-xl transform hover:scale-105 transition duration-300 ease-in-out p-8">
+                                    <div class="flex flex-col items-center">
+                                        <img src="ammar roshdy.jpg" alt="Ammar Roshdy - Data Collector Photo"
+                                            class="w-32 h-32 rounded-full border-4 border-indigo-500 mb-4">
+                                        <h3 class="text-xl font-semibold text-gray-800 dark:text-gray-100">ammar roshdy
+                                        </h3>
+                                        <div class="flex space-x-4 mt-6">
+                                            <a href="https://www.instagram.com/3mar_roshdyy"
+                                                class="text-indigo-600 dark:text-indigo-400 hover:text-indigo-500 transform hover:scale-110 transition duration-200"
+                                                target="_blank" rel="noopener noreferrer">
+                                                <i class="fab fa-instagram fa-2x"></i>
+                                            </a>
+                                        </div>
+                                    </div>
+                                    <p dir="rtl" class="text-gray-600 dark:text-gray-300 mt-4 text-sm">
+                                        مهندس علي ما تفرج
+                                    </p>
+                                </div>
+
+                                <!-- Mohand khaled Card -->
+                                <div
+                                    class="bg-white dark:bg-gray-800 rounded-xl shadow-xl transform hover:scale-105 transition duration-300 ease-in-out p-8">
+                                    <div class="flex flex-col items-center">
+                                        <img src="Mohand khaled.jpg" alt="Mohand khaled - Data Collector Photo"
+                                            class="w-32 h-32 rounded-full border-4 border-indigo-500 mb-4 object-cover">
+                                        <h3 class="text-xl font-semibold text-gray-800 dark:text-gray-100">Mohand khaled
+                                        </h3>
+                                    </div>
+                                </div>
+                                <!-- Mostafa Nour card  -->
+                                <div
+                                    class="bg-white dark:bg-gray-800 rounded-xl shadow-xl transform hover:scale-105 transition duration-300 ease-in-out p-8">
+                                    <div class="flex flex-col items-center">
+                                        <img src="Mostafa_nour.jpg" alt="Mostafa Nour - Data Collector Photo"
+                                            class="w-32 h-32 rounded-full border-4 border-indigo-500 mb-4 object-cover">
+                                        <h3 class="text-xl font-semibold text-gray-800 dark:text-gray-100">Mostafa Nour
+                                        </h3>
+                                        <div class="flex space-x-4 mt-6">
+                                            <a href="https://www.facebook.com/share/16HiyfdoMD/"
+                                                class="text-indigo-600 dark:text-indigo-400 hover:text-indigo-500 transform hover:scale-110 transition duration-200"
+                                                target="_blank" rel="noopener noreferrer">
+                                                <i class="fab fa-facebook fa-2x"></i>
+                                            </a>
+                                        </div>
+                                    </div>
+                                </div>
+                                <!-- Add more Year 2 helpers here -->
+                            </div>
+                        </div>
+
+                        <br>
+
+                        <!-- Year 1 Leaders -->
+                        <div class="mb-8">
+                            <h3 class="text-xl font-semibold mb-4 text-indigo-600 dark:text-indigo-400">Year 1 Leaders
+                            </h3>
+                            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">
+                                <!-- Nare Mohammed Card -->
+                                <div
+                                    class="bg-white dark:bg-gray-800 rounded-xl shadow-xl transform hover:scale-105 transition duration-300 ease-in-out p-8">
+                                    <div class="flex flex-col items-center">
+                                        <img src="Nare Mohammed.jpg" alt="Nare Mohammed - Data Collector Photo"
+                                            class="w-32 h-32 rounded-full border-4 border-indigo-500 mb-4 object-cover">
+                                        <h3 class="text-xl font-semibold text-gray-800 dark:text-gray-100">Nare Mohammed
+                                        </h3>
+                                        <div class="flex space-x-4 mt-6">
+                                            <a href="https://www.linkedin.com/in/naira-elshorbagy-710017330?utm_source=share&utm_campaign=share_via&utm_content=profile&utm_medium=android_app"
+                                                class="text-indigo-600 dark:text-indigo-400 hover:text-indigo-500 transform hover:scale-110 transition duration-200"
+                                                target="_blank" rel="noopener noreferrer">
+                                                <i class="fab fa-linkedin fa-2x"></i>
+                                            </a>
+                                        </div>
+                                    </div>
+                                    <p class="text-gray-600 dark:text-gray-300 mt-4 text-sm">
+                                        AI intern , HTI first year student
+                                    </p>
+                                </div>
+
+                                <!-- Hamza Haikal Card  -->
+                                <div
+                                    class="bg-white dark:bg-gray-800 rounded-xl shadow-xl transform hover:scale-105 transition duration-300 ease-in-out p-8">
+                                    <div class="flex flex-col items-center">
+                                        <img src="Hamza_Haikal.jpg" alt="Hamza Haikal - Data Collector Photo"
+                                            class="w-32 h-32 rounded-full border-4 border-indigo-500 mb-4 object-cover">
+                                        <h3 class="text-xl font-semibold text-gray-800 dark:text-gray-100">Hamza Haikal
+                                        </h3>
+                                        <div class="flex space-x-4 mt-6">
+                                            <a href="https://www.facebook.com/share/12EQdc3GpjM/"
+                                                class="text-indigo-600 dark:text-indigo-400 hover:text-indigo-500 transform hover:scale-110 transition duration-200"
+                                                target="_blank" rel="noopener noreferrer">
+                                                <i class="fab fa-facebook fa-2x"></i>
+                                            </a>
+
+                                            <a href="https://www.instagram.com/dabuilder.hamza"
+                                                class="text-indigo-600 dark:text-indigo-400 hover:text-indigo-500 transform hover:scale-110 transition duration-200"
+                                                target="_blank" rel="noopener noreferrer">
+                                                <i class="fab fa-instagram fa-2x"></i>
+                                            </a>
+
+                                            <a href="https://wa.me/qr/LF45FABHMAVUE1"
+                                                class="text-indigo-600 dark:text-indigo-400 hover:text-indigo-500 transform hover:scale-110 transition duration-200"
+                                                target="_blank" rel="noopener noreferrer">
+                                                <i class="fab fa-whatsapp fa-2x"></i>
+                                            </a>
+
+                                        </div>
+                                    </div>
+                                    <p class="text-gray-600 dark:text-gray-300 mt-4 text-sm">
+                                        HTI student with a strong foundation in HTML & CSS, and currently exploring
+                                        JavaScript to deliver smooth and responsive user experiences </p>
+                                </div>
+                                <!-- JanaMagdy card  -->
+                                <div
+                                    class="bg-white dark:bg-gray-800 rounded-xl shadow-xl transform hover:scale-105 transition duration-300 ease-in-out p-8">
+                                    <div class="flex flex-col items-center">
+                                        <img src="icon.jpg" alt="JanaMagdy - Data Collector Photo"
+                                            class="w-32 h-32 rounded-full border-4 border-indigo-500 mb-4 object-cover">
+                                        <h3 class="text-xl font-semibold text-gray-800 dark:text-gray-100">Jana Magdy
+                                        </h3>
+                                        <div class="flex space-x-4 mt-6">
+                                            <a href="https://github.com/JanaMagdy"
+                                                class="text-indigo-600 dark:text-indigo-400 hover:text-indigo-500 transform hover:scale-110 transition duration-200"
+                                                target="_blank" rel="noopener noreferrer">
+                                                <i class="fab fa-github fa-2x"></i>
+                                            </a>
+
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <!-- Thomas nasser Card  -->
+                                <div
+                                    class="bg-white dark:bg-gray-800 rounded-xl shadow-xl transform hover:scale-105 transition duration-300 ease-in-out p-8">
+                                    <div class="flex flex-col items-center">
+                                        <img src="Thomas_nasser.jpg" alt="Thomas nasser- Data Collector Photo"
+                                            class="w-32 h-32 rounded-full border-4 border-indigo-500 mb-4 object-cover">
+                                        <h3 class="text-xl font-semibold text-gray-800 dark:text-gray-100">Thomas nasser
+                                        </h3>
+                                        <div class="flex space-x-4 mt-6">
+                                            <a href="https://www.linkedin.com/in/thomas-nasser-30aa87248"
+                                                class="text-indigo-600 dark:text-indigo-400 hover:text-indigo-500 transform hover:scale-110 transition duration-200"
+                                                target="_blank" rel="noopener noreferrer">
+                                                <i class="fab fa-linkedin fa-2x"></i>
+                                            </a>
+                                        </div>
+                                        <p class="text-gray-600 dark:text-gray-300 mt-4 text-sm">Content Creator</p>
+                                    </div>
+                                </div>
+
+                                <!-- Aya Elsayed card  -->
+                                <div
+                                    class="bg-white dark:bg-gray-800 rounded-xl shadow-xl transform hover:scale-105 transition duration-300 ease-in-out p-8">
+                                    <div class="flex flex-col items-center">
+                                        <img src="icon.jpg" alt=" Aya Elsayed - Data Collector Photo"
+                                            class="w-32 h-32 rounded-full border-4 border-indigo-500 mb-4 object-cover">
+                                        <h3 class="text-xl font-semibold text-gray-800 dark:text-gray-100">Aya Elsayed
+                                        </h3>
+                                    </div>
+                                </div>
+
+                                <!-- 3amer card  -->
+                                <div
+                                    class="bg-white dark:bg-gray-800 rounded-xl shadow-xl transform hover:scale-105 transition duration-300 ease-in-out p-8">
+                                    <div class="flex flex-col items-center">
+                                        <img src="3amer.jpg" alt="3amer - Data Collector Photo"
+                                            class="w-32 h-32 rounded-full border-4 border-indigo-500 mb-4 object-cover">
+                                        <h3 class="text-xl font-semibold text-gray-800 dark:text-gray-100">3amer
+                                        </h3>
+                                        <div class="flex space-x-4 mt-6">
+                                            <a href="https://wa.me/qr/WVNH66ZZZK3DC1"
+                                                class="text-indigo-600 dark:text-indigo-400 hover:text-indigo-500 transform hover:scale-110 transition duration-200"
+                                                target="_blank" rel="noopener noreferrer">
+                                                <i class="fab fa-whatsapp fa-2x"></i>
+                                            </a>
+
+                                            <a href="https://www.instagram.com/ahmedamer2911?"
+                                                class="text-indigo-600 dark:text-indigo-400 hover:text-indigo-500 transform hover:scale-110 transition duration-200"
+                                                target="_blank" rel="noopener noreferrer">
+                                                <i class="fab fa-instagram fa-2x"></i>
+                                            </a>
+                                        </div>
+                                    </div>
+                                </div>
+                                <!-- 3amoor card  -->
+                                <div
+                                    class="bg-white dark:bg-gray-800 rounded-xl shadow-xl transform hover:scale-105 transition duration-300 ease-in-out p-8">
+                                    <div class="flex flex-col items-center">
+                                        <img src="3amoor.jpg" alt="3amoor - Data Collector Photo"
+                                            class="w-32 h-32 rounded-full border-4 border-indigo-500 mb-4 object-cover">
+                                        <h3 class="text-xl font-semibold text-gray-800 dark:text-gray-100">3amoor
+                                        </h3>
+                                        <div class="flex space-x-4 mt-6">
+                                            <a href="https://www.linkedin.com/in/amr-khaled-a282b2343"
+                                                class="text-indigo-600 dark:text-indigo-400 hover:text-indigo-500 transform hover:scale-110 transition duration-200"
+                                                target="_blank" rel="noopener noreferrer">
+                                                <i class="fab fa-linkedin fa-2x"></i>
+                                            </a>
+
+                                            <a href="https://www.instagram.com/amrr.khaled.77"
+                                                class="text-indigo-600 dark:text-indigo-400 hover:text-indigo-500 transform hover:scale-110 transition duration-200"
+                                                target="_blank" rel="noopener noreferrer">
+                                                <i class="fab fa-instagram fa-2x"></i>
+                                            </a>
+                                        </div>
+                                        <p class="text-gray-600 dark:text-gray-300 mt-4 text-sm">Social media marketing
+                                            and data collector</p>
+                                    </div>
+                                </div>
+                                <!-- Shaimaa ashraf card  -->
+                                <div
+                                    class="bg-white dark:bg-gray-800 rounded-xl shadow-xl transform hover:scale-105 transition duration-300 ease-in-out p-8">
+                                    <div class="flex flex-col items-center">
+                                        <img src="icon.jpg" alt="Shaimaa ashraf - Data Collector Photo"
+                                            class="w-32 h-32 rounded-full border-4 border-indigo-500 mb-4 object-cover">
+                                        <h3 class="text-xl font-semibold text-gray-800 dark:text-gray-100">Shaimaa
+                                            ashraf
+                                        </h3>
+                                        <div class="flex space-x-4 mt-6">
+                                            <a href="https://www.instagram.com/shaimaa.haggag.31"
+                                                class="text-indigo-600 dark:text-indigo-400 hover:text-indigo-500 transform hover:scale-110 transition duration-200"
+                                                target="_blank" rel="noopener noreferrer">
+                                                <i class="fab fa-instagram fa-2x"></i>
+                                            </a>
+                                        </div>
+                                        <p class="text-gray-600 dark:text-gray-300 mt-4 text-sm">HTI first year student
+                                        </p>
+                                    </div>
+                                </div>
+                                <!-- Add more Year 1 helpers here -->
+                            </div>
+                        </div>
+
+
+
+                        <!-- Call to Action -->
+                        <div class="mt-12 text-center">
+                            <p class="text-gray-600 dark:text-gray-300 text-lg">
+                                Interested in joining our team? Call us on WhatsApp
+                                <a href="https://wa.me/201090952790?text=Hello%20Team%20Shoky%2C%20I%20am%20interested%20in%20joining%20your%20team."
+                                    class="text-indigo-600 dark:text-indigo-400 hover:text-indigo-500 transform hover:scale-110 transition duration-200">
+                                    <i class="fab fa-whatsapp"></i> WhatsApp
+                                </a> for exciting opportunities!
+                            </p>
+                        </div>
+                    </div>
+
+                </div>
+            </main>
+        </div>
+    </div>
+
+    <!-- Notification Dropdown -->
+    <div id="notification-dropdown"
+        class="hidden absolute right-4 top-16 w-80 max-h-96 overflow-y-auto bg-white dark:bg-gray-800 rounded-lg shadow-lg z-50 border border-gray-200 dark:border-gray-700">
+        <div class="p-4 border-b border-gray-200 dark:border-gray-700">
+            <h3 class="font-semibold text-gray-900 dark:text-white">Notifications</h3>
+        </div>
+
+        <div id="notification-list" class="p-2">
+            <!-- Dynamically populated -->
+        </div>
+
+        <div class="p-3 text-center border-t border-gray-200 dark:border-gray-700">
+            <button id="clear-notifications" class="text-sm text-indigo-600 dark:text-indigo-400 hover:underline">Clear
+                All</button>
+        </div>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+
+</html>

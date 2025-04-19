@@ -1,0 +1,473 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Lecture Data Input Form</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+            margin: 0;
+            padding: 20px;
+            min-height: 100vh;
+        }
+
+        h2 {
+            color: #2c3e50;
+            text-align: center;
+            margin-bottom: 30px;
+            text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.1);
+        }
+
+        h3 {
+            color: #34495e;
+            margin-bottom: 15px;
+        }
+
+        .section {
+            margin-bottom: 30px;
+            background: white;
+            border-radius: 15px;
+            padding: 20px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+
+        .entry,
+        .chapter-entry {
+            background: #f9f9f9;
+            border-radius: 10px;
+            padding: 15px;
+            margin-bottom: 15px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+            transition: transform 0.2s;
+        }
+
+        .entry:hover,
+        .chapter-entry:hover {
+            transform: translateY(-2px);
+        }
+
+        .chapter-entry {
+            border: 2px dashed #bdc3c7;
+            margin: 10px 0;
+        }
+
+        .material-entry {
+            background: #ecf0f1;
+            border-radius: 5px;
+            padding: 10px;
+            margin: 5px 0;
+            border: 1px solid #ddd;
+        }
+
+        input,
+        textarea,
+        select {
+            display: block;
+            width: 100%;
+            margin: 8px 0;
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            font-size: 14px;
+            box-sizing: border-box;
+            transition: border-color 0.3s;
+        }
+
+        input:focus,
+        textarea:focus,
+        select:focus {
+            outline: none;
+            border-color: #3498db;
+            box-shadow: 0 0 5px rgba(52, 152, 219, 0.3);
+        }
+
+        textarea {
+            min-height: 80px;
+            resize: vertical;
+        }
+
+        button {
+            padding: 10px 20px;
+            margin: 5px 5px 0 0;
+            border: none;
+            border-radius: 5px;
+            background: #3498db;
+            color: white;
+            font-size: 14px;
+            cursor: pointer;
+            transition: background 0.3s, transform 0.2s;
+        }
+
+        button:hover {
+            background: #2980b9;
+            transform: translateY(-1px);
+        }
+
+        button:active {
+            transform: translateY(1px);
+        }
+
+        .button-group {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+        }
+
+        pre {
+            background: #2c3e50;
+            color: #ecf0f1;
+            padding: 20px;
+            border-radius: 10px;
+            font-family: 'Courier New', Courier, monospace;
+            white-space: pre-wrap;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+
+        @media (max-width: 600px) {
+            .section {
+                padding: 15px;
+            }
+
+            button {
+                width: 100%;
+                margin: 5px 0;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <h2>Course & Lecture Manager</h2>
+
+    <!-- Lecture Data Section -->
+    <div class="section" id="lectureDataSection">
+        <h3>Lecture Data</h3>
+        <div id="lectureEntries"></div>
+        <div class="button-group">
+            <button onclick="addLectureEntry()">Add Lecture</button>
+            <button onclick="removeLectureEntry()" id="removeLectureBtn" style="display: none;">Remove Lecture</button>
+        </div>
+    </div>
+
+    <!-- Course Data Section -->
+    <div class="section" id="courseDataSection">
+        <h3>Course Data</h3>
+        <div id="courseEntries"></div>
+        <div class="button-group">
+            <button onclick="addCourseEntry()">Add Course</button>
+            <button onclick="removeCourseEntry()" id="removeCourseBtn" style="display: none;">Remove Course</button>
+        </div>
+    </div>
+
+    <!-- News Section -->
+    <div class="section" id="newsSection">
+        <h3>News</h3>
+        <div id="newsEntries"></div>
+        <div class="button-group">
+            <button onclick="addNewsEntry()">Add News</button>
+            <button onclick="removeNewsEntry()" id="removeNewsBtn" style="display: none;">Remove News</button>
+        </div>
+    </div>
+
+    <button onclick="generateOutput()"
+        style="background: #e74c3c; width: 200px; margin: 20px auto; display: block;">Generate Output</button>
+    <h3>Output:</h3>
+    <pre id="output"></pre>
+
+    <script>
+        // Lecture Data Functions
+        function addLectureEntry() {
+            const container = document.getElementById('lectureEntries');
+            const entry = document.createElement('div');
+            entry.className = 'entry';
+            entry.innerHTML = `
+                <input type="number" placeholder="ID" class="lecture-id">
+                <input type="text" placeholder="Title" class="lecture-title">
+                <input type="date" placeholder="Date" class="lecture-date">
+                <input type="time" placeholder="Time" class="lecture-time">
+                <input type="text" placeholder="Location" class="lecture-location">
+                <input type="text" placeholder="Instructor" class="lecture-instructor">
+            `;
+            container.appendChild(entry);
+            updateRemoveButton('lectureEntries', 'removeLectureBtn');
+        }
+
+        function removeLectureEntry() {
+            const container = document.getElementById('lectureEntries');
+            if (container.children.length > 1) {
+                container.removeChild(container.lastChild);
+            }
+            updateRemoveButton('lectureEntries', 'removeLectureBtn');
+        }
+
+        // Course Data Functions
+        function addCourseEntry() {
+            const container = document.getElementById('courseEntries');
+            const entry = document.createElement('div');
+            entry.className = 'entry';
+            entry.innerHTML = `
+                <select class="course-year">
+                    <option value="" disabled selected>Select Academic Year</option>
+                    <option value="1">1</option>
+                    <option value="2">2</option>
+                    <option value="3">3</option>
+                    <option value="4">4</option>
+                </select>
+                <input type="text" placeholder="Course ID" class="course-id">
+                <input type="text" placeholder="Title" class="course-title">
+                <input type="text" placeholder="Instructor" class="course-instructor">
+                <textarea placeholder="Description" class="course-description"></textarea>
+                <div class="chapters-container"></div>
+                <div class="button-group">
+                    <button onclick="addChapterEntry(this.parentElement.parentElement)">Add Chapter</button>
+                    <button onclick="removeChapterEntry(this.parentElement.parentElement)" class="remove-chapter-btn" style="display: none;">Remove Chapter</button>
+                </div>
+            `;
+            container.appendChild(entry);
+            addChapterEntry(entry);
+            updateRemoveButton('courseEntries', 'removeCourseBtn');
+        }
+
+        function removeCourseEntry() {
+            const container = document.getElementById('courseEntries');
+            if (container.children.length > 1) {
+                container.removeChild(container.lastChild);
+            }
+            updateRemoveButton('courseEntries', 'removeCourseBtn');
+        }
+
+        function addChapterEntry(courseEntry) {
+            const chaptersContainer = courseEntry.querySelector('.chapters-container');
+            const chapterEntry = document.createElement('div');
+            chapterEntry.className = 'chapter-entry';
+            chapterEntry.innerHTML = `
+                <input type="text" placeholder="Chapter Title" class="course-chapter-title">
+                <textarea placeholder="Chapter Description" class="course-chapter-desc"></textarea>
+                <div class="materials-container"></div>
+                <div class="button-group">
+                    <button onclick="addMaterialEntry(this.parentElement.parentElement)">Add Material</button>
+                    <button onclick="removeMaterialEntry(this.parentElement.parentElement)" class="remove-material-btn" style="display: none;">Remove Material</button>
+                </div>
+            `;
+            chaptersContainer.appendChild(chapterEntry);
+            addMaterialEntry(chapterEntry); // Add one material by default
+            updateChapterRemoveButton(courseEntry);
+        }
+
+        function removeChapterEntry(courseEntry) {
+            const chaptersContainer = courseEntry.querySelector('.chapters-container');
+            if (chaptersContainer.children.length > 1) {
+                chaptersContainer.removeChild(chaptersContainer.lastChild);
+            }
+            updateChapterRemoveButton(courseEntry);
+        }
+
+        function addMaterialEntry(chapterEntry) {
+            const materialsContainer = chapterEntry.querySelector('.materials-container');
+            const materialEntry = document.createElement('div');
+            materialEntry.className = 'material-entry';
+            materialEntry.innerHTML = `
+                <input type="input" placeholder="Material Title" class="course-material-title">
+                <select class="course-material-type">
+                    <option value="" disabled selected>Select Material Type</option>
+                    <option value="pdf">pdf</option>
+                    <option value="video">video</option>
+                    <option value="assignment">assignment</option>
+                </select>
+                <input type="date" placeholder="Material Date" class="course-material-date">
+                <input type="text" placeholder="Material Link" class="course-material-link">
+            `;
+            materialsContainer.appendChild(materialEntry);
+            updateMaterialRemoveButton(chapterEntry);
+        }
+
+        function removeMaterialEntry(chapterEntry) {
+            const materialsContainer = chapterEntry.querySelector('.materials-container');
+            if (materialsContainer.children.length > 1) {
+                materialsContainer.removeChild(materialsContainer.lastChild);
+            }
+            updateMaterialRemoveButton(chapterEntry);
+        }
+
+        // News Data Functions
+        function addNewsEntry() {
+            const container = document.getElementById('newsEntries');
+            const entry = document.createElement('div');
+            entry.className = 'entry';
+            entry.innerHTML = `
+                <input type="number" placeholder="ID" class="news-id">
+                <input type="text" placeholder="Title" class="news-title">
+                <input type="date" placeholder="Date" class="news-date">
+                <textarea placeholder="Content" class="news-content"></textarea>
+                <input type="text" placeholder="Source" class="news-source">
+            `;
+            container.appendChild(entry);
+            updateRemoveButton('newsEntries', 'removeNewsBtn');
+        }
+
+        function removeNewsEntry() {
+            const container = document.getElementById('newsEntries');
+            if (container.children.length > 1) {
+                container.removeChild(container.lastChild);
+            }
+            updateRemoveButton('newsEntries', 'removeNewsBtn');
+        }
+
+        // Utility Functions to Show/Hide Remove Buttons
+        function updateRemoveButton(containerId, buttonId) {
+            const container = document.getElementById(containerId);
+            const button = document.getElementById(buttonId);
+            button.style.display = container.children.length > 1 ? 'inline-block' : 'none';
+        }
+
+        function updateChapterRemoveButton(courseEntry) {
+            const chaptersContainer = courseEntry.querySelector('.chapters-container');
+            const button = courseEntry.querySelector('.remove-chapter-btn');
+            button.style.display = chaptersContainer.children.length > 1 ? 'inline-block' : 'none';
+        }
+
+        function updateMaterialRemoveButton(chapterEntry) {
+            const materialsContainer = chapterEntry.querySelector('.materials-container');
+            const button = chapterEntry.querySelector('.remove-material-btn');
+            button.style.display = materialsContainer.children.length > 1 ? 'inline-block' : 'none';
+        }
+
+        // Generate Output
+        function generateOutput() {
+            let output = '';
+
+            // Lecture Data
+            const lectureEntries = document.getElementById('lectureEntries').children;
+            if (lectureEntries.length > 0) {
+                output += 'const lectureData = [\n';
+                Array.from(lectureEntries).forEach((entry, index) => {
+                    const id = entry.querySelector('.lecture-id').value;
+                    const title = entry.querySelector('.lecture-title').value;
+                    const date = entry.querySelector('.lecture-date').value;
+                    const time = entry.querySelector('.lecture-time').value;
+                    const location = entry.querySelector('.lecture-location').value;
+                    const instructor = entry.querySelector('.lecture-instructor').value;
+
+                    if (id && title && date && time && location && instructor) {
+                        output += `    {\n        id: ${id},\n        title: "${title}",\n        date: "${date}",\n        time: "${time}:00",\n        location: "${location}",\n        instructor: "${instructor}"\n    }`;
+                        if (index < lectureEntries.length - 1) output += ',\n';
+                        else output += '\n';
+                    }
+                });
+                output += '];\n\n';
+            }
+
+            // Course Data
+            const courseEntries = document.getElementById('courseEntries').children;
+            if (courseEntries.length > 0) {
+                output += 'const courseData = {\n';
+                const years = {};
+
+                Array.from(courseEntries).forEach(entry => {
+                    const year = entry.querySelector('.course-year').value;
+                    const id = entry.querySelector('.course-id').value;
+                    const title = entry.querySelector('.course-title').value;
+                    const instructor = entry.querySelector('.course-instructor').value;
+                    const description = entry.querySelector('.course-description').value;
+                    const chapterEntries = entry.querySelectorAll('.chapter-entry');
+
+                    if (year && id && title && instructor && description) {
+                        if (!years[year]) years[year] = [];
+                        const chapters = [];
+                        chapterEntries.forEach(chapter => {
+                            const chapterTitle = chapter.querySelector('.course-chapter-title').value;
+                            const chapterDesc = chapter.querySelector('.course-chapter-desc').value;
+                            const materialEntries = chapter.querySelectorAll('.material-entry');
+
+                            if (chapterTitle && chapterDesc) {
+                                const materials = [];
+                                materialEntries.forEach(material => {
+                                    const materialTitle = material.querySelector('.course-material-title').value;
+                                    const materialType = material.querySelector('.course-material-type').value;
+                                    const materialDate = material.querySelector('.course-material-date').value;
+                                    const materialLink = material.querySelector('.course-material-link').value;
+                                    if (materialTitle && materialType && materialDate && materialLink) {
+                                        materials.push({
+                                            title: materialTitle,
+                                            type: materialType,
+                                            date: materialDate,
+                                            link: materialLink
+                                        });
+                                    }
+                                });
+                                chapters.push({ title: chapterTitle, description: chapterDesc, materials });
+                            }
+                        });
+                        years[year].push({ id, title, instructor, description, chapters });
+                    }
+                });
+
+                const yearKeys = Object.keys(years);
+                yearKeys.forEach((year, yearIndex) => {
+                    output += `    ${year}: [\n`;
+                    years[year].forEach((course, courseIndex) => {
+                        output += `        {\n            id: "${course.id}",\n            title: "${course.title}",\n            instructor: "${course.instructor}",\n            description: "${course.description}"`;
+                        if (course.chapters.length > 0) {
+                            output += `,\n            chapters: [\n`;
+                            course.chapters.forEach((chapter, chapterIndex) => {
+                                output += `                {\n                    title: "${chapter.title}",\n                    description: "${chapter.description}"`;
+                                if (chapter.materials.length > 0) {
+                                    output += `,\n                    materials: [\n`;
+                                    chapter.materials.forEach((material, materialIndex) => {
+                                        output += `                        { title: "${material.title}", type: "${material.type}", date: "${material.date}", link: "${material.link}" }`;
+                                        if (materialIndex < chapter.materials.length - 1) output += ',\n';
+                                        else output += '\n';
+                                    });
+                                    output += `                    ]`;
+                                }
+                                output += `\n                }`;
+                                if (chapterIndex < course.chapters.length - 1) output += ',\n';
+                                else output += '\n';
+                            });
+                            output += `            ]`;
+                        }
+                        output += `\n        }`;
+                        if (courseIndex < years[year].length - 1) output += ',\n';
+                        else output += '\n';
+                    });
+                    output += `    ]`;
+                    if (yearIndex < yearKeys.length - 1) output += ',\n';
+                    else output += '\n';
+                });
+                output += '};\n\n';
+            }
+
+            // News
+            const newsEntries = document.getElementById('newsEntries').children;
+            if (newsEntries.length > 0) {
+                output += 'const news = [\n';
+                Array.from(newsEntries).forEach((entry, index) => {
+                    const id = entry.querySelector('.news-id').value;
+                    const title = entry.querySelector('.news-title').value;
+                    const date = entry.querySelector('.news-date').value;
+                    const content = entry.querySelector('.news-content').value;
+                    const source = entry.querySelector('.news-source').value;
+
+                    if (id && title && date && content && source) {
+                        output += `    {\n        id: ${id},\n        title: "${title}",\n        date: "${date}",\n        content: "${content}",\n        source: "${source}"\n    }`;
+                        if (index < newsEntries.length - 1) output += ',\n';
+                        else output += '\n';
+                    }
+                });
+                output += '];\n';
+            }
+
+            document.getElementById('output').textContent = output || 'No valid data entered.';
+        }
+
+        // Initialize with one empty entry for each
+        addLectureEntry();
+        addCourseEntry();
+        addNewsEntry();
+    </script>
+</body>
+
+</html>
