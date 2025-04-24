@@ -37,9 +37,36 @@
     <link rel="icon" type="image/png" sizes="32x32" href="favicon/favicon-32x32.png">
     <link rel="icon" type="image/png" sizes="96x96" href="favicon/favicon-96x96.png">
     <link rel="icon" type="image/png" sizes="16x16" href="favicon/favicon-16x16.png">
+    <!-- AFTER (Example - Adapt based on your critical CSS needs) -->
+    <!-- Load critical CSS normally (or inline it) -->
+    <!-- <link href="critical.css" rel="stylesheet"> -->
+
+    <!-- Preload non-critical CSS -->
+    <link rel="preload" href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" as="style"
+        onload="this.onload=null;this.rel='stylesheet'">
+    <noscript>
+        <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css">
+    </noscript>
+
+    <link rel="preload" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@6.0.0/css/all.min.css"
+        as="style" onload="this.onload=null;this.rel='stylesheet'">
+    <noscript>
+        <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@6.0.0/css/all.min.css">
+    </noscript>
+
+    <link rel="preload" href="https://cdn.jsdelivr.net/npm/fullcalendar@5.10.1/main.min.css" as="style"
+        onload="this.onload=null;this.rel='stylesheet'">
+    <noscript>
+        <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/fullcalendar@5.10.1/main.min.css">
+    </noscript>
+
+    <link rel="preload" href="https://cdn.jsdelivr.net/npm/shepherd.js@10.0.1/dist/css/shepherd.css" as="style"
+        onload="this.onload=null;this.rel='stylesheet'">
+    <noscript>
+        <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/shepherd.js@10.0.1/dist/css/shepherd.css">
+    </noscript>
     <!-- Add after your existing CSS links -->
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/shepherd.js@10.0.1/dist/css/shepherd.css" />
-    <script src="https://cdn.jsdelivr.net/npm/shepherd.js@10.0.1/dist/js/shepherd.min.js"></script>
+    <script defer src="https://cdn.jsdelivr.net/npm/shepherd.js@10.0.1/dist/js/shepherd.min.js"></script>
     <script type="application/ld+json">
         {
           "@context": "https://schema.org",
@@ -73,11 +100,8 @@
     <title>Team Shoky Helper - Your College Companion</title>
     <link rel="canonical" href="https://teamshoky.or-g.net/">
     <link rel="manifest" href="manifest.json">
-    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
-    <link href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@6.0.0/css/all.min.css" rel="stylesheet">
-    <link href="https://cdn.jsdelivr.net/npm/fullcalendar@5.10.1/main.min.css" rel="stylesheet">
-    <link href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@6.0.0/css/all.min.css" rel="stylesheet">
-    <script src="https://cdn.jsdelivr.net/npm/fullcalendar@5.10.1/main.min.js"></script>
+    <link rel="preconnect" href="https://cdn.jsdelivr.net">
+    <script defer src="https://cdn.jsdelivr.net/npm/fullcalendar@5.10.1/main.min.js"></scriptdefer>
     <script>
         if ("serviceWorker" in navigator) {
             navigator.serviceWorker.register("./service-worker.js")
@@ -982,7 +1006,7 @@
             <!-- Sidebar Header (Fixed Top) -->
             <div class="p-4 flex items-center justify-between flex-shrink-0">
                 <h1 class="text-xl font-bold" style="cursor: pointer;"> <a href="">Team Shoky Helper</a></h1>
-                <button id="close-sidebar" class="lg:hidden text-white focus:outline-none">
+                <button id="close-sidebar" aria-label="Close sidebar" class="lg:hidden text-white focus:outline-none">
                     <i class="fas fa-times"></i>
                 </button>
             </div>
@@ -996,7 +1020,7 @@
                             <span id="user-initials">U</span>
                         </div>
                         <div>
-                            <h3 id="sidebar-user-name" class="font-medium">User Name</h3>
+                            <h2 id="sidebar-user-name" class="font-medium">User Name</h2>
                             <p id="sidebar-university" class="text-xs text-indigo-200">University</p>
                         </div>
                     </div>
@@ -1092,7 +1116,7 @@
                 <!-- Theme and Copyright -->
                 <div class="flex justify-between items-center text-indigo-200 text-sm">
                     <span>© 2025 Team Shoky</span>
-                    <button id="theme-toggle" class="hover:text-white">
+                    <button id="theme-toggle" aria-label="Toggle theme" class="hover:text-white">
                         <i class="fas fa-moon"></i>
                     </button>
                 </div>
@@ -1104,7 +1128,8 @@
         <div class="flex-1 flex flex-col ml-0 lg:ml-64 transition-all duration-300">
             <!-- Navbar -->
             <header class="bg-white dark:bg-gray-800 shadow-sm h-16 flex items-center px-4 sticky top-0 z-20">
-                <button id="open-sidebar" class="lg:hidden mr-4 text-gray-600 dark:text-gray-300 focus:outline-none">
+                <button id="open-sidebar" aria-label="Open sidebar"
+                    class="lg:hidden mr-4 text-gray-600 dark:text-gray-300 focus:outline-none">
                     <i class="fas fa-bars"></i>
                 </button>
 
@@ -1732,15 +1757,16 @@
                                 class="relative bg-white dark:bg-gray-800 rounded-xl shadow-xl overflow-hidden transform hover:scale-105 transition duration-300 ease-in-out p-8">
                                 <!-- Cover Photo -->
                                 <div class="absolute inset-0">
-                                    <img src="youseftamer_profile.jpg" alt="Yousef Tamer - Head of Team Shoky"
+                                    <img loading="lazy" src="youseftamer_profile.jpg"
+                                        alt="Yousef Tamer - Head of Team Shoky"
                                         class="w-full h-full object-cover opacity-30">
                                 </div>
 
                                 <!-- Profile Section -->
                                 <div class="relative flex flex-col items-center">
                                     <div class="w-40 h-40 rounded-full border-4 border-indigo-500 overflow-hidden">
-                                        <img src="youseftamer_profile.jpg" alt="Yousef Tamer - Head of Team Shoky"
-                                            class="w-full h-full object-cover">
+                                        <img loading="lazy" src="youseftamer_profile.jpg"
+                                            alt="Yousef Tamer - Head of Team Shoky" class="w-full h-full object-cover">
                                     </div>
                                     <h3 class="text-2xl font-semibold text-gray-800 dark:text-gray-100 mt-4">Yousef
                                         Tamer</h3>
@@ -1754,7 +1780,8 @@
                                         <!-- Linktree Icon -->
                                         <a href="https://linktr.ee/jooexploit" target="_blank"
                                             class="text-indigo-600 dark:text-indigo-400 hover:text-indigo-500 transform hover:scale-110 transition duration-200">
-                                            <img src="https://cdn.brandfetch.io/id_tNIm05N/theme/dark/symbol.svg"
+                                            <img loading="lazy"
+                                                src="https://cdn.brandfetch.io/id_tNIm05N/theme/dark/symbol.svg"
                                                 alt="Linktree - icon" class="w-8 h-8">
                                         </a>
                                     </div>
@@ -1770,14 +1797,14 @@
                                 class="relative bg-white dark:bg-gray-800 rounded-xl shadow-xl overflow-hidden transform hover:scale-105 transition duration-300 ease-in-out p-8">
                                 <!-- Cover Photo -->
                                 <div class="absolute inset-0">
-                                    <img src="diaa.jpeg" alt="Diaa Elsadek - Vice Head of Team Shoky"
+                                    <img loading="lazy" src="diaa.jpeg" alt="Diaa Elsadek - Vice Head of Team Shoky"
                                         class="w-full h-full object-cover opacity-30">
                                 </div>
 
                                 <!-- Profile Section -->
                                 <div class="relative flex flex-col items-center">
                                     <div class="w-40 h-40 rounded-full border-4 border-indigo-500 overflow-hidden">
-                                        <img src="diaa.jpeg" alt="Diaa Elsadek - Vice Head of Team Shoky"
+                                        <img loading="lazy" src="diaa.jpeg" alt="Diaa Elsadek - Vice Head of Team Shoky"
                                             class="w-full h-full object-cover">
                                     </div>
                                     <h3 class="text-2xl font-semibold text-gray-800 dark:text-gray-100 mt-4">Diaa
@@ -1798,7 +1825,8 @@
                                         <!-- Linktree Icon -->
                                         <a href="https://linktr.ee/diaa_elsadek" target="_blank"
                                             class="text-indigo-600 dark:text-indigo-400 hover:text-indigo-500 transform hover:scale-110 transition duration-200">
-                                            <img src="https://cdn.brandfetch.io/id_tNIm05N/theme/dark/symbol.svg"
+                                            <img loading="lazy"
+                                                src="https://cdn.brandfetch.io/id_tNIm05N/theme/dark/symbol.svg"
                                                 alt="Linktree - icon" class="w-8 h-8">
                                         </a>
                                     </div>
@@ -1819,15 +1847,16 @@
                                 class="relative bg-white dark:bg-gray-800 rounded-xl shadow-xl overflow-hidden transform hover:scale-105 transition duration-300 ease-in-out p-8">
                                 <!-- Cover Photo -->
                                 <div class="absolute inset-0">
-                                    <img src="youseftamer_profile.jpg" alt="Yousef Tamer - Head of Team Shoky"
+                                    <img loading="lazy" src="youseftamer_profile.jpg"
+                                        alt="Yousef Tamer - Head of Team Shoky"
                                         class="w-full h-full object-cover opacity-30">
                                 </div>
 
                                 <!-- Profile Section -->
                                 <div class="relative flex flex-col items-center">
                                     <div class="w-40 h-40 rounded-full border-4 border-indigo-500 overflow-hidden">
-                                        <img src="youseftamer_profile.jpg" alt="Yousef Tamer - Head of Team Shoky"
-                                            class="w-full h-full object-cover">
+                                        <img loading="lazy" src="youseftamer_profile.jpg"
+                                            alt="Yousef Tamer - Head of Team Shoky" class="w-full h-full object-cover">
                                     </div>
                                     <h3 class="text-2xl font-semibold text-gray-800 dark:text-gray-100 mt-4">Yousef
                                         Tamer</h3>
@@ -1841,7 +1870,8 @@
                                         <!-- Linktree Icon -->
                                         <a href="https://linktr.ee/jooexploit" target="_blank"
                                             class="text-indigo-600 dark:text-indigo-400 hover:text-indigo-500 transform hover:scale-110 transition duration-200">
-                                            <img src="https://cdn.brandfetch.io/id_tNIm05N/theme/dark/symbol.svg"
+                                            <img loading="lazy"
+                                                src="https://cdn.brandfetch.io/id_tNIm05N/theme/dark/symbol.svg"
                                                 alt="Linktree - icon" class="w-8 h-8">
                                         </a>
                                     </div>
@@ -1868,7 +1898,8 @@
                                 <div
                                     class="bg-white dark:bg-gray-800 rounded-xl shadow-xl transform hover:scale-105 transition duration-300 ease-in-out p-8">
                                     <div class="flex flex-col items-center">
-                                        <img src="mazen_tamer.jpg" alt="mazen tamer - Data Collector Photo"
+                                        <img loading="lazy" src="mazen_tamer.jpg"
+                                            alt="mazen tamer - Data Collector Photo"
                                             class="w-32 h-32 rounded-full border-4 border-indigo-500 mb-4">
                                         <h3 class="text-xl font-semibold text-gray-800 dark:text-gray-100">Mazen Tamer
                                         </h3>
@@ -1888,7 +1919,7 @@
                                 <div
                                     class="bg-white dark:bg-gray-800 rounded-xl shadow-xl transform hover:scale-105 transition duration-300 ease-in-out p-8">
                                     <div class="flex flex-col items-center">
-                                        <img src="islam_wael.jpg" alt="Eslam wael - Data Collector Photo"
+                                        <img loading="lazy" src="islam_wael.jpg" alt="Eslam wael - Data Collector Photo"
                                             class="w-32 h-32 rounded-full border-4 border-indigo-500 mb-4">
                                         <h3 class="text-xl font-semibold text-gray-800 dark:text-gray-100">Eslam wael
                                         </h3>
@@ -1913,7 +1944,7 @@
                                 <div
                                     class="bg-white dark:bg-gray-800 rounded-xl shadow-xl transform hover:scale-105 transition duration-300 ease-in-out p-8">
                                     <div class="flex flex-col items-center">
-                                        <img src="icon.jpg" alt="Mariem Mostafa - Data Collector Photo"
+                                        <img loading="lazy" src="icon.jpg" alt="Mariem Mostafa - Data Collector Photo"
                                             class="w-32 h-32 rounded-full border-4 border-indigo-500 mb-4">
                                         <h3 class="text-xl font-semibold text-gray-800 dark:text-gray-100">Mariem
                                             Mostafa
@@ -1948,7 +1979,8 @@
                                 <div
                                     class="bg-white dark:bg-gray-800 rounded-xl shadow-xl transform hover:scale-105 transition duration-300 ease-in-out p-8">
                                     <div class="flex flex-col items-center">
-                                        <img src="ammar roshdy.jpg" alt="Ammar Roshdy - Data Collector Photo"
+                                        <img loading="lazy" src="ammar roshdy.jpg"
+                                            alt="Ammar Roshdy - Data Collector Photo"
                                             class="w-32 h-32 rounded-full border-4 border-indigo-500 mb-4">
                                         <h3 class="text-xl font-semibold text-gray-800 dark:text-gray-100">ammar roshdy
                                         </h3>
@@ -1969,7 +2001,8 @@
                                 <div
                                     class="bg-white dark:bg-gray-800 rounded-xl shadow-xl transform hover:scale-105 transition duration-300 ease-in-out p-8">
                                     <div class="flex flex-col items-center">
-                                        <img src="Mohand khaled.jpg" alt="Mohand khaled - Data Collector Photo"
+                                        <img loading="lazy" src="Mohand khaled.jpg"
+                                            alt="Mohand khaled - Data Collector Photo"
                                             class="w-32 h-32 rounded-full border-4 border-indigo-500 mb-4 object-cover">
                                         <h3 class="text-xl font-semibold text-gray-800 dark:text-gray-100">Mohand khaled
                                         </h3>
@@ -1979,7 +2012,8 @@
                                 <div
                                     class="bg-white dark:bg-gray-800 rounded-xl shadow-xl transform hover:scale-105 transition duration-300 ease-in-out p-8">
                                     <div class="flex flex-col items-center">
-                                        <img src="Mostafa_nour.jpg" alt="Mostafa Nour - Data Collector Photo"
+                                        <img loading="lazy" src="Mostafa_nour.jpg"
+                                            alt="Mostafa Nour - Data Collector Photo"
                                             class="w-32 h-32 rounded-full border-4 border-indigo-500 mb-4 object-cover">
                                         <h3 class="text-xl font-semibold text-gray-800 dark:text-gray-100">Mostafa Nour
                                         </h3>
@@ -2007,7 +2041,8 @@
                                 <div
                                     class="bg-white dark:bg-gray-800 rounded-xl shadow-xl transform hover:scale-105 transition duration-300 ease-in-out p-8">
                                     <div class="flex flex-col items-center">
-                                        <img src="Nare Mohammed.jpg" alt="Nare Mohammed - Data Collector Photo"
+                                        <img loading="lazy" src="Nare Mohammed.jpg"
+                                            alt="Nare Mohammed - Data Collector Photo"
                                             class="w-32 h-32 rounded-full border-4 border-indigo-500 mb-4 object-cover">
                                         <h3 class="text-xl font-semibold text-gray-800 dark:text-gray-100">Nare Mohammed
                                         </h3>
@@ -2028,7 +2063,8 @@
                                 <div
                                     class="bg-white dark:bg-gray-800 rounded-xl shadow-xl transform hover:scale-105 transition duration-300 ease-in-out p-8">
                                     <div class="flex flex-col items-center">
-                                        <img src="Hamza_Haikal.jpg" alt="Hamza Haikal - Data Collector Photo"
+                                        <img loading="lazy" src="Hamza_Haikal.jpg"
+                                            alt="Hamza Haikal - Data Collector Photo"
                                             class="w-32 h-32 rounded-full border-4 border-indigo-500 mb-4 object-cover">
                                         <h3 class="text-xl font-semibold text-gray-800 dark:text-gray-100">Hamza Haikal
                                         </h3>
@@ -2061,7 +2097,7 @@
                                 <div
                                     class="bg-white dark:bg-gray-800 rounded-xl shadow-xl transform hover:scale-105 transition duration-300 ease-in-out p-8">
                                     <div class="flex flex-col items-center">
-                                        <img src="icon.jpg" alt="JanaMagdy - Data Collector Photo"
+                                        <img loading="lazy" src="icon.jpg" alt="JanaMagdy - Data Collector Photo"
                                             class="w-32 h-32 rounded-full border-4 border-indigo-500 mb-4 object-cover">
                                         <h3 class="text-xl font-semibold text-gray-800 dark:text-gray-100">Jana Magdy
                                         </h3>
@@ -2080,7 +2116,8 @@
                                 <div
                                     class="bg-white dark:bg-gray-800 rounded-xl shadow-xl transform hover:scale-105 transition duration-300 ease-in-out p-8">
                                     <div class="flex flex-col items-center">
-                                        <img src="Thomas_nasser.jpg" alt="Thomas nasser- Data Collector Photo"
+                                        <img loading="lazy" src="Thomas_nasser.jpg"
+                                            alt="Thomas nasser- Data Collector Photo"
                                             class="w-32 h-32 rounded-full border-4 border-indigo-500 mb-4 object-cover">
                                         <h3 class="text-xl font-semibold text-gray-800 dark:text-gray-100">Thomas nasser
                                         </h3>
@@ -2099,7 +2136,7 @@
                                 <div
                                     class="bg-white dark:bg-gray-800 rounded-xl shadow-xl transform hover:scale-105 transition duration-300 ease-in-out p-8">
                                     <div class="flex flex-col items-center">
-                                        <img src="icon.jpg" alt=" Aya Elsayed - Data Collector Photo"
+                                        <img loading="lazy" src="icon.jpg" alt=" Aya Elsayed - Data Collector Photo"
                                             class="w-32 h-32 rounded-full border-4 border-indigo-500 mb-4 object-cover">
                                         <h3 class="text-xl font-semibold text-gray-800 dark:text-gray-100">Aya Elsayed
                                         </h3>
@@ -2110,7 +2147,7 @@
                                 <div
                                     class="bg-white dark:bg-gray-800 rounded-xl shadow-xl transform hover:scale-105 transition duration-300 ease-in-out p-8">
                                     <div class="flex flex-col items-center">
-                                        <img src="3amer.jpg" alt="3amer - Data Collector Photo"
+                                        <img loading="lazy" src="3amer.jpg" alt="3amer - Data Collector Photo"
                                             class="w-32 h-32 rounded-full border-4 border-indigo-500 mb-4 object-cover">
                                         <h3 class="text-xl font-semibold text-gray-800 dark:text-gray-100">3amer
                                         </h3>
@@ -2133,7 +2170,7 @@
                                 <div
                                     class="bg-white dark:bg-gray-800 rounded-xl shadow-xl transform hover:scale-105 transition duration-300 ease-in-out p-8">
                                     <div class="flex flex-col items-center">
-                                        <img src="3amoor.jpg" alt="3amoor - Data Collector Photo"
+                                        <img loading="lazy" src="3amoor.jpg" alt="3amoor - Data Collector Photo"
                                             class="w-32 h-32 rounded-full border-4 border-indigo-500 mb-4 object-cover">
                                         <h3 class="text-xl font-semibold text-gray-800 dark:text-gray-100">3amoor
                                         </h3>
@@ -2158,7 +2195,7 @@
                                 <div
                                     class="bg-white dark:bg-gray-800 rounded-xl shadow-xl transform hover:scale-105 transition duration-300 ease-in-out p-8">
                                     <div class="flex flex-col items-center">
-                                        <img src="icon.jpg" alt="Shaimaa ashraf - Data Collector Photo"
+                                        <img loading="lazy" src="icon.jpg" alt="Shaimaa ashraf - Data Collector Photo"
                                             class="w-32 h-32 rounded-full border-4 border-indigo-500 mb-4 object-cover">
                                         <h3 class="text-xl font-semibold text-gray-800 dark:text-gray-100">Shaimaa
                                             ashraf
