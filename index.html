@@ -880,16 +880,18 @@
     <div class="flex h-screen overflow-hidden relative">
         <!-- Sidebar -->
         <div id="sidebar"
-            class="sidebar bg-indigo-800 text-white h-screen flex-shrink-0 fixed left-0 top-0 bottom-0 z-30 transition-transform duration-300 ease-in-out transform">
-            <div class="p-4 flex items-center justify-between">
+            class="sidebar bg-indigo-800 text-white h-screen flex flex-col flex-shrink-0 fixed left-0 top-0 bottom-0 z-30 transition-transform duration-300 ease-in-out transform">
+            <!-- Sidebar Header (Fixed Top) -->
+            <div class="p-4 flex items-center justify-between flex-shrink-0">
                 <h1 class="text-xl font-bold" style="cursor: pointer;"> <a href="">Team Shoky Helper</a></h1>
                 <button id="close-sidebar" class="lg:hidden text-white focus:outline-none">
                     <i class="fas fa-times"></i>
                 </button>
             </div>
 
-            <div class="mt-6 px-3">
-                <div id="user-info" class="mb-8 px-3 py-4 bg-indigo-700 rounded-lg">
+            <!-- User Info Block (Fixed Below Header) -->
+            <div class="px-3 mt-4 mb-4 flex-shrink-0"> <!-- Adjusted margin -->
+                <div id="user-info" class="px-3 py-4 bg-indigo-700 rounded-lg">
                     <div class="flex items-center mb-3">
                         <div
                             class="w-10 h-10 rounded-full bg-indigo-500 flex items-center justify-center text-lg font-semibold mr-3">
@@ -905,7 +907,10 @@
                         <span>Group: <span id="sidebar-group">-</span></span>
                     </div>
                 </div>
+            </div>
 
+            <!-- Scrollable Navigation Area -->
+            <div class="flex-grow overflow-y-auto px-3 pb-4"> <!-- Make this div scrollable -->
                 <nav>
                     <ul class="space-y-2">
                         <li>
@@ -920,6 +925,14 @@
                                 class="nav-link w-full flex items-center px-3 py-2 rounded-md font-medium hover:bg-indigo-700 transition-colors">
                                 <i class="fas fa-book w-6"></i>
                                 <span>Courses</span>
+                            </button>
+                        </li>
+                        <!-- Add the Exam Tracker link here -->
+                        <li>
+                            <button data-page="exam-tracker"
+                                class="nav-link w-full flex items-center px-3 py-2 rounded-md font-medium hover:bg-indigo-700 transition-colors">
+                                <i class="fas fa-calendar-check w-6"></i>
+                                <span>Exam Tracker</span>
                             </button>
                         </li>
                         <li>
@@ -944,26 +957,14 @@
                             </button>
                         </li>
                         <li>
-                            <button data-page="exam-tracker"
-                                class="nav-link w-full flex items-center px-3 py-2 rounded-md font-medium hover:bg-indigo-700 transition-colors">
-                                <i class="fas fa-calendar-check w-6"></i> <!-- Changed icon -->
-                                <span>Exam Tracker</span>
-                            </button>
-                        </li>
-                        <li>
-                            <button data-page="settings"
-                                class="nav-link w-full flex items-center px-3 py-2 rounded-md font-medium hover:bg-indigo-700 transition-colors">
-                                <i class="fas fa-cog w-6"></i>
-                                <span>Settings</span>
-                            </button>
-                        </li>
-                        <li>
                             <button data-page="about-us"
                                 class="nav-link w-full flex items-center px-3 py-2 rounded-md font-medium hover:bg-indigo-700 transition-colors">
                                 <i class="fas fa-info-circle w-6"></i>
                                 <span>About Us</span>
                             </button>
                         </li>
+                        <!-- Settings button MOVED to footer -->
+                        <!-- Install App button stays here -->
                         <li id="install-app-button-container">
                             <button id="install-app-button"
                                 class="nav-link w-full flex items-center px-3 py-2 rounded-md font-medium hover:bg-indigo-700 transition-colors">
@@ -971,23 +972,35 @@
                                 <span>Download App</span>
                             </button>
                         </li>
+                        <!-- Add any other less critical navigation items here -->
+
                     </ul>
                 </nav>
-            </div>
+            </div> <!-- End Scrollable Area -->
 
-            <div class="absolute bottom-4 left-0 right-0 px-4">
+            <!-- Sidebar Footer (Fixed Bottom) -->
+            <div class="px-4 py-4 border-t border-indigo-700 flex-shrink-0"> <!-- Add border -->
+                <!-- Settings Button Moved Here -->
+                <button data-page="settings"
+                    class="nav-link w-full flex items-center px-3 py-2 mb-3 rounded-md font-medium hover:bg-indigo-700 transition-colors">
+                    <i class="fas fa-cog w-6"></i>
+                    <span>Settings</span>
+                </button>
+                <!-- Logout Button Moved Here -->
+                <button id="logout-button"
+                    class="w-full mb-3 py-2 px-4 bg-red-600 text-white font-medium rounded-md shadow-sm hover:bg-red-700 transition-colors">
+                    Logout
+                </button>
+                <!-- Theme and Copyright -->
                 <div class="flex justify-between items-center text-indigo-200 text-sm">
                     <span>© 2025 Team Shoky</span>
                     <button id="theme-toggle" class="hover:text-white">
-                        <!-- <i class="fas fa-moon"></i> -->
+                        <i class="fas fa-moon"></i>
                     </button>
                 </div>
-                <button id="logout-button"
-                    class="w-full mt-4 py-2 px-4 bg-red-600 text-white font-medium rounded-md shadow-sm hover:bg-red-700 transition-colors">
-                    Logout
-                </button>
             </div>
-        </div>
+
+        </div> <!-- End Sidebar -->
 
         <!-- Main Content -->
         <div class="flex-1 flex flex-col ml-0 lg:ml-64 transition-all duration-300">
