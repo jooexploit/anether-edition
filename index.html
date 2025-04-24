@@ -3695,11 +3695,71 @@
                     });
 
                     // Share/Copy button listeners (no changes needed here)
+                    // Web Share API button
                     const shareBtn = container.querySelector('#share-course-btn');
-                    if (shareBtn) { /* ... listener code ... */ }
-                    const copyBtn = container.querySelector('#copy-course-link-btn');
-                    if (copyBtn) { /* ... listener code ... */ }
+                    if (shareBtn) {
+                        shareBtn.addEventListener('click', async () => {
+                            console.log('Share button clicked!');
+                            try {
+                                // Ensure course data is available before creating shareData
+                                if (!course || !course.title || !course.id || !course.instructor || !shareUrl) {
+                                    console.error('Missing data required for sharing.');
+                                    alert('Cannot share course: essential information is missing.');
+                                    return; // Prevent sharing if data is bad
+                                }
 
+                                // --- Create the data object with the NEW text ---
+                                const shareData = {
+                                    title: `Course: ${course.title}`, // Used as Subject/Link Title
+                                    // --- NEW, more engaging text ---
+                                    text: `Hey! 👋 Check out this course on Team Shoky Helper: "${course.title}" (ID: ${course.id}) taught by ${course.instructor}. You can find all the details and materials here! 📚`,
+                                    // --- End of new text ---
+                                    url: shareUrl, // The link
+                                };
+                                // --- End of data object ---
+
+                                console.log('Attempting to share with this data:', shareData);
+
+                                // Call the Web Share API
+                                await navigator.share(shareData);
+
+                                console.log('Course shared successfully using Web Share API.');
+
+                            } catch (err) {
+                                // Handle errors (e.g., user cancelled share, API not supported error)
+                                console.error('Error sharing course via Web Share API:', err);
+                                if (err.name !== 'AbortError') { // Don't alert if user just cancelled
+                                    alert(`Sharing failed: ${err.message}`);
+                                } else {
+                                    console.log('Sharing aborted by user.');
+                                }
+                            }
+                        });
+                        console.log('Share button listener attached.');
+                    }
+                    const copyBtn = container.querySelector('#copy-course-link-btn');
+                    if (copyBtn) {
+                        copyBtn.addEventListener('click', async (e) => {
+                            const urlToCopy = e.currentTarget.dataset.url;
+                            const originalText = e.currentTarget.innerHTML; // Store original button content
+
+                            try {
+                                await navigator.clipboard.writeText(urlToCopy);
+                                console.log('Course link copied to clipboard:', urlToCopy);
+                                // Provide temporary visual feedback
+                                e.currentTarget.innerHTML = '<i class="fas fa-check mr-1"></i> Copied!';
+                                e.currentTarget.disabled = true; // Briefly disable
+                                setTimeout(() => {
+                                    e.currentTarget.innerHTML = originalText; // Restore original text
+                                    e.currentTarget.disabled = false; // Re-enable
+                                }, 2000); // Reset after 2 seconds
+                            } catch (err) {
+                                console.error('Failed to copy course link to clipboard:', err);
+                                // Fallback for user if automatic copy fails
+                                alert('Failed to copy link automatically. Please copy it manually:\n\n' + urlToCopy);
+                            }
+                        });
+                    }
 
                     // --- Expand and Scroll to Target Chapter Logic ---
                     const targetIndex = this.state.targetChapterIndex;
