@@ -1,0 +1,212 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>HTML Preview - Team Shoky Helper (Secure)</title>
+    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+    <!-- Favicons (Optional - Copy from your index.html if needed, adjust paths if necessary) -->
+    <link rel="apple-touch-icon" sizes="57x57" href="favicon/apple-icon-57x57.png">
+    <link rel="apple-touch-icon" sizes="60x60" href="favicon/apple-icon-60x60.png">
+    <!-- Add other favicon links here if needed -->
+    <link rel="icon" type="image/png" sizes="32x32" href="favicon/favicon-32x32.png">
+    <link rel="icon" type="image/png" sizes="16x16" href="favicon/favicon-16x16.png">
+    <link rel="manifest" href="manifest.json"> <!-- Adjust path if needed -->
+    <meta name="theme-color" content="#4F46E5">
+
+    <style>
+        html,
+        body {
+            height: 100%;
+            margin: 0;
+            padding: 0;
+            overflow: hidden;
+        }
+
+        body {
+            display: flex;
+            flex-direction: column;
+        }
+
+        main {
+            flex-grow: 1;
+            overflow: hidden;
+            position: relative;
+            /* Needed for absolute positioning of message */
+        }
+
+        iframe {
+            border: none;
+            width: 100%;
+            height: 100%;
+        }
+    </style>
+</head>
+
+<body class="bg-gray-200 dark:bg-gray-900">
+
+    <!-- Header Bar -->
+    <header class="bg-indigo-700 text-white p-3 shadow-md w-full z-10 flex-shrink-0">
+        <a href="/">
+            <h1 class="text-lg font-semibold">Team Shoky Helper</h1>
+        </a>
+    </header>
+
+    <!-- Main Content Area (for the iframe and messages) -->
+    <main>
+        <!-- Iframe for previewing content -->
+        <iframe id="preview-frame" title="HTML Preview Pane" sandbox="allow-scripts allow-same-origin" class="hidden">
+            <!-- Fallback content if iframes are not supported -->
+            <p class="p-4 text-red-600">Your browser does not support iframes.</p>
+        </iframe>
+
+        <!-- Message Overlay Div -->
+        <div id="message-overlay" class="message-overlay text-gray-700 dark:text-gray-300">
+            <!-- Content updated by JavaScript -->
+        </div>
+    </main>
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            // --- DOM Element Selection ---
+            const iframe = document.getElementById('preview-frame');
+            const messageOverlay = document.getElementById('message-overlay');
+
+            // --- URL Parameter ---
+            const urlParams = new URLSearchParams(window.location.search);
+            const filePathRaw = urlParams.get('path');
+            const filePath = filePathRaw ? decodeURIComponent(filePathRaw) : null;
+
+            // --- Helper Functions ---
+
+            /**
+             * Displays a message in the overlay area, ensuring the iframe is hidden.
+             * Makes the overlay visible.
+             * @param {string} htmlContent - The HTML content for the message.
+             * @param {boolean} [isError=true] - Flag to indicate if the message is an error (defaults to true for messages).
+             */
+            function showErrorMessage(htmlContent, isError = true) {
+                iframe.classList.add('hidden');     // Explicitly hide iframe
+                iframe.src = 'about:blank';         // Reset src
+                messageOverlay.innerHTML = htmlContent;
+                messageOverlay.classList.remove('hidden'); // MAKE OVERLAY VISIBLE
+                const logType = isError ? 'error' : 'info';
+                const logPrefix = isError ? 'Error displayed:' : 'Message displayed:';
+                console[logType](`${logPrefix} ${messageOverlay.textContent.replace(/\s+/g, ' ').trim()}`);
+            }
+
+            /** Hides the message overlay and shows the iframe. */
+            function showIframeContent() {
+                // Check if iframe src is actually set to something meaningful before showing
+                if (iframe.src && iframe.src !== 'about:blank') {
+                    console.log('Showing iframe content, hiding overlay for:', iframe.src);
+                    messageOverlay.classList.add('hidden'); // Hide overlay
+                    iframe.classList.remove('hidden');     // Show iframe
+                } else {
+                    // This case should ideally not be reached if load was successful for non-blank
+                    console.warn('showIframeContent called, but iframe src is blank or invalid.');
+                    // Fallback to show error if called inappropriately
+                    showErrorMessage(
+                        `<h2 class="text-xl font-semibold mb-2 text-red-600 dark:text-red-500">Internal Error</h2>
+                          <p>Could not display the preview content due to an unexpected state.</p>`, true);
+                }
+            }
+
+            /**
+             * Validates the provided file path for security.
+             * @param {string | null} path - The file path from the URL parameter.
+             * @returns {{valid: boolean, reason: string}} - Validation result.
+             */
+            function isValidPath(path) {
+                // --- Same robust validation logic as before ---
+                if (!path || path.trim() === '') { return { valid: false, reason: 'No path provided.' }; }
+                if (path.includes('..')) { return { valid: false, reason: 'Path traversal ("..") is not allowed.' }; }
+                const forbiddenSchemes = ['javascript:', 'data:', 'file://', 'http://', 'https://', 'ftp://', 'blob:'];
+                for (const scheme of forbiddenSchemes) { if (path.toLowerCase().startsWith(scheme)) { return { valid: false, reason: `Loading via scheme "${scheme}" is not permitted.` }; } }
+                if (path.startsWith('/') || path.startsWith('\\') || /^[a-zA-Z]:[\\/]/.test(path)) { return { valid: false, reason: 'Absolute paths are not allowed. Please use relative paths.' }; }
+                const allowedExtensions = ['.html', '.htm'];
+                const lowerPath = path.toLowerCase();
+                if (!allowedExtensions.some(ext => lowerPath.endsWith(ext))) { console.warn(`Security Warning: Path "${path}" does not end with allowed extension (${allowedExtensions.join(', ')}). Loading anyway.`); }
+                if (path.includes('%00') || path.includes('\0')) { return { valid: false, reason: 'Path contains null byte, which is not allowed.' }; }
+                return { valid: true, reason: '' };
+                // --- End of validation logic ---
+            }
+
+            // --- Iframe Event Listeners (Setup *before* setting src) ---
+
+            iframe.addEventListener('load', () => {
+                const loadedSrc = iframe.src;
+                console.log(`iframe 'load' event fired for src: ${loadedSrc}`);
+
+                if (loadedSrc !== 'about:blank') {
+                    // SUCCESS: It loaded *something*. Show it.
+                    console.log('Load successful for non-blank src. Displaying content.');
+                    showIframeContent();
+                } else {
+                    // It loaded 'about:blank'. This means the intended load likely failed or was blocked BEFORE the error event could fire.
+                    console.warn("iframe loaded 'about:blank'. Load might have been blocked or failed silently.");
+                    // Show an informative message ONLY if we actually tried to load a valid path
+                    // Use validationResult captured from the outer scope
+                    if (typeof validationResult !== 'undefined' && validationResult && validationResult.valid) {
+                        showErrorMessage(`
+                            <h2 class="text-xl font-semibold mb-2 text-yellow-600 dark:text-yellow-500">Preview Failed or Blocked</h2>
+                            <p>The preview frame appears empty. This can happen if the browser blocked access to the file (check console for errors) or if the file itself is empty/invalid.</p>
+                            <p class="mt-2">Path attempted: <code class="bg-gray-300 dark:bg-gray-700 px-1 rounded text-gray-800 dark:text-gray-200 break-all">${filePath || 'N/A'}</code></p>`, true);
+                    }
+                    // If validationResult was invalid, the message was already shown. Do nothing here.
+                }
+            });
+
+            iframe.addEventListener('error', (event) => {
+                console.error(`iframe 'error' event fired. Failed to load src: ${filePath}`, event);
+                const errorHTML = `
+                     <h2 class="text-xl font-semibold mb-2 text-red-600 dark:text-red-500">Loading Error</h2>
+                     <p>Could not load the preview frame for the specified path.</p>
+                     <p class="mt-2">This usually means the file was not found at the relative path <code class="bg-gray-300 dark:bg-gray-700 px-1 rounded text-gray-800 dark:text-gray-200 break-all">${filePath || 'N/A'}</code> or browser security restrictions prevented access.</p>
+                     <p class="mt-2">Please verify the file path and check the browser console (F12) for detailed errors.</p>
+                `;
+                showErrorMessage(errorHTML, true); // Show specific error message
+            });
+
+
+            // --- Main Execution Logic ---
+
+            // Initialize UI state: BOTH iframe AND overlay hidden
+            iframe.classList.add('hidden');
+            messageOverlay.classList.add('hidden'); // Keep overlay hidden initially
+            messageOverlay.innerHTML = '';          // Clear any default text
+
+            const validationResult = isValidPath(filePath); // Run validation (declare validationResult here)
+
+            if (validationResult.valid) {
+                // Path is valid: Attempt to load it. The event listeners will handle visibility.
+                console.log('Path is valid. Attempting to set iframe src:', filePath);
+                iframe.src = filePath;
+                // DO NOT show iframe or overlay here - wait for events
+
+            } else {
+                // Path is invalid or missing: Show appropriate message immediately.
+                const messageHTML = !filePathRaw
+                    ? ` <h2 class="text-xl font-semibold mb-2">No Preview Path Specified</h2>
+                        <p>Please provide a relative path to the local HTML file...</p>
+                        <p class="mt-2">Example: <code class="bg-gray-300 dark:bg-gray-700 px-1 rounded text-gray-800 dark:text-gray-200">preview.html?path=your_page.html</code></p>`
+                    : ` <h2 class="text-xl font-semibold mb-2 text-red-600 dark:text-red-500">Invalid Path</h2>
+                        <p class="mb-2">Cannot load the specified path: <code class="bg-gray-300 dark:bg-gray-700 px-1 rounded text-gray-800 dark:text-gray-200 break-all">${filePathRaw}</code></p>
+                        <p class="font-medium">Reason: ${validationResult.reason}</p>
+                        <p class="mt-4">Please use a valid, relative path...</p>`;
+                showErrorMessage(messageHTML, true); // Show error/instruction message
+                console.error(`Invalid or disallowed path provided: ${filePathRaw || '(Not Provided)'}. Reason: ${validationResult.reason}`);
+            }
+
+
+            // --- Dark Mode Detection ---
+            const darkModeMatcher = window.matchMedia('(prefers-color-scheme: dark)');
+            function handleDarkMode(matches) { if (matches) { document.body.classList.add('dark'); } else { document.body.classList.remove('dark'); } }
+            handleDarkMode(darkModeMatcher.matches);
+            darkModeMatcher.addEventListener('change', e => handleDarkMode(e.matches));
+
+        });
+    </script>
+</body>
+
+</html>
