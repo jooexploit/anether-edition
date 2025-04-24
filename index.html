@@ -802,6 +802,53 @@
             overflow: hidden;
             /* Prevent the main sidebar container from scrolling */
         }
+
+        .chapter-content {
+            overflow: hidden;
+            /* Hide content that exceeds max-height */
+            max-height: 0;
+            /* Start collapsed */
+            opacity: 0;
+            /* Start fully transparent */
+            /* Define transitions for max-height and opacity */
+            transition: max-height 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275),
+                /* Faster start, overshoot end */
+                opacity 0.3s ease-in-out;
+            /* Remove padding when collapsed to prevent empty space */
+            padding-top: 0 !important;
+            padding-bottom: 0 !important;
+            margin-top: 0 !important;
+            /* Ensure no margin pushes space when collapsed */
+            margin-bottom: 0 !important;
+            /* Apply padding ONLY when open using adjacent sibling or descendant selector if needed,
+               OR handle padding within the content itself */
+        }
+
+        .chapter-content.chapter-open {
+            max-height: 1000px;
+            /* Set a max-height larger than any expected content */
+            opacity: 1;
+            /* Fully visible */
+            /* Re-apply padding when open - Adjust px value as needed */
+            padding-top: 1rem !important;
+            /* Equivalent to p-4 top */
+            padding-bottom: 1rem !important;
+            /* Equivalent to p-4 bottom */
+            /* Delay opacity transition slightly on opening for smoother effect */
+            transition: max-height 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275),
+                opacity 0.3s ease-in-out 0.1s;
+            /* Delay opacity fade-in */
+        }
+
+        /* Ensure the icon rotates smoothly */
+        .chapter-header i {
+            transition: transform 0.3s ease-in-out;
+        }
+
+        /* Icon rotation class remains the same */
+        .chapter-header i.rotate-180 {
+            transform: rotate(180deg);
+        }
     </style>
 </head>
 
@@ -2586,6 +2633,8 @@
                     currentPage: 'dashboard',
                     notifications: true,
                     selectedCourse: null,
+                    selectedCourseId: null,
+                    targetChapterIndex: null,
                     userData: {
                         name: null,
                         university: null,
@@ -2597,95 +2646,116 @@
 
                 // Initialize Application
                 init: function () {
-                    // Add this at the beginning of init
-                    if (checkIfMobile()) {
-                        document.getElementById('sidebar').classList.add('sidebar-collapsed');
-                    }
                     this.loadUserData();
-                    this.setupEventListeners();
+                    this.setupEventListeners(); // Keep this early
                     this.setupFullCalendar();
-                    this.loadMockData();
-                    this.renderCurrentPage();
+                    this.loadMockData(); // Load data needed for routing/rendering
+                    // this.renderCurrentPage(); // Remove this - routing logic below handles initial page
                     this.updateUIWithUserData();
                     this.renderNotifications();
 
                     // Check theme preference
                     const savedDarkMode = localStorage.getItem('darkMode');
-                    if (savedDarkMode === 'true') {
-                        this.toggleDarkMode(true);
-                    }
-
-                    // Show welcome modal if first visit
-                    if (!this.state.userData.name) {
-                        document.getElementById('welcome-modal').classList.remove('hidden');
-                    }
+                    if (savedDarkMode === 'true') { this.toggleDarkMode(true); }
 
                     // Set current date
                     const dateOptions = { year: 'numeric', month: 'long', day: 'numeric' };
                     document.getElementById('current-date').textContent = new Date().toLocaleDateString('en-US', dateOptions);
 
-                    // START ADDITION: Add initial history state for the dashboard
-                    if (history.state === null || history.state.page !== 'dashboard') {
-                        history.pushState({ page: 'dashboard' }, 'Dashboard', window.location.pathname + window.location.search);
-                        console.log('Initial history state pushed for dashboard.');
-                    }
+                    // START ADDITION: Initial Routing Logic
+                    const initialRoute = this.parseHashRoute(window.location.hash);
+                    console.log('Initial route parsed:', initialRoute);
+
+                    let startPage = initialRoute.page || 'dashboard';
+                    let startId = initialRoute.id || null;
+
+                    // Navigate to the determined starting page/state
+                    this.navigateTo(startPage, startId);
+
+                    // Ensure initial history state matches the actual start page/id
+                    const initialHash = window.location.hash || '#/dashboard'; // Use current hash or default
+                    const initialState = { page: startPage, id: startId };
+                    const initialTitle = this.capitalizeFirstLetter(startPage) + (startId ? ` (${startId})` : '');
+                    // Use replaceState for the very first entry to avoid a 'back' to a blank state
+                    history.replaceState(initialState, initialTitle, initialHash);
+                    console.log('Initial history state replaced:', initialHash, initialState);
                     // END ADDITION
 
+                    // Show welcome modal if first visit (AFTER initial routing attempt)
+                    if (!this.state.userData.name) {
+                        document.getElementById('welcome-modal').classList.remove('hidden');
+                    }
+
                     // Add event listeners for history navigation AFTER initial setup
-                    this.setupHistoryListeners(); // Call the new setup function
-                },
+                    this.setupHistoryListeners();
 
+                    // Adjust sidebar for mobile AFTER initial setup
+                    if (checkIfMobile()) {
+                        document.getElementById('sidebar').classList.add('sidebar-collapsed');
+                    }
+                }, // End of init function
 
+                // START ADDITION: Helper to parse URL hash
+                parseHashRoute: function (hash) {
+                    const route = { page: null, id: null };
+                    if (hash && hash.startsWith('#/')) {
+                        const parts = hash.substring(2).split('/'); // Remove #/ and split
+                        route.page = parts[0] || null;
+                        if (route.page === 'course-details' && parts.length > 1) {
+                            route.id = decodeURIComponent(parts[1]); // Decode potential course ID
+                        }
+                        // Add more else if blocks here if other pages need IDs
+                    }
+                    return route;
+                }, // End of parseHashRoute function
+                // END ADDITION
 
                 // START REVISED VERSION: New function to setup history listeners
                 setupHistoryListeners: function () {
-                    // --- Popstate Listener (Browser Back/Forward Button) ---
                     window.addEventListener('popstate', (event) => {
                         const previousState = event.state; // State we are going back/forward TO
                         console.log('popstate event fired. Navigating TO state:', previousState);
 
-                        let targetPage = 'dashboard'; // Default to dashboard if state is missing
+                        let targetPage = 'dashboard';
+                        let targetId = null;
+                        let targetChapterIndex = null; // <<< Variable for chapter index
 
                         if (previousState && previousState.page) {
                             targetPage = previousState.page;
+                            targetId = previousState.id || null;
+                            targetChapterIndex = previousState.chapterIndex; // <<< Get chapter index from state
+                            console.log('Using event.state for navigation:', previousState);
                         } else {
+                            // Fallback logic remains the same...
                             console.warn('popstate event had null or missing state.page, defaulting to dashboard.');
-                            // If we reached the state before our initial pushState,
-                            // push the dashboard state again to establish a baseline.
-                            history.pushState({ page: 'dashboard' }, 'Dashboard', window.location.pathname + window.location.search);
+                            history.replaceState({ page: 'dashboard', id: null, chapterIndex: null }, 'Dashboard', '#/dashboard');
                         }
 
-                        // IMPORTANT: Check if the app's current page *already matches* the target state.
-                        // This prevents infinite loops if navigateTo somehow triggers popstate indirectly,
-                        // and avoids unnecessary re-rendering/navigation calls.
-                        if (this.state.currentPage !== targetPage) {
-                            console.log(`Current app page "${this.state.currentPage}" differs from history target "${targetPage}". Navigating app...`);
+                        // Check if the app's current state already matches the target state
+                        if (this.state.currentPage !== targetPage ||
+                            this.state.selectedCourseId !== targetId ||
+                            this.state.targetChapterIndex !== targetChapterIndex) { // <<< Compare chapter index too (important after resetting)
+
+                            console.log(`App state (${this.state.currentPage}/${this.state.selectedCourseId}/chap:${this.state.targetChapterIndex}) differs from history target (${targetPage}/${targetId}/chap:${targetChapterIndex}). Navigating app...`);
+
+                            // Set the target chapter index BEFORE navigating
+                            this.state.targetChapterIndex = targetChapterIndex; // <<< Set state
 
                             // Navigate the application view WITHOUT pushing history again
-                            // We achieve this because navigateTo now checks if the state exists
-                            this.navigateTo(targetPage);
+                            this.navigateTo(targetPage, targetId);
 
                         } else {
-                            console.log(`Current app page "${this.state.currentPage}" already matches history target "${targetPage}". No app navigation needed.`);
+                            console.log(`App state already matches history target (${targetPage}/${targetId}/chap:${targetChapterIndex}). No app navigation needed.`);
+                            // Reset target index even if not navigating, as popstate implies intent changed
+                            this.state.targetChapterIndex = null;
                         }
                     });
 
-                    // --- Beforeunload Listener (Attempting to Leave/Close) ---
-                    // This logic remains the same - prompt only when leaving from the dashboard.
-                    window.addEventListener('beforeunload', (event) => {
-                        if (this.state.currentPage === 'dashboard') {
-                            console.log('beforeunload event fired while on dashboard. Prompting user.');
-                            event.preventDefault();
-                            event.returnValue = '';
-                        } else {
-                            console.log('beforeunload event fired, but not on dashboard. Allowing exit without prompt.');
-                        }
-                    });
+                    // Beforeunload listener remains the same...
+                    window.addEventListener('beforeunload', (event) => { /* ... */ });
 
                     console.log('History event listeners (popstate, beforeunload) attached.');
-
-                }, // End of setupHistoryListeners function
-                // END REVISED VERSION
+                },// END REVISED VERSION
                 // Load User Data from Cookies
                 loadUserData: function () {
                     this.state.userData.name = this.getCookie('userName');
@@ -2980,75 +3050,105 @@
                     this.loadMockData();
                 },
 
-                // Navigate to Page
-                navigateTo: function (page) {
-                    console.log(`Navigating to: ${page}`); // Keep this for debugging
+                navigateTo: function (page, id = null) { // Add id parameter
+                    console.log(`Navigating to: ${page}` + (id ? ` with ID: ${id}` : ''));
+                    const targetChapterIndexForState = this.state.targetChapterIndex;
 
-                    // START ADDITION: Push state BEFORE updating internal app state
-                    // Only push if the target page is different from the current history state page
-                    // This prevents duplicate entries if navigating to the same page via code/popstate
-                    const currentStatePage = history.state ? history.state.page : null;
-                    if (page !== currentStatePage) {
-                        // Use a clean title and keep the current URL (or modify hash/path if you prefer)
-                        history.pushState({ page: page }, this.capitalizeFirstLetter(page), window.location.pathname + window.location.search);
-                        console.log(`History state pushed for: ${page}`);
-                    } else {
-                        console.log(`Skipping history pushState, already on state for: ${page}`);
+                    // Update internal state FIRST
+                    const previousPage = this.state.currentPage;
+                    this.state.currentPage = page;
+                    this.state.selectedCourseId = id; // Store the ID if provided
+                    console.log(`App state updated - currentPage: ${this.state.currentPage}, selectedCourseId: ${this.state.selectedCourseId}`);
+
+
+                    // --- Construct the new URL Hash ---
+                    let newHash = `#/${page}`;
+                    if (page === 'course-details' && id) {
+                        newHash += `/${encodeURIComponent(id)}`; // Ensure ID is URL-safe
                     }
-                    // END ADDITION
+                    const pageTitle = this.capitalizeFirstLetter(page) + (id ? ` (${id})` : '');
 
-                    // --- Existing logic for showing/hiding pages ---
-                    if (page === 'course-details') {
-                        document.getElementById('courses-page').classList.add('hidden');
-                        document.getElementById('course-details-page').classList.remove('hidden');
-                        this.renderCourseDetails(); // Render details *after* showing the page div
-                    } else if (page === 'about-us') {
-                        document.querySelectorAll('.page-container').forEach(pageEl => {
-                            pageEl.classList.add('hidden');
-                        });
-                        document.getElementById('about-us-page').classList.remove('hidden');
-                        document.getElementById('current-page-breadcrumb').textContent = 'About Us';
-                    } else if (page === 'exam-tracker') {
-                        document.querySelectorAll('.page-container').forEach(pageEl => {
-                            pageEl.classList.add('hidden');
-                        });
-                        document.getElementById('exam-tracker-page').classList.remove('hidden');
-                        document.getElementById('current-page-breadcrumb').textContent = 'Exam Tracker';
-                        // Optionally re-render if data might change frequently
-                        // this.renderExamTracker();
+                    // --- Update History State and URL ---
+                    const currentStateHash = window.location.hash;
+                    if (newHash !== currentStateHash) {
+                        // Push state including page and id
+                        history.pushState({ page: page, id: id }, pageTitle, newHash);
+                        console.log(`History state pushed: ${newHash}`);
                     } else {
-                        // Hide all pages
-                        document.querySelectorAll('.page-container').forEach(pageEl => {
-                            pageEl.classList.add('hidden');
-                        });
+                        console.log(`Skipping history pushState, hash already matches: ${newHash}`);
+                    }
 
-                        // Show selected page
+                    // --- Logic for showing/hiding pages ---
+                    // Hide all pages first
+                    document.querySelectorAll('.page-container').forEach(pageEl => {
+                        pageEl.classList.add('hidden');
+                    });
+
+                    // Handle course details specifically to load data
+                    if (page === 'course-details') {
+                        if (!id) {
+                            console.error("NavigateTo 'course-details' called without an ID.");
+                            this.navigateTo('courses'); // Redirect to courses list if no ID
+                            return;
+                        }
+                        // Find the course using the ID
+                        const course = this.mockData.courses.find(c => c.id === id);
+                        if (!course) {
+                            console.error(`Course with ID ${id} not found.`);
+                            alert(`Error: Course with ID ${id} could not be found.`); // User feedback
+                            this.navigateTo('courses'); // Redirect
+                            return;
+                        }
+                        this.state.selectedCourse = course; // Set the selected course in state
+                        const targetPageElement = document.getElementById('course-details-page');
+                        if (targetPageElement) {
+                            targetPageElement.classList.remove('hidden');
+                            document.getElementById('current-page-breadcrumb').textContent = `Courses / ${course.title}`; // Update breadcrumb
+                            this.renderCourseDetails(); // Render *after* finding course and showing page
+                        } else {
+                            console.error("Course details page element not found!");
+                            this.navigateTo('courses'); // Fallback
+                        }
+
+                    } else if (page === 'courses') {
+                        // Handle back navigation from course details
+                        this.state.selectedCourse = null;
+                        this.state.selectedCourseId = null;
+                        const targetPageElement = document.getElementById('courses-page');
+                        if (targetPageElement) {
+                            targetPageElement.classList.remove('hidden');
+                            document.getElementById('current-page-breadcrumb').textContent = 'Courses';
+                        } else {
+                            console.error("Courses page element not found!");
+                            this.navigateTo('dashboard');
+                        }
+                    }
+                    // Handle other pages (ensure IDs exist)
+                    else {
                         const targetPageElement = document.getElementById(`${page}-page`);
                         if (targetPageElement) {
                             targetPageElement.classList.remove('hidden');
-                            // Update breadcrumbs
                             document.getElementById('current-page-breadcrumb').textContent = this.capitalizeFirstLetter(page);
+
+                            // Special rendering for calendar if navigating to lectures
+                            if (page === 'lectures' && this.calendar) {
+                                setTimeout(() => this.calendar.render(), 0); // Render slightly deferred
+                            }
+                            // Re-render tools if navigating there
+                            if (page === 'tools') {
+                                this.renderToolsPage?.(); // Use optional chaining in case method doesn't exist yet
+                            }
+                            // Re-render exam tracker
+                            if (page === 'exam-tracker') {
+                                this.renderExamTracker?.();
+                            }
+
                         } else {
                             console.error(`Page element not found for id: ${page}-page`);
-                            // Optionally navigate to a default/error page
-                            this.navigateTo('dashboard'); // Go to dashboard if page not found
-                            return; // Stop further processing for this invalid page
-                        }
-
-                        // Special handling for calendar view
-                        if (page === 'lectures' && this.calendar && !document.getElementById('calendar-view').classList.contains('hidden')) {
-                            // Ensure calendar is initialized before rendering
-                            this.calendar.render();
+                            this.navigateTo('dashboard'); // Fallback to dashboard
                         }
                     }
-                    // --- End of Existing logic ---
-
-                    // Update internal state AFTER potentially showing the page
-                    this.state.currentPage = page;
-                    console.log(`App state currentPage updated to: ${this.state.currentPage}`);
-
-                }, // End of navigateTo function
-                // Toggle Dark Mode
+                }, // End of navigateTo function// Toggle Dark Mode
                 toggleDarkMode: function (forcedState) {
                     const newState = forcedState !== undefined ? forcedState : !this.state.darkMode;
 
@@ -3282,22 +3382,27 @@
                     });
                 },
 
-                // Render Recent Materials on Dashboard
                 renderRecentMaterials: function () {
                     const container = document.getElementById('recent-materials');
-                    container.innerHTML = '';
+                    container.innerHTML = ''; // Clear previous items
 
-                    // Collect all materials from courses
+                    // Collect all materials WITH courseId and chapterIndex
                     const allMaterials = [];
                     this.mockData.courses.forEach(course => {
-                        course.chapters.forEach(chapter => {
+                        if (!course || !course.chapters) return; // Safety check
+                        course.chapters.forEach((chapter, chapterIndex) => { // Get chapterIndex
+                            if (!chapter || !chapter.materials) return; // Safety check
                             chapter.materials.forEach(material => {
                                 allMaterials.push({
+                                    // Keep existing properties
                                     title: material.title,
                                     type: material.type,
-                                    course: course.title,
-                                    chapter: chapter.title,
-                                    date: material.date
+                                    courseTitle: course.title, // Keep original title for display
+                                    chapterTitle: chapter.title, // Keep original title for display
+                                    date: material.date,
+                                    // Add necessary navigation data
+                                    courseId: course.id,      // <<< Add Course ID
+                                    chapterIndex: chapterIndex  // <<< Add Chapter Index
                                 });
                             });
                         });
@@ -3318,36 +3423,71 @@
                         const materialDate = new Date(material.date);
                         const formattedDate = materialDate.toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
 
-                        let icon = 'fa-file-pdf';
-                        let bgColor = 'bg-red-100 dark:bg-red-900 text-red-600 dark:text-red-300';
-
-                        if (material.type === 'video') {
-                            icon = 'fa-video';
-                            bgColor = 'bg-blue-100 dark:bg-blue-900 text-blue-600 dark:text-blue-300';
-                        } else if (material.type === 'assignment') {
-                            icon = 'fa-tasks';
-                            bgColor = 'bg-green-100 dark:bg-green-900 text-green-600 dark:text-green-300';
+                        // Determine icon and background color (existing logic)
+                        let icon = 'fa-file-alt';
+                        let bgColor = 'bg-gray-100 dark:bg-gray-900 text-gray-600 dark:text-gray-300'; // Default
+                        switch (material.type?.toLowerCase()) { // Add optional chaining and lower case
+                            case 'pdf': icon = 'fa-file-pdf'; bgColor = 'bg-red-100 dark:bg-red-900 text-red-600 dark:text-red-300'; break;
+                            case 'video': icon = 'fa-video'; bgColor = 'bg-blue-100 dark:bg-blue-900 text-blue-600 dark:text-blue-300'; break;
+                            case 'assignment': icon = 'fa-tasks'; bgColor = 'bg-green-100 dark:bg-green-900 text-green-600 dark:text-green-300'; break;
+                            case 'presentation': icon = 'fa-file-powerpoint'; bgColor = 'bg-orange-100 dark:bg-orange-900 text-orange-600 dark:text-orange-400'; break;
+                            case 'document': icon = 'fa-file-word'; bgColor = 'bg-blue-100 dark:bg-blue-900 text-blue-700 dark:text-blue-500'; break;
                         }
 
-                        const materialEl = document.createElement('div');
-                        materialEl.className = 'flex items-start p-2 rounded-lg hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors';
-                        materialEl.innerHTML = `
-                    <div class="flex-shrink-0 w-10 h-10 rounded-md ${bgColor} flex items-center justify-center mr-3">
-                        <i class="fas ${icon}"></i>
-                    </div>
-                    <div class="flex-1">
-                        <div class="flex justify-between">
-                            <h4 class="font-medium text-gray-900 dark:text-white">${material.title}</h4>
-                            <span class="text-xs text-gray-500 dark:text-gray-400">${formattedDate}</span>
-                        </div>
-                        <p class="text-sm text-gray-600 dark:text-gray-300">${material.course} - ${material.chapter}</p>
-                    </div>
-                `;
+                        // Use a button element for click interaction
+                        const materialEl = document.createElement('button');
+                        materialEl.className = 'w-full text-left flex items-start p-2 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-700 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-opacity-50 transition-colors recent-material-item'; // Add common class
+                        // Add data attributes for navigation
+                        materialEl.setAttribute('data-course-id', material.courseId);
+                        materialEl.setAttribute('data-chapter-index', material.chapterIndex);
+                        // Add ARIA label for accessibility
+                        materialEl.setAttribute('aria-label', `View material ${material.title} in course ${material.courseTitle}`);
 
+                        materialEl.innerHTML = `
+                            <div class="flex-shrink-0 w-10 h-10 rounded-md ${bgColor} flex items-center justify-center mr-3">
+                                <i class="fas ${icon}"></i>
+                            </div>
+                            <div class="flex-1 overflow-hidden"> <!-- Added overflow-hidden -->
+                                <div class="flex justify-between items-center">
+                                    <h4 class="font-medium text-gray-900 dark:text-white truncate" title="${material.title}">${material.title}</h4> <!-- Added truncate and title -->
+                                    <span class="text-xs text-gray-500 dark:text-gray-400 whitespace-nowrap ml-2">${formattedDate}</span> <!-- Added whitespace-nowrap -->
+                                </div>
+                                <p class="text-sm text-gray-600 dark:text-gray-300 truncate" title="${material.courseTitle} - ${material.chapterTitle}"> <!-- Added truncate and title -->
+                                    ${material.courseTitle} - ${material.chapterTitle}
+                                </p>
+                            </div>
+                        `;
                         container.appendChild(materialEl);
                     });
-                },
 
+                    // --- Event Delegation for Clicks ---
+                    // Remove previous listener if any to prevent duplicates
+                    if (this.recentMaterialClickListener) {
+                        container.removeEventListener('click', this.recentMaterialClickListener);
+                    }
+                    // Define the new listener function
+                    this.recentMaterialClickListener = (event) => {
+                        const clickedItem = event.target.closest('.recent-material-item'); // Find the button element
+                        if (clickedItem) {
+                            const courseId = clickedItem.dataset.courseId;
+                            const chapterIndex = parseInt(clickedItem.dataset.chapterIndex, 10); // Parse as integer
+
+                            if (courseId && !isNaN(chapterIndex)) {
+                                console.log(`Clicked recent material: Course ID ${courseId}, Chapter Index ${chapterIndex}`);
+                                // Set the target chapter index in state BEFORE navigating
+                                this.state.targetChapterIndex = chapterIndex;
+                                // Navigate to the course details page
+                                this.navigateTo('course-details', courseId);
+                            } else {
+                                console.warn('Clicked recent material item missing required data attributes.');
+                            }
+                        }
+                    };
+                    // Add the listener to the container
+                    container.addEventListener('click', this.recentMaterialClickListener);
+
+
+                }, // End of renderRecentMaterials
                 // Render Dashboard News
                 renderDashboardNews: function () {
                     const container = document.getElementById('dashboard-news');
@@ -3410,8 +3550,8 @@
                     document.querySelectorAll('.view-course-btn').forEach(button => {
                         button.addEventListener('click', (e) => {
                             const courseId = e.target.dataset.courseId;
-                            this.state.selectedCourse = this.mockData.courses.find(course => course.id === courseId);
-                            this.navigateTo('course-details');
+                            // Call navigateTo instead of setting state directly
+                            this.navigateTo('course-details', courseId);
                         });
                     });
                 },
@@ -3430,83 +3570,182 @@
                     });
                 },
 
-                // Render Course Details
                 renderCourseDetails: function () {
                     const container = document.getElementById('course-details-content');
                     const course = this.state.selectedCourse;
 
+                    // --- Pre-condition Check ---
                     if (!course) {
+                        console.error("renderCourseDetails called but this.state.selectedCourse is null. Navigating away.");
                         this.navigateTo('courses');
                         return;
                     }
+                    console.log(`Rendering details for course: ${course.id}. Target chapter index: ${this.state.targetChapterIndex}`);
 
+                    // --- Prepare Share/Copy Link ---
+                    const shareUrl = `${window.location.origin}${window.location.pathname}#/course-details/${encodeURIComponent(course.id)}`;
+                    let shareButtonHtml = '';
+                    if (navigator.share) {
+                        // Use Web Share API button
+                        shareButtonHtml = `<button id="share-course-btn" class="mt-2 sm:mt-0 px-4 py-2 rounded-md bg-green-600 text-white text-sm font-medium hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500 transition-colors"><i class="fas fa-share-alt mr-1"></i> Share Course</button>`;
+                    } else {
+                        // Fallback to copy link button
+                        shareButtonHtml = `<button id="copy-course-link-btn" data-url="${shareUrl}" class="mt-2 sm:mt-0 px-4 py-2 rounded-md bg-blue-600 text-white text-sm font-medium hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 transition-colors"><i class="fas fa-copy mr-1"></i> Copy Link</button>`;
+                    }
+                    // --- End Share/Copy Link ---
+
+
+                    // --- Construct Main HTML ---
+                    // Note the change in the chapter content div's classes below
                     container.innerHTML = `
-                        <div class="bg-white dark:bg-gray-800 rounded-xl shadow-md overflow-hidden mb-6">
-                            <div class="p-6">
-                                <h1 class="text-2xl font-bold mb-2">${course.title}</h1>
-                                <p class="text-gray-600 dark:text-gray-300 mb-4">Instructor: ${course.instructor}</p>
-                                <p class="text-gray-700 dark:text-gray-300">${course.description}</p>
+                <div class="bg-white dark:bg-gray-800 rounded-xl shadow-md overflow-hidden mb-6">
+                    <div class="p-6">
+                        <div class="flex justify-between items-start flex-wrap gap-2 mb-4">
+                            <div class="flex-grow">
+                                <h1 class="text-2xl font-bold text-gray-900 dark:text-white">${course.title} <span class="text-lg font-normal text-gray-500 dark:text-gray-400">(${course.id})</span></h1>
+                                <p class="text-gray-600 dark:text-gray-300 mt-1">Instructor: ${course.instructor}</p>
+                            </div>
+                            <div class="flex-shrink-0">
+                                ${shareButtonHtml}
                             </div>
                         </div>
-                        
-                        <h2 class="text-xl font-semibold mb-4">Course Chapters</h2>
-                        <div id="chapters-container" class="space-y-4">
-                            ${course.chapters.map((chapter, index) => `
-                                <div class="bg-white dark:bg-gray-800 rounded-xl shadow-md overflow-hidden">
-                                    <div class="p-4 bg-gray-50 dark:bg-gray-700 flex justify-between items-center cursor-pointer chapter-header" data-chapter-index="${index}">
-                                        <h3 class="font-medium">${chapter.title}</h3>
-                                        <i class="fas fa-chevron-down text-gray-500 dark:text-gray-400 transform transition-transform duration-300"></i>
-                                    </div>
-                                    <div class="chapter-content p-4 hidden">
-                                        <p class="text-gray-600 dark:text-gray-300 mb-4">${chapter.description}</p>
-                                        
-                                        <h4 class="font-medium mb-2">Materials</h4>
-                                        <div class="space-y-2">
-                                            ${chapter.materials.map(material => {
-                        let icon = 'fa-file-pdf';
-                        let color = 'text-red-600 dark:text-red-400';
+                        <p class="text-gray-700 dark:text-gray-300">${course.description || 'No description available.'}</p>
+                    </div>
+                </div>
 
-                        if (material.type === 'video') {
-                            icon = 'fa-video';
-                            color = 'text-blue-600 dark:text-blue-400';
-                        } else if (material.type === 'assignment') {
-                            icon = 'fa-tasks';
-                            color = 'text-green-600 dark:text-green-400';
+                <h2 class="text-xl font-semibold mb-4 text-gray-900 dark:text-white">Course Chapters</h2>
+
+                <div id="chapters-container" class="space-y-4">
+                    ${course.chapters && course.chapters.length > 0 ? course.chapters.map((chapter, index) => `
+                        <div class="bg-white dark:bg-gray-800 rounded-lg shadow overflow-hidden border border-gray-200 dark:border-gray-700">
+                            <div class="p-4 bg-gray-50 dark:bg-gray-700 flex justify-between items-center cursor-pointer chapter-header"
+                                 data-chapter-index="${index}"
+                                 aria-expanded="false"
+                                 aria-controls="chapter-content-${index}">
+                                <h3 class="font-medium text-lg text-gray-900 dark:text-white">${chapter.title || `Chapter ${index + 1}`}</h3>
+                                <i class="fas fa-chevron-down text-gray-500 dark:text-gray-400 transform transition-transform duration-300"></i>
+                            </div>
+
+                            <!-- CHANGE: Chapter Content HTML Structure for Animation -->
+                            <!-- OLD: <div id="chapter-content-${index}" class="chapter-content p-4 hidden border-t border-gray-200 dark:border-gray-600"> -->
+                            <div id="chapter-content-${index}" class="chapter-content px-4 border-t border-gray-200 dark:border-gray-600">
+                                <!-- Inner div needed to handle padding transition correctly with max-height -->
+                                <div class="pt-4 pb-4">
+                            <!-- END CHANGE -->
+                                    <p class="text-gray-600 dark:text-gray-300 mb-4">${chapter.description || 'No chapter description.'}</p>
+
+                                    <h4 class="font-semibold mb-2 text-gray-800 dark:text-gray-200">Materials</h4>
+                                    <div class="space-y-2">
+                                        ${chapter.materials && chapter.materials.length > 0 ? chapter.materials.map(material => {
+                        // --- Material type icon logic (no changes here) ---
+                        let icon = 'fa-file-alt'; let color = 'text-gray-600 dark:text-gray-400'; let typeLabel = 'File';
+                        switch (material.type?.toLowerCase()) {
+                            case 'pdf': icon = 'fa-file-pdf'; color = 'text-red-600 dark:text-red-400'; typeLabel = 'PDF'; break;
+                            case 'video': icon = 'fa-video'; color = 'text-blue-600 dark:text-blue-400'; typeLabel = 'Video'; break;
+                            case 'assignment': icon = 'fa-tasks'; color = 'text-green-600 dark:text-green-400'; typeLabel = 'Assignment'; break;
+                            case 'presentation': icon = 'fa-file-powerpoint'; color = 'text-orange-500 dark:text-orange-400'; typeLabel = 'Presentation'; break;
+                            case 'document': icon = 'fa-file-word'; color = 'text-blue-700 dark:text-blue-500'; typeLabel = 'Document'; break;
                         }
-
+                        // --- End Material type logic ---
                         return `
-                                                <div class="flex items-center p-2 hover:bg-gray-50 dark:hover:bg-gray-700 rounded-md">
-                                                    <i class="fas ${icon} ${color} mr-3"></i>
-                                                    <div class="flex-1">
-                                                        <p class="font-medium">${material.title}</p>
-                                                        <p class="text-xs text-gray-500 dark:text-gray-400">Added: ${new Date(material.date).toLocaleDateString()}</p>
+                                                <div class="flex items-center justify-between p-2 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-md">
+                                                    <div class="flex items-center space-x-3 overflow-hidden mr-2">
+                                                        <i class="fas ${icon} ${color} fa-fw text-lg flex-shrink-0"></i>
+                                                        <div class="flex-grow overflow-hidden">
+                                                            <p class="font-medium text-gray-900 dark:text-white truncate" title="${material.title}">${material.title}</p>
+                                                            <p class="text-xs text-gray-500 dark:text-gray-400">Added: ${material.date ? new Date(material.date).toLocaleDateString() : 'N/A'}</p>
+                                                        </div>
                                                     </div>
-                                                    <a href="${material.link}"  class="px-3 py-1 rounded-md bg-gray-200 dark:bg-gray-600 text-gray-800 dark:text-white text-sm hover:bg-gray-300 dark:hover:bg-gray-500 transition-colors download-btn">
-                                                        <i class="fas fa-folder-open mr-1"></i> Open
+                                                    <a href="${material.link || '#'}" target="_blank" rel="noopener noreferrer" class="ml-2 flex-shrink-0 px-3 py-1 rounded-md bg-indigo-100 dark:bg-indigo-900 text-indigo-700 dark:text-indigo-300 text-sm font-medium hover:bg-indigo-200 dark:hover:bg-indigo-800 focus:outline-none focus:ring-2 focus:ring-offset-1 focus:ring-indigo-500 transition-colors download-btn ${!material.link ? 'opacity-50 cursor-not-allowed' : ''}" title="Open ${typeLabel}" ${!material.link ? 'aria-disabled="true"' : ''}>
+                                                        <i class="fas fa-external-link-alt mr-1"></i> Open
                                                     </a>
                                                 </div>
                                             `;
-                    }).join('')}
-                                        </div>
+                    }).join('') : '<p class="text-sm text-gray-500 dark:text-gray-400">No materials available for this chapter.</p>'}
                                     </div>
-                                </div>
-                            `).join('')}
+                                </div> <!-- End inner padding div -->
+                            </div> <!-- End chapter-content -->
                         </div>
-                    `;
+                    `).join('') : '<p class="text-gray-600 dark:text-gray-400">No chapters found for this course.</p>'}
+                </div>
+            `;
+                    // --- End Construct Main HTML ---
 
-                    // Add event listeners to chapter headers
-                    document.querySelectorAll('.chapter-header').forEach(header => {
+
+                    // --- Attach Event Listeners AFTER rendering HTML ---
+
+                    // Accordion Click Handler
+                    container.querySelectorAll('.chapter-header').forEach(header => {
                         header.addEventListener('click', () => {
-                            const content = header.nextElementSibling;
+                            const content = header.nextElementSibling; // The .chapter-content div
                             const icon = header.querySelector('i');
+                            const isExpanded = header.getAttribute('aria-expanded') === 'true';
 
-                            content.classList.toggle('hidden');
-                            icon.classList.toggle('rotate-180');
+                            // CHANGE: Toggle the animation class instead of 'hidden'
+                            // OLD: content.classList.toggle('hidden');
+                            content.classList.toggle('chapter-open');
+                            // END CHANGE
+
+                            // Update ARIA and icon rotation (no change needed here)
+                            header.setAttribute('aria-expanded', !isExpanded);
+                            if (icon) { // Check if icon exists
+                                icon.classList.toggle('rotate-180', !isExpanded);
+                            }
                         });
                     });
-                },
 
-                // Render Lectures
+                    // Share/Copy button listeners (no changes needed here)
+                    const shareBtn = container.querySelector('#share-course-btn');
+                    if (shareBtn) { /* ... listener code ... */ }
+                    const copyBtn = container.querySelector('#copy-course-link-btn');
+                    if (copyBtn) { /* ... listener code ... */ }
+
+
+                    // --- Expand and Scroll to Target Chapter Logic ---
+                    const targetIndex = this.state.targetChapterIndex;
+                    if (targetIndex !== null && targetIndex >= 0) {
+                        console.log(`Attempting to expand and scroll to chapter index: ${targetIndex}`);
+                        const targetHeader = container.querySelector(`.chapter-header[data-chapter-index="${targetIndex}"]`);
+                        const targetContent = container.querySelector(`#chapter-content-${targetIndex}`);
+
+                        if (targetHeader && targetContent) {
+                            console.log(`Found target elements for chapter index ${targetIndex}`);
+                            const icon = targetHeader.querySelector('i');
+
+                            // CHANGE: Add the animation class instead of removing 'hidden'
+                            // OLD: targetContent.classList.remove('hidden');
+                            targetContent.classList.add('chapter-open');
+                            // END CHANGE
+
+                            // Update ARIA and icon state to match expanded view
+                            targetHeader.setAttribute('aria-expanded', 'true');
+                            if (icon) {
+                                icon.classList.add('rotate-180');
+                            }
+
+                            // CHANGE: Added setTimeout for potentially smoother scroll targeting after animation starts
+                            // OLD: targetHeader.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+                            // OLD: console.log(`Scrolled chapter ${targetIndex} into view.`);
+                            setTimeout(() => {
+                                targetHeader.scrollIntoView({
+                                    behavior: 'smooth',
+                                    block: 'nearest'
+                                });
+                                console.log(`Scrolled chapter ${targetIndex} into view.`);
+                            }, 100); // Small delay (100ms)
+                            // END CHANGE
+
+                        } else {
+                            console.warn(`Could not find header or content elements for chapter index ${targetIndex}`);
+                        }
+
+                        // Reset the target index (no change needed here)
+                        this.state.targetChapterIndex = null;
+                        console.log('Reset targetChapterIndex state.');
+                    }
+                    // --- End Expand and Scroll ---
+
+                }, // End of renderCourseDetails function // Render Lectures
                 renderLectures: function () {
                     const tbody = document.getElementById('lecture-list');
                     tbody.innerHTML = '';
