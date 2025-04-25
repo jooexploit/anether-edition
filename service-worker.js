@@ -5,7 +5,7 @@
 
 // --- Configuration ---
 
-const CACHE_NAME = "team-shoky-helper-v2"; // !! INCREMENT THIS WHEN YOU UPDATE ASSETS !!
+const CACHE_NAME = "team-shoky-helper-v2"; 
 
 // Essential files for the App Shell to load offline
 const APP_SHELL_URLS = [

@@ -189,47 +189,33 @@
             const installButtonContainer = document.getElementById('install-app-button-container');
             const installButton = document.getElementById('install-app-button');
 
-            // Check if the app is already running as a PWA
             const isRunningAsPWA = window.matchMedia('(display-mode: standalone)').matches || window.navigator.standalone;
 
             if (isRunningAsPWA) {
-                // Disable the "Download App" button if the app is already running
                 installButton.disabled = true;
                 installButton.textContent = 'App Installed';
                 installButtonContainer.classList.remove('hidden');
             } else {
-                // Listen for the beforeinstallprompt event
+                // Only show if event fires
                 window.addEventListener('beforeinstallprompt', (e) => {
-                    // Prevent the mini-infobar from appearing on mobile
                     e.preventDefault();
-                    // Stash the event so it can be triggered later
                     deferredPrompt = e;
-
-                    // Show the "Download App" button
                     installButtonContainer.classList.remove('hidden');
                 });
 
-                if (installButton) {
-                    installButton.addEventListener('click', async () => {
-                        if (deferredPrompt) {
-                            // Show the install prompt
-                            deferredPrompt.prompt();
-
-                            // Wait for the user to respond to the prompt
-                            const { outcome } = await deferredPrompt.userChoice;
-                            if (outcome === 'accepted') {
-                                console.log('User accepted the install prompt');
-                            } else {
-                                console.log('User dismissed the install prompt');
-                            }
-
-                            // Clear the deferredPrompt variable
-                            deferredPrompt = null;
-                        }
-                    });
-                }
+                installButton.addEventListener('click', async () => {
+                    if (deferredPrompt) {
+                        deferredPrompt.prompt();
+                        const { outcome } = await deferredPrompt.userChoice;
+                        console.log(outcome === 'accepted' ? 'User accepted install' : 'User dismissed install');
+                        deferredPrompt = null;
+                    } else {
+                        alert("Install option not available yet. Try again later.");
+                    }
+                });
             }
         });
+
     </script>
     <style>
         :root {
@@ -1087,9 +1073,9 @@
                         </li>
                         <!-- Settings button MOVED to footer -->
                         <!-- Install App button stays here -->
-                        <li id="install-app-button-container">
+                        <li id="install-app-button-container" class="hidden">
                             <button id="install-app-button"
-                                class="nav-link w-full flex items-center px-3 py-2 rounded-md font-medium hover:bg-indigo-700 transition-colors">
+                                class=" w-full flex items-center px-3 py-2 rounded-md font-medium hover:bg-indigo-700 transition-colors">
                                 <i class="fas fa-download w-6"></i>
                                 <span>Download App</span>
                             </button>
@@ -1117,7 +1103,7 @@
                 <div class="flex justify-between items-center text-indigo-200 text-sm">
                     <span>© 2025 Team Shoky</span>
                     <button id="theme-toggle" aria-label="Toggle theme" class="hover:text-white">
-                        <i class="fas fa-moon"></i>
+                        <!-- <i class="fas fa-moon"></i> -->
                     </button>
                 </div>
             </div>
@@ -3611,71 +3597,61 @@
                     const container = document.getElementById('course-details-content');
                     const course = this.state.selectedCourse;
 
-                    // --- Pre-condition Check ---
                     if (!course) {
                         console.error("renderCourseDetails called but this.state.selectedCourse is null. Navigating away.");
                         this.navigateTo('courses');
                         return;
                     }
-                    console.log(`Rendering details for course: ${course.id}. Target chapter index: ${this.state.targetChapterIndex}`);
 
-                    // --- Prepare Share/Copy Link ---
                     const shareUrl = `${window.location.origin}${window.location.pathname}#/course-details/${encodeURIComponent(course.id)}`;
                     let shareButtonHtml = '';
                     if (navigator.share) {
-                        // Use Web Share API button
                         shareButtonHtml = `<button id="share-course-btn" class="mt-2 sm:mt-0 px-4 py-2 rounded-md bg-green-600 text-white text-sm font-medium hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500 transition-colors"><i class="fas fa-share-alt mr-1"></i> Share Course</button>`;
                     } else {
-                        // Fallback to copy link button
                         shareButtonHtml = `<button id="copy-course-link-btn" data-url="${shareUrl}" class="mt-2 sm:mt-0 px-4 py-2 rounded-md bg-blue-600 text-white text-sm font-medium hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 transition-colors"><i class="fas fa-copy mr-1"></i> Copy Link</button>`;
                     }
-                    // --- End Share/Copy Link ---
 
-
-                    // --- Construct Main HTML ---
-                    // Note the change in the chapter content div's classes below
                     container.innerHTML = `
-                <div class="bg-white dark:bg-gray-800 rounded-xl shadow-md overflow-hidden mb-6">
-                    <div class="p-6">
-                        <div class="flex justify-between items-start flex-wrap gap-2 mb-4">
-                            <div class="flex-grow">
-                                <h1 class="text-2xl font-bold text-gray-900 dark:text-white">${course.title} <span class="text-lg font-normal text-gray-500 dark:text-gray-400">(${course.id})</span></h1>
-                                <p class="text-gray-600 dark:text-gray-300 mt-1">Instructor: ${course.instructor}</p>
-                            </div>
-                            <div class="flex-shrink-0">
-                                ${shareButtonHtml}
-                            </div>
-                        </div>
-                        <p class="text-gray-700 dark:text-gray-300">${course.description || 'No description available.'}</p>
-                    </div>
-                </div>
+<div class="bg-white dark:bg-gray-800 rounded-xl shadow-md overflow-hidden mb-6">
+    <div class="p-4 sm:p-6">
+        <div class="flex justify-between items-start flex-wrap gap-2 mb-4">
+            <div class="flex-grow min-w-0">
+                <h1 class="text-xl sm:text-2xl font-bold text-gray-900 dark:text-white break-words">${course.title}
+                    <span class="text-lg font-normal text-gray-500 dark:text-gray-400">(${course.id})</span>
+                </h1>
+                <p class="text-gray-600 dark:text-gray-300 mt-1">Instructor: ${course.instructor}</p>
+            </div>
+            <div class="flex-shrink-0">
+                ${shareButtonHtml}
+            </div>
+        </div>
+<p class="text-gray-700 dark:text-gray-300 break-words max-w-full text-sm sm:text-base line-clamp-5 sm:line-clamp-3">
+  ${course.description || 'No description available.'}
+</p>
+    </div>
+</div>
 
-                <h2 class="text-xl font-semibold mb-4 text-gray-900 dark:text-white">Course Chapters</h2>
+<h2 class="text-lg sm:text-xl font-semibold mb-4 text-gray-900 dark:text-white">Course Chapters</h2>
 
-                <div id="chapters-container" class="space-y-4">
-                    ${course.chapters && course.chapters.length > 0 ? course.chapters.map((chapter, index) => `
-                        <div class="bg-white dark:bg-gray-800 rounded-lg shadow overflow-hidden border border-gray-200 dark:border-gray-700">
-                            <div class="p-4 bg-gray-50 dark:bg-gray-700 flex justify-between items-center cursor-pointer chapter-header"
-                                 data-chapter-index="${index}"
-                                 aria-expanded="false"
-                                 aria-controls="chapter-content-${index}">
-                                <h3 class="font-medium text-lg text-gray-900 dark:text-white">${chapter.title || `Chapter ${index + 1}`}</h3>
-                                <i class="fas fa-chevron-down text-gray-500 dark:text-gray-400 transform transition-transform duration-300"></i>
-                            </div>
+<div id="chapters-container" class="space-y-4">
+    ${course.chapters && course.chapters.length > 0 ? course.chapters.map((chapter, index) => `
+        <div class="bg-white dark:bg-gray-800 rounded-lg shadow overflow-hidden border border-gray-200 dark:border-gray-700">
+            <div class="p-4 bg-gray-50 dark:bg-gray-700 flex justify-between items-center cursor-pointer chapter-header"
+                 data-chapter-index="${index}"
+                 aria-expanded="false"
+                 aria-controls="chapter-content-${index}">
+                <h3 class="font-medium text-base sm:text-lg text-gray-900 dark:text-white mr-2 break-words">${chapter.title || `Chapter ${index + 1}`}</h3>
+                <i class="fas fa-chevron-down text-gray-500 dark:text-gray-400 transform transition-transform duration-300 flex-shrink-0"></i> 
+            </div>
 
-                            <!-- CHANGE: Chapter Content HTML Structure for Animation -->
-                            <!-- OLD: <div id="chapter-content-${index}" class="chapter-content p-4 hidden border-t border-gray-200 dark:border-gray-600"> -->
-                            <div id="chapter-content-${index}" class="chapter-content px-4 border-t border-gray-200 dark:border-gray-600">
-                                <!-- Inner div needed to handle padding transition correctly with max-height -->
-                                <div class="pt-4 pb-4">
-                            <!-- END CHANGE -->
-                                    <p class="text-gray-600 dark:text-gray-300 mb-4">${chapter.description || 'No chapter description.'}</p>
+            <div id="chapter-content-${index}" class="chapter-content px-4 border-t border-gray-200 dark:border-gray-600 max-h-0 overflow-hidden transition-all duration-300 ease-in-out">
+                <div class="pt-4 pb-4">
+                    <p class="text-gray-600 dark:text-gray-300 mb-4 break-words whitespace-pre-wrap">${chapter.description || 'No chapter description.'}</p>
 
-                                    <h4 class="font-semibold mb-2 text-gray-800 dark:text-gray-200">Materials</h4>
-                                    <div class="space-y-2">
-                                        ${chapter.materials && chapter.materials.length > 0 ? chapter.materials.map(material => {
-                        // --- Material type icon logic (no changes here) ---
-                        let icon = 'fa-file-alt'; let color = 'text-gray-600 dark:text-gray-400'; let typeLabel = 'File';
+                    <h4 class="font-semibold mb-2 text-gray-800 dark:text-gray-200">Materials</h4>
+                    <div class="space-y-2">
+                        ${chapter.materials && chapter.materials.length > 0 ? chapter.materials.map(material => {
+                        let icon = 'fa-file-alt', color = 'text-gray-600 dark:text-gray-400', typeLabel = 'File';
                         switch (material.type?.toLowerCase()) {
                             case 'pdf': icon = 'fa-file-pdf'; color = 'text-red-600 dark:text-red-400'; typeLabel = 'PDF'; break;
                             case 'video': icon = 'fa-video'; color = 'text-blue-600 dark:text-blue-400'; typeLabel = 'Video'; break;
@@ -3683,166 +3659,89 @@
                             case 'presentation': icon = 'fa-file-powerpoint'; color = 'text-orange-500 dark:text-orange-400'; typeLabel = 'Presentation'; break;
                             case 'document': icon = 'fa-file-word'; color = 'text-blue-700 dark:text-blue-500'; typeLabel = 'Document'; break;
                         }
-                        // --- End Material type logic ---
                         return `
-                                                <div class="flex items-center justify-between p-2 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-md">
-                                                    <div class="flex items-center space-x-3 overflow-hidden mr-2">
-                                                        <i class="fas ${icon} ${color} fa-fw text-lg flex-shrink-0"></i>
-                                                        <div class="flex-grow overflow-hidden">
-                                                            <p class="font-medium text-gray-900 dark:text-white truncate" title="${material.title}">${material.title}</p>
-                                                            <p class="text-xs text-gray-500 dark:text-gray-400">Added: ${material.date ? new Date(material.date).toLocaleDateString() : 'N/A'}</p>
-                                                        </div>
-                                                    </div>
-                                                    <a href="${material.link || '#'}" target="_blank" rel="noopener noreferrer" class="ml-2 flex-shrink-0 px-3 py-1 rounded-md bg-indigo-100 dark:bg-indigo-900 text-indigo-700 dark:text-indigo-300 text-sm font-medium hover:bg-indigo-200 dark:hover:bg-indigo-800 focus:outline-none focus:ring-2 focus:ring-offset-1 focus:ring-indigo-500 transition-colors download-btn ${!material.link ? 'opacity-50 cursor-not-allowed' : ''}" title="Open ${typeLabel}" ${!material.link ? 'aria-disabled="true"' : ''}>
-                                                        <i class="fas fa-external-link-alt mr-1"></i> Open
-                                                    </a>
-                                                </div>
-                                            `;
-                    }).join('') : '<p class="text-sm text-gray-500 dark:text-gray-400">No materials available for this chapter.</p>'}
+                            <div class="flex items-center justify-between p-2 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-md flex-wrap sm:flex-nowrap gap-2">
+                                <div class="flex items-center space-x-2 sm:space-x-3 overflow-hidden mr-2 min-w-0 flex-grow"> 
+                                    <i class="fas ${icon} ${color} fa-fw text-lg flex-shrink-0"></i>
+                                    <div class="flex-grow overflow-hidden min-w-0"> 
+                                        <p class="font-medium text-gray-900 dark:text-white truncate" title="${material.title}">${material.title}</p>
+                                        <p class="text-xs text-gray-500 dark:text-gray-400">Added: ${material.date ? new Date(material.date).toLocaleDateString() : 'N/A'}</p>
                                     </div>
-                                </div> <!-- End inner padding div -->
-                            </div> <!-- End chapter-content -->
-                        </div>
-                    `).join('') : '<p class="text-gray-600 dark:text-gray-400">No chapters found for this course.</p>'}
+                                </div>
+                                <a href="${material.link || '#'}" target="_blank" rel="noopener noreferrer" class="ml-auto sm:ml-2 flex-shrink-0 px-3 py-1 rounded-md bg-indigo-100 dark:bg-indigo-900 text-indigo-700 dark:text-indigo-300 text-sm font-medium hover:bg-indigo-200 dark:hover:bg-indigo-800 focus:outline-none focus:ring-2 focus:ring-offset-1 focus:ring-indigo-500 transition-colors download-btn ${!material.link ? 'opacity-50 cursor-not-allowed' : ''}" title="Open ${typeLabel}" ${!material.link ? 'aria-disabled="true"' : ''}>
+                                    <i class="fas fa-external-link-alt mr-1"></i> Open
+                                </a>
+                            </div>`;
+                    }).join('') : '<p class="text-sm text-gray-500 dark:text-gray-400">No materials available for this chapter.</p>'}
+                    </div>
                 </div>
-            `;
-                    // --- End Construct Main HTML ---
+            </div>
+        </div>
+    `).join('') : '<p class="text-gray-600 dark:text-gray-400">No chapters found for this course.</p>'}
+</div>
+`;
 
-
-                    // --- Attach Event Listeners AFTER rendering HTML ---
-
-                    // Accordion Click Handler
+                    // Accordion logic
                     container.querySelectorAll('.chapter-header').forEach(header => {
                         header.addEventListener('click', () => {
-                            const content = header.nextElementSibling; // The .chapter-content div
-                            const icon = header.querySelector('i');
+                            const content = header.nextElementSibling;
+                            const icon = header.querySelector('i.fa-chevron-down');
                             const isExpanded = header.getAttribute('aria-expanded') === 'true';
-
-                            // CHANGE: Toggle the animation class instead of 'hidden'
-                            // OLD: content.classList.toggle('hidden');
                             content.classList.toggle('chapter-open');
-                            // END CHANGE
-
-                            // Update ARIA and icon rotation (no change needed here)
                             header.setAttribute('aria-expanded', !isExpanded);
-                            if (icon) { // Check if icon exists
-                                icon.classList.toggle('rotate-180', !isExpanded);
-                            }
+                            if (icon) icon.classList.toggle('rotate-180', !isExpanded);
                         });
                     });
 
-                    // Share/Copy button listeners (no changes needed here)
-                    // Web Share API button
+                    // Share button
                     const shareBtn = container.querySelector('#share-course-btn');
                     if (shareBtn) {
                         shareBtn.addEventListener('click', async () => {
-                            console.log('Share button clicked!');
                             try {
-                                // Ensure course data is available before creating shareData
-                                if (!course || !course.title || !course.id || !course.instructor || !shareUrl) {
-                                    console.error('Missing data required for sharing.');
-                                    alert('Cannot share course: essential information is missing.');
-                                    return; // Prevent sharing if data is bad
-                                }
-
-                                // --- Create the data object with the NEW text ---
                                 const shareData = {
-                                    title: `Course: ${course.title}`, // Used as Subject/Link Title
-                                    // --- NEW, more engaging text ---
-                                    text: `Hey! 👋 Check out this course on Team Shoky Helper: "${course.title}" (ID: ${course.id}) taught by ${course.instructor}. You can find all the details and materials here! 📚`,
-                                    // --- End of new text ---
-                                    url: shareUrl, // The link
+                                    title: `Course: ${course.title}`,
+                                    text: `Hey! 👋 Check out this course: "${course.title}" (ID: ${course.id}) by ${course.instructor}`,
+                                    url: shareUrl,
                                 };
-                                // --- End of data object ---
-
-                                console.log('Attempting to share with this data:', shareData);
-
-                                // Call the Web Share API
                                 await navigator.share(shareData);
-
-                                console.log('Course shared successfully using Web Share API.');
-
                             } catch (err) {
-                                // Handle errors (e.g., user cancelled share, API not supported error)
-                                console.error('Error sharing course via Web Share API:', err);
-                                if (err.name !== 'AbortError') { // Don't alert if user just cancelled
-                                    alert(`Sharing failed: ${err.message}`);
-                                } else {
-                                    console.log('Sharing aborted by user.');
-                                }
+                                if (err.name !== 'AbortError') alert(`Sharing failed: ${err.message}`);
                             }
                         });
-                        console.log('Share button listener attached.');
                     }
+
+                    // Copy link fallback
                     const copyBtn = container.querySelector('#copy-course-link-btn');
                     if (copyBtn) {
                         copyBtn.addEventListener('click', async (e) => {
                             const urlToCopy = e.currentTarget.dataset.url;
-                            const originalText = e.currentTarget.innerHTML; // Store original button content
-
+                            const originalText = e.currentTarget.innerHTML;
                             try {
                                 await navigator.clipboard.writeText(urlToCopy);
-                                console.log('Course link copied to clipboard:', urlToCopy);
-                                // Provide temporary visual feedback
                                 e.currentTarget.innerHTML = '<i class="fas fa-check mr-1"></i> Copied!';
-                                e.currentTarget.disabled = true; // Briefly disable
+                                e.currentTarget.disabled = true;
                                 setTimeout(() => {
-                                    e.currentTarget.innerHTML = originalText; // Restore original text
-                                    e.currentTarget.disabled = false; // Re-enable
-                                }, 2000); // Reset after 2 seconds
+                                    e.currentTarget.innerHTML = originalText;
+                                    e.currentTarget.disabled = false;
+                                }, 2000);
                             } catch (err) {
-                                console.error('Failed to copy course link to clipboard:', err);
-                                // Fallback for user if automatic copy fails
-                                alert('Failed to copy link automatically. Please copy it manually:\n\n' + urlToCopy);
+                                alert('Copy failed. Please copy manually:\n\n' + urlToCopy);
                             }
                         });
                     }
 
-                    // --- Expand and Scroll to Target Chapter Logic ---
+                    // Scroll to chapter if specified
                     const targetIndex = this.state.targetChapterIndex;
                     if (targetIndex !== null && targetIndex >= 0) {
-                        console.log(`Attempting to expand and scroll to chapter index: ${targetIndex}`);
-                        const targetHeader = container.querySelector(`.chapter-header[data-chapter-index="${targetIndex}"]`);
-                        const targetContent = container.querySelector(`#chapter-content-${targetIndex}`);
-
-                        if (targetHeader && targetContent) {
-                            console.log(`Found target elements for chapter index ${targetIndex}`);
-                            const icon = targetHeader.querySelector('i');
-
-                            // CHANGE: Add the animation class instead of removing 'hidden'
-                            // OLD: targetContent.classList.remove('hidden');
-                            targetContent.classList.add('chapter-open');
-                            // END CHANGE
-
-                            // Update ARIA and icon state to match expanded view
-                            targetHeader.setAttribute('aria-expanded', 'true');
-                            if (icon) {
-                                icon.classList.add('rotate-180');
-                            }
-
-                            // CHANGE: Added setTimeout for potentially smoother scroll targeting after animation starts
-                            // OLD: targetHeader.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
-                            // OLD: console.log(`Scrolled chapter ${targetIndex} into view.`);
-                            setTimeout(() => {
-                                targetHeader.scrollIntoView({
-                                    behavior: 'smooth',
-                                    block: 'nearest'
-                                });
-                                console.log(`Scrolled chapter ${targetIndex} into view.`);
-                            }, 100); // Small delay (100ms)
-                            // END CHANGE
-
-                        } else {
-                            console.warn(`Could not find header or content elements for chapter index ${targetIndex}`);
+                        const chapterHeader = container.querySelector(`[data-chapter-index="${targetIndex}"]`);
+                        if (chapterHeader) {
+                            chapterHeader.click(); // open it
+                            chapterHeader.scrollIntoView({ behavior: 'smooth', block: 'start' });
                         }
-
-                        // Reset the target index (no change needed here)
-                        this.state.targetChapterIndex = null;
-                        console.log('Reset targetChapterIndex state.');
                     }
-                    // --- End Expand and Scroll ---
+                },
 
-                }, // End of renderCourseDetails function // Render Lectures
+
                 renderLectures: function () {
                     const tbody = document.getElementById('lecture-list');
                     tbody.innerHTML = '';
