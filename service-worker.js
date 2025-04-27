@@ -6,7 +6,7 @@
 */
 
 
-const CACHE_NAME = "team-shoky-helper-v5"; // <-- INCREMENTED VERSION!
+const CACHE_NAME = "team-shoky-helper-v6"; // <-- INCREMENTED VERSION!
 
 // Essential files for the App Shell to load offline
 const APP_SHELL_URLS = [
