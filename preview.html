@@ -4,7 +4,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>HTML Preview - Team Shoky Helper (Secure)</title>
+    <title>Team Shoky Helper Previewer </title>
     <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
     <!-- Favicons (Optional - Copy from your index.html if needed, adjust paths if necessary) -->
     <link rel="apple-touch-icon" sizes="57x57" href="favicon/apple-icon-57x57.png">
@@ -79,44 +79,27 @@
 
             // --- Helper Functions ---
 
-            /**
-             * Displays a message in the overlay area, ensuring the iframe is hidden.
-             * Makes the overlay visible.
-             * @param {string} htmlContent - The HTML content for the message.
-             * @param {boolean} [isError=true] - Flag to indicate if the message is an error (defaults to true for messages).
-             */
-            function showErrorMessage(htmlContent, isError = true) {
-                iframe.classList.add('hidden');     // Explicitly hide iframe
-                iframe.src = 'about:blank';         // Reset src
+            /** Displays a message, hides iframe */
+            function showMessage(htmlContent, isError = true) {
+                iframe.classList.add('hidden');
+                iframe.removeAttribute('srcdoc'); // Clear srcdoc
+                iframe.src = 'about:blank';        // Reset src too
                 messageOverlay.innerHTML = htmlContent;
-                messageOverlay.classList.remove('hidden'); // MAKE OVERLAY VISIBLE
+                messageOverlay.classList.remove('hidden');
                 const logType = isError ? 'error' : 'info';
                 const logPrefix = isError ? 'Error displayed:' : 'Message displayed:';
                 console[logType](`${logPrefix} ${messageOverlay.textContent.replace(/\s+/g, ' ').trim()}`);
             }
 
-            /** Hides the message overlay and shows the iframe. */
+            /** Hides message, shows iframe */
             function showIframeContent() {
-                // Check if iframe src is actually set to something meaningful before showing
-                if (iframe.src && iframe.src !== 'about:blank') {
-                    console.log('Showing iframe content, hiding overlay for:', iframe.src);
-                    messageOverlay.classList.add('hidden'); // Hide overlay
-                    iframe.classList.remove('hidden');     // Show iframe
-                } else {
-                    // This case should ideally not be reached if load was successful for non-blank
-                    console.warn('showIframeContent called, but iframe src is blank or invalid.');
-                    // Fallback to show error if called inappropriately
-                    showErrorMessage(
-                        `<h2 class="text-xl font-semibold mb-2 text-red-600 dark:text-red-500">Internal Error</h2>
-                          <p>Could not display the preview content due to an unexpected state.</p>`, true);
-                }
+                // Only show iframe if srcdoc has been potentially set (or if we intend to load blank)
+                console.log('Showing iframe content, hiding overlay.');
+                messageOverlay.classList.add('hidden');
+                iframe.classList.remove('hidden');
             }
 
-            /**
-             * Validates the provided file path for security.
-             * @param {string | null} path - The file path from the URL parameter.
-             * @returns {{valid: boolean, reason: string}} - Validation result.
-             */
+            /** Validates the provided file path */
             function isValidPath(path) {
                 // --- Same robust validation logic as before ---
                 if (!path || path.trim() === '') { return { valid: false, reason: 'No path provided.' }; }
@@ -132,79 +115,75 @@
                 // --- End of validation logic ---
             }
 
-            // --- Iframe Event Listeners (Setup *before* setting src) ---
-
-            iframe.addEventListener('load', () => {
-                const loadedSrc = iframe.src;
-                console.log(`iframe 'load' event fired for src: ${loadedSrc}`);
-
-                if (loadedSrc !== 'about:blank') {
-                    // SUCCESS: It loaded *something*. Show it.
-                    console.log('Load successful for non-blank src. Displaying content.');
-                    showIframeContent();
-                } else {
-                    // It loaded 'about:blank'. This means the intended load likely failed or was blocked BEFORE the error event could fire.
-                    console.warn("iframe loaded 'about:blank'. Load might have been blocked or failed silently.");
-                    // Show an informative message ONLY if we actually tried to load a valid path
-                    // Use validationResult captured from the outer scope
-                    if (typeof validationResult !== 'undefined' && validationResult && validationResult.valid) {
-                        showErrorMessage(`
-                            <h2 class="text-xl font-semibold mb-2 text-yellow-600 dark:text-yellow-500">Preview Failed or Blocked</h2>
-                            <p>The preview frame appears empty. This can happen if the browser blocked access to the file (check console for errors) or if the file itself is empty/invalid.</p>
-                            <p class="mt-2">Path attempted: <code class="bg-gray-300 dark:bg-gray-700 px-1 rounded text-gray-800 dark:text-gray-200 break-all">${filePath || 'N/A'}</code></p>`, true);
-                    }
-                    // If validationResult was invalid, the message was already shown. Do nothing here.
-                }
-            });
-
-            iframe.addEventListener('error', (event) => {
-                console.error(`iframe 'error' event fired. Failed to load src: ${filePath}`, event);
-                const errorHTML = `
-                     <h2 class="text-xl font-semibold mb-2 text-red-600 dark:text-red-500">Loading Error</h2>
-                     <p>Could not load the preview frame for the specified path.</p>
-                     <p class="mt-2">This usually means the file was not found at the relative path <code class="bg-gray-300 dark:bg-gray-700 px-1 rounded text-gray-800 dark:text-gray-200 break-all">${filePath || 'N/A'}</code> or browser security restrictions prevented access.</p>
-                     <p class="mt-2">Please verify the file path and check the browser console (F12) for detailed errors.</p>
-                `;
-                showErrorMessage(errorHTML, true); // Show specific error message
-            });
-
-
             // --- Main Execution Logic ---
 
             // Initialize UI state: BOTH iframe AND overlay hidden
             iframe.classList.add('hidden');
-            messageOverlay.classList.add('hidden'); // Keep overlay hidden initially
-            messageOverlay.innerHTML = '';          // Clear any default text
+            messageOverlay.classList.add('hidden');
+            messageOverlay.innerHTML = '';
 
-            const validationResult = isValidPath(filePath); // Run validation (declare validationResult here)
+            const validationResult = isValidPath(filePath);
 
             if (validationResult.valid) {
-                // Path is valid: Attempt to load it. The event listeners will handle visibility.
-                console.log('Path is valid. Attempting to set iframe src:', filePath);
-                iframe.src = filePath;
-                // DO NOT show iframe or overlay here - wait for events
+                // Path is valid: Attempt to FETCH it.
+                console.log('Path is valid. Attempting to fetch content for:', filePath);
+                // Show a loading message initially
+                showMessage(`
+                    <h2 class="text-xl font-semibold mb-2">Loading Preview...</h2>
+                    <p>Fetching content for: <code class="bg-gray-300 dark:bg-gray-700 px-1 rounded text-gray-800 dark:text-gray-200 break-all">${filePath}</code></p>
+                    <div class="mt-4"><svg class="animate-spin h-5 w-5 text-indigo-600 dark:text-indigo-400 mx-auto" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                        <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+                        <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                    </svg></div>
+                `, false); // false indicates it's not an error message yet
+
+                fetch(filePath)
+                    .then(response => {
+                        console.log(`Fetch response status for ${filePath}: ${response.status}`);
+                        if (!response.ok) {
+                            // Handle HTTP errors (like 404 Not Found)
+                            throw new Error(`HTTP error ${response.status} - ${response.statusText}`);
+                        }
+                        return response.text(); // Get the HTML content as text
+                    })
+                    .then(htmlContent => {
+                        console.log(`Successfully fetched content for ${filePath}. Setting srcdoc.`);
+                        // Inject the fetched HTML into the iframe using srcdoc
+                        iframe.srcdoc = htmlContent;
+                        // Now show the iframe (which will process the srcdoc)
+                        showIframeContent();
+                    })
+                    .catch(error => {
+                        console.error(`Failed to fetch or process ${filePath}:`, error);
+                        const errorHTML = `
+                             <h2 class="text-xl font-semibold mb-2 text-red-600 dark:text-red-500">Loading Error</h2>
+                             <p>Could not fetch the preview content for the specified path.</p>
+                             <p class="mt-2">Reason: ${error.message || 'Network error or file not found'}.</p>
+                             <p class="mt-2">Path attempted: <code class="bg-gray-300 dark:bg-gray-700 px-1 rounded text-gray-800 dark:text-gray-200 break-all">${filePath}</code></p>
+                             <p class="mt-2">Please verify the file exists at this relative path on the server and check the browser console (F12).</p>
+                        `;
+                        showMessage(errorHTML, true); // Show specific fetch error message
+                    });
 
             } else {
                 // Path is invalid or missing: Show appropriate message immediately.
                 const messageHTML = !filePathRaw
                     ? ` <h2 class="text-xl font-semibold mb-2">No Preview Path Specified</h2>
-                        <p>Please provide a relative path to the local HTML file...</p>
+                        <p>Please provide a relative path to the local HTML file you want to preview in the 'path' URL parameter.</p>
                         <p class="mt-2">Example: <code class="bg-gray-300 dark:bg-gray-700 px-1 rounded text-gray-800 dark:text-gray-200">preview.html?path=your_page.html</code></p>`
                     : ` <h2 class="text-xl font-semibold mb-2 text-red-600 dark:text-red-500">Invalid Path</h2>
                         <p class="mb-2">Cannot load the specified path: <code class="bg-gray-300 dark:bg-gray-700 px-1 rounded text-gray-800 dark:text-gray-200 break-all">${filePathRaw}</code></p>
                         <p class="font-medium">Reason: ${validationResult.reason}</p>
-                        <p class="mt-4">Please use a valid, relative path...</p>`;
-                showErrorMessage(messageHTML, true); // Show error/instruction message
+                        <p class="mt-4">Please use a valid, relative path to an existing HTML file on the server.</p>`;
+                showMessage(messageHTML, true);
                 console.error(`Invalid or disallowed path provided: ${filePathRaw || '(Not Provided)'}. Reason: ${validationResult.reason}`);
             }
-
 
             // --- Dark Mode Detection ---
             const darkModeMatcher = window.matchMedia('(prefers-color-scheme: dark)');
             function handleDarkMode(matches) { if (matches) { document.body.classList.add('dark'); } else { document.body.classList.remove('dark'); } }
             handleDarkMode(darkModeMatcher.matches);
             darkModeMatcher.addEventListener('change', e => handleDarkMode(e.matches));
-
         });
     </script>
 </body>
