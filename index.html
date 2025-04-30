@@ -215,7 +215,39 @@
                 });
             }
         });
+    </script>
+    <script type="module">
+        // Import the functions you need from the SDKs you need
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
+        import { getDatabase } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-database.js"; // <<< ADD THIS LINE
+        import { getAnalytics } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-analytics.js"; // Keep if you use analytics
+        import { getFirestore } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
 
+        // Your web app's Firebase configuration
+        const firebaseConfig = {
+            apiKey: "AIzaSyAUY9gvxnY5hGPu0lXNXJacLHKgZrEQ7eU", // Use your actual key
+            authDomain: "teamshokyhelper.firebaseapp.com",
+            // !!! IMPORTANT: Add databaseURL if it's not automatically derived (often needed for Realtime Database)
+            databaseURL: "https://teamshokyhelper-default-rtdb.firebaseio.com", // <<< ADD/VERIFY YOUR REALTIME DATABASE URL
+            projectId: "teamshokyhelper",
+            storageBucket: "teamshokyhelper.appspot.com", // <<< Corrected common pattern .appspot.com
+            messagingSenderId: "991615498817",
+            appId: "1:991615498817:web:00a1925089c38bcc0464c0",
+            measurementId: "G-7JJ4FT0GJ2" // Optional
+        };
+
+        // Initialize Firebase App (globally accessible)
+        try {
+            // We initialize here so the app instance is ready when the main script runs
+            window._firebaseAppInstance = initializeApp(firebaseConfig);
+            console.log("Firebase App Initialized (in head module)");
+        } catch (error) {
+            console.error("Firebase Initialization Failed (in head module):", error);
+            alert("Critical error initializing application services. Please refresh.");
+        }
+
+        // If you use analytics:
+        // const analytics = getAnalytics(window._firebaseAppInstance);
     </script>
     <style>
         :root {
@@ -2191,6 +2223,9 @@
     </div>
 
     <script>
+        // --- START: Get Firebase Database Reference ---
+        let db; // Declare db variable to be accessible within the app object
+        // --- END: Get Firebase Database Reference ---
         document.addEventListener('DOMContentLoaded', function () {
             // Sticky Note Template
             const noteTemplate = (color, content = '', id = Date.now()) => `
@@ -2599,7 +2634,6 @@
             //         }
             //     ]
             // });
-function _0x6988(_0x5667b6,_0x271281){const _0x2b486f=_0x2b48();return _0x6988=function(_0x6988b8,_0x29170c){_0x6988b8=_0x6988b8-0x1ba;let _0x439339=_0x2b486f[_0x6988b8];return _0x439339;},_0x6988(_0x5667b6,_0x271281);}const _0x251eb8=_0x6988;function _0x2b48(){const _0x5e43fd=['Operation\x20Research','https://drive.google.com/file/d/1d1LSvr-Pmc4xRki7hc7qW2oHfKs3_zka/view?usp=drivesdk','This\x20chapter\x20explores\x20eigenvalues\x20and\x20eigenvectors,\x20fundamental\x20concepts\x20in\x20linear\x20algebra\x20with\x20wide\x20applications\x20in\x20physics,\x20engineering,\x20and\x20data\x20analysis.','quiz5.pdf','https://drive.google.com/file/d/17vJ1zCUJv0Q48jrCypHBdnZZACNN5Tnz/view?usp=drivesdk','Operators.html','chapter\x203','https://drive.google.com/file/d/1pmhshYbm7ogYaRG0jV24LHDKtw5gMqYB/view?usp=drivesdk','https://drive.google.com/file/d/1_z6Mg3aBTGIYLnXlBCyuqN2qXYTeEOM7/view?usp=drive_link','CS\x2010406','report\x20writing','https://drive.google.com/file/d/1cQdem7NcaEfaNwPzAIlmRcRgBPJW4y5m/view?usp=drive_link','https://drive.google.com/file/d/1JS68PWOh4t1g0Bbg1ueqJUUtpq86Be8K/view?usp=drive_link','Chapter\x202\x20مكتوب\x20','Data\x20Resource\x20\x20Management','variables\x20and\x20scope\x20(chapter\x202)','Correlation\x20and\x20Regression\x20Correlation\x20shows\x20the\x20strength\x20and\x20direction\x20of\x20a\x20relationship\x20between\x20variables,\x20while\x20regression\x20explains\x20this\x20relationship\x20through\x20an\x20equation\x20and\x20helps\x20predict\x20unknown\x20values.','document','lecture2_multimedia','https://drive.google.com/file/d/1Y9KWw4i9Lvqt9TXFPrvhAsbUc5pQ9VBD/view?usp=drivesdk','https://htiedu.sharepoint.com/:b:/s/OperationResearchORAll_Groups/EWIGEIqsUYlAuENJsUD3TmoB2D2KQfXkmb4NPxiTppPafQ','item105','https://drive.google.com/file/d/1KaZDeyccAepeV85c_8gGF4kU7rDImGrf/view?usp=sharing','Software\x20Testing','https://docs.google.com/document/d/16pFcZzaOqdyImiNx_xumldWKICx0Agm8niJsv7FfaFA/edit?usp=drive_link','Lec\x201','شابتر1\x20كامل\x20مكتوب\x20','Lec3','تلخيص\x20','https://drive.google.com/file/d/1McI0uUky8FGgvCRllRbh5O6cZuBMCT9T/view?usp=drive_link','https://drive.google.com/file/d/1E2Q-UIRqwjCYbtNXjomAq_rvLIjqqfcz/view?usp=sharing','Part\x205','/preview.html?path=4-03.1-11\x20Python\x20Object\x20and\x20Data\x20Structure\x20Basics.html','Probability\x20&\x20Statistics','https://drive.google.com/file/d/1c-0C-ttxYItEKejL7t0OUgBSJvBQcYrY/view?usp=sharing','Chapter\x203\x20Summary\x202','Covers\x20matrices,\x20operations\x20(addition,\x20multiplication,\x20inversion),\x20determinants,\x20and\x20methods\x20for\x20solving\x20linear\x20systems\x20(Gauss-Jordan,\x20Cramer’s\x20Rule).','https://drive.google.com/file/d/1SAUUYbdaCCsZwzl_0taaDQEQ0E9tpLG8/view?usp=drivesdk','Linear\x20algebra\x20is\x20the\x20branch\x20of\x20mathematics\x20that\x20studies\x20vectors,\x20vector\x20spaces,\x20linear\x20transformations,\x20and\x20systems\x20of\x20linear\x20equations.','cs\x20104','https://drive.google.com/file/d/1LesYIyIA8DX9V2WDyjta-UlAnMM6jmqX/view?usp=drivesdk','https://drive.google.com/file/d/1LALQYvw_Y9Sdm2v1V3k0_yDD5LQMeud0/view?usp=drive_link','https://drive.google.com/file/d/1u0IICHroyO8M6NTmdXqHQTG6VgO6Zxpv/view?usp=sharing','task','https://drive.google.com/file/d/1lAgO_u53gteQ3Cw2lJ-PaWljUGzWmaUl/view?usp=drivesdk','BS\x201022','https://drive.google.com/file/d/1m5VKu_iQHkwFvg5p6A76Eo4FqRj5a9nZ/view?usp=drive_link','Lec1','https://htiedu.sharepoint.com/:v:/s/OperationResearchORAll_Groups/Ed08r1H3LFxHjk7c52PTnxABsfZKCI2KgnVAKFCRKPGnOg','https://drive.google.com/file/d/1u7MePOEL3soZCQr-9pzyzvkn5gMyQAa0/view?usp=drive_link','Sheet\x2013','Dr\x20.\x20sara','BS\x20201','This\x20file\x20is\x20about\x20computers\x20and\x20the\x20internet.It\x20shows\x20how\x20they\x20help\x20us,\x20but\x20also\x20how\x20some\x20people\x20use\x20them\x20to\x20do\x20bad\x20things.It\x20talks\x20about\x20how\x20to\x20be\x20good\x20when\x20using\x20computers,\x20and\x20how\x20to\x20stay\x20safe\x20online.It\x20says\x20we\x20should\x20not\x20steal,\x20spy,\x20or\x20hurt\x20others\x20using\x20a\x20computer.','https://drive.google.com/file/d/1U7IdsW6LuvGHnQIzy6jMw8V_2tu8xKK9/view?usp=drivesdk','Lec\x205','2025-04-24','04.1,2\x20Comparison\x20Operators\x20in\x20Python.html','إحصاء\x20و\x20احتمالات\x20د.خالد','05.4\x20Useful\x20operators.html','1\x20Formulation','https://drive.google.com/file/d/1lPaIpMRm3f9V4zguzLtE3CxvxOgx-Sh2/view?usp=drive_link','chapter\x202','Chapter2\x20Random\x20variables\x20and\x20expectation.','\x20Computer\x20Hardware','https://drive.google.com/file/d/1Fqml0-MWzq2riXnZW8wXiKSPADNSvmtP/view?usp=drive_link','Lec4','2025-04-16','No\x20Description\x20','https://drive.google.com/file/d/1kpGnXQZMBJX9qIRVmlaqKAn2G8X_VyRR/view?usp=drive_link','https://drive.google.com/file/d/1oTExYFOGuUOZcxqkWD126YsdNZYCfyZX/view?usp=drive_link','Chapter\x201\x20كامل\x20','assignment','https://drive.google.com/file/d/1YRb6sghfyleRro_50f3nsv_IdHfFrHAI/view?usp=drivesdk','An\x20introduction\x20to\x20probability\x20distributions,\x20describing\x20how\x20probabilities\x20are\x20assigned\x20to\x20different\x20possible\x20outcomes\x20of\x20a\x20random\x20variable.','Revision\x20Ch2\x20د.فرحات\x20','dr.mona','https://drive.google.com/file/d/1Re0rBevoWl0AXCKQhDqoSybzRIURtsss/view?usp=sharing','2025-04-26T09:00:00','https://drive.google.com/file/d/1Z-kxhuXyiL2JR8foXhR3OTPyJtpwU848/view?usp=drive_link','مقدمة\x20نظم\x20د.أحمد','A\x20basic\x20course\x20introducing\x20statistics\x20and\x20probability\x20concepts\x20used\x20to\x20analyze\x20data\x20and\x20measure\x20uncertainty','https://drive.google.com/file/d/1jCJ1Hb63UEQrsyhJXtB0G7c_jwWvdu_U/view?usp=drivesdk','Quality\x20Control\x20(QC)\x20and\x20Quality\x20Assurance\x20(QA)\x20are\x20systematic\x20processes\x20designed\x20to\x20ensure\x20that\x20products\x20or\x20services\x20meet\x20specified\x20requirements\x20and\x20standards.\x20While\x20QC\x20focuses\x20on\x20identifying\x20defects\x20in\x20finished\x20products,\x20QA\x20emphasizes\x20preventing\x20defects\x20through\x20improved\x20processes.','https://drive.google.com/file/d/1rmh4NH4pMU-9IaXdhhgMzFSSUpoa3mvh/view?usp=drivesdk','2\x20Graphical','Lec2','6-String.ipynb','/preview.html?path=05.4\x20Useful\x20operators.html','لينك\x20شرح\x20الزيرو','https://drive.google.com/file/d/1dF0Ov39D_qEg_XcXQ83JDVo5pk6_HQJ7/view?usp=drive_link','Business\x20Ethics\x20is\x20the\x20study\x20of\x20moral\x20principles\x20and\x20values\x20that\x20guide\x20behavior\x20in\x20the\x20world\x20of\x20business.\x20It\x20helps\x20people\x20understand\x20what\x20is\x20right\x20and\x20wrong\x20in\x20business\x20situations,\x20such\x20as\x20dealing\x20with\x20customers,\x20employees,\x20and\x20the\x20environment.\x20The\x20goal\x20is\x20to\x20promote\x20honesty,\x20fairness,\x20and\x20responsibility\x20in\x20business\x20activities.','item106','https://drive.google.com/file/d/1UbLA5jfIQpTS-YdHaHqBvgNb8Up-Xerm/view?usp=drivesdk','https://drive.google.com/file/d/1l8mKXaIptxbILY_J8oMeLHj0uCO_vPEY/view?usp=sharing','Chapter\x201','https://drive.google.com/file/d/1XIV3oMfTzaQjk028bKNq_tUTicfXV7_X/view?usp=drive_link','https://drive.google.com/file/d/1qj1mkZeZ3MDFKmmQQLBYGNVSU8ovPBdv/view?usp=drivesdk','exam','Using\x20DDL\x20Statements\x20to\x20Create\x20and\x20Manage\x20Tables','lecture3_multimedia','https://drive.google.com/file/d/1pb7m1kJkr1frsTpwuE23kMxDdLKzKAFW/view?usp=drivesdk','https://htiedu.sharepoint.com/:v:/s/OperationResearchORAll_Groups/EdQuA9cKGYNMtC5SFUWZywYBopiPwS8jCFe1DOqWtBT2AQ','https://drive.google.com/file/d/1XxWWYToiNMGYh0_PvKGagpckKbMrm3ux/view?usp=drive_link','Room\x20101','This\x20chapter\x20introduces\x20vector\x20spaces—a\x20fundamental\x20structure\x20where\x20vectors\x20(not\x20just\x20arrows\x20in\x20space,\x20but\x20also\x20matrices,\x20functions,\x20etc.)\x20can\x20be\x20added\x20and\x20scaled.','ملخص\x20','https://drive.google.com/file/d/1VDto2u9fhrdvaxWVYxpgVsjcd9KDtsfF/view?usp=drive_link','Part\x203','selection\x20control\x20statements\x20(ch3)','https://drive.google.com/file/d/1JZt8Df3D4tsFTBYOeBoWz2r8IJLnv51q/view?usp=drive_link','Lecture\x202','https://drive.google.com/file/d/1LqN17ojiWHmhhhk04aSY0-W41wRPFkYJ/view?usp=sharing','https://drive.google.com/file/d/1rEnLVSmBf1zz5B7eXTQFqtzzDQwEah4w/view?usp=drivesdk','video','https://drive.google.com/file/d/1_Tx9WOyKeghWsapRoFrerzwL6yq_VgaF/view?usp=drive_link','2025-04-28','4\x20Simplex\x20','https://drive.google.com/file/d/1_nSdzZIpSZXmOSpZ9cAk1FnWY-MA-nvF/view?usp=drive_link','Midterm\x202024','https://docs.google.com/document/d/1I49wIXYJVYXMQce2vFp7PvODsechVOHoL7EBhIQRMIE/edit?usp=drive_link','Matrices\x20and\x20system\x20of\x20algebric\x20equation\x20','https://drive.google.com/file/d/1u4Ot9WswWSl0asVJLmC_jZmtGemj5-Xd/view?usp=sharing','This\x20chapter\x20introduces\x20the\x20concept\x20of\x20inner\x20product\x20spaces,\x20which\x20generalize\x20the\x20idea\x20of\x20the\x20dot\x20product\x20in\x20Euclidean\x20space\x20to\x20more\x20abstract\x20vector\x20spaces.','This\x20chapter\x20explains\x20how\x20to\x20develop\x20and\x20implement\x20a\x20structured\x20Quality\x20Assurance\x20and\x20Control\x20(QA/QC)\x20Plan\x20to\x20ensure\x20consistent,\x20high-quality\x20outputs\x20in\x20projects.\x20It\x20emphasizes\x20formalizing\x20QA/QC\x20procedures,\x20defining\x20roles,\x20and\x20integrating\x20checks\x20throughout\x20project\x20phases.','Chapter\x203\x20Inner\x20Product\x20Spaces.','2025-04-21','https://htiedu.sharepoint.com/:v:/s/OperationResearchORAll_Groups/ERIRhDonSYJAmDz5m_iMS00B6jNeRH0waqXhhxaad6pdvw','https://drive.google.com/file/d/1DmavK4btraCsNKSRv7gm-NAlu6x1uYgP/view?usp=drive_link','This\x20chapter\x20introduces\x20loop\x20control\x20statements,\x20which\x20are\x20used\x20to\x20repeat\x20a\x20block\x20of\x20code\x20multiple\x20times.\x20Students\x20will\x20learn\x20how\x20loops\x20help\x20automate\x20repetitive\x20tasks\x20and\x20make\x20programs\x20more\x20efficient.\x20The\x20chapter\x20explains\x20different\x20types\x20of\x20loops,\x20how\x20they\x20work,\x20and\x20how\x20to\x20control\x20their\x20execution\x20using\x20conditions.\x20It\x20also\x20covers\x20concepts\x20such\x20as\x20infinite\x20loops,\x20nested\x20loops,\x20and\x20how\x20to\x20exit\x20or\x20skip\x20parts\x20of\x20a\x20loop\x20when\x20needed.\x20Mastering\x20loops\x20is\x20essential\x20for\x20solving\x20many\x20real-world\x20programming\x20problems.','https://drive.google.com/file/d/1K_oJK4G4Jz5CGqZ0owID-g6qfYGJa2qm/view?usp=drive_link','quiz3.pdf','lecture6_multimedia','https://drive.google.com/file/d/1_7g5SnY9DwAENWV24uJCkWd6evMgfd1X/view?usp=drive_link','Computer\x20Programming','sheet\x203','/preview.html?path=Operators.html','https://drive.google.com/file/d/11M_S-kYuRknl_f9J6L2oKmwtl9afvNze/view?usp=drive_link','Lecture\x2011','Chapter\x204\x20Eigenvalues\x20and\x20Eigenvectors.','https://drive.google.com/file/d/1CySHSGyDsaXQ8n97mwiP2RUKlj1ApQot/view?usp=drive_link','Quality\x20control\x20and\x20Quality\x20assurance.','CS101:\x20Introduction\x20to\x20Computer\x20Science\x20','https://drive.google.com/file/d/1K4ldyujyHOCsOlKD_gSmCigO-iIdNJIo/view?usp=drivesdk','Chapter\x204','https://drive.google.com/file/d/1LLB60cg-GrylLgfvy6-DjZmI54ujhGz5/view?usp=drive_link','Comprehension','2\x20graphical\x20','System\x20of\x20linear\x20equations\x20','2025-04-28T09:00:00','Sheet\x208','MATH201:\x20Linear\x20Algebra\x20-\x20Lecture\x202','https://drive.google.com/file/d/1Ktb9UuxbsDhyMiyBG-MHOSfrR-in06mo/view?usp=drive_link','Sheet\x203','Report\x20Writing\x20is\x20the\x20process\x20of\x20organizing\x20and\x20presenting\x20information\x20clearly\x20and\x20systematically.\x20It\x20involves\x20collecting\x20data,\x20analyzing\x20it,\x20and\x20structuring\x20the\x20content\x20in\x20a\x20formal\x20format\x20to\x20inform,\x20explain,\x20or\x20recommend\x20actions\x20to\x20a\x20specific\x20audience.\x20Reports\x20are\x20often\x20used\x20in\x20academic,\x20business,\x20and\x20technical\x20fields\x20to\x20communicate\x20findings\x20and\x20support\x20decision-making.','Chapter\x202\x20Summary\x202','Sheet\x204','https://drive.google.com/file/d/1sR4lpF1CqGRv9H8WikjgltFwQaFyDEtJ/view?usp=drivesdk','https://htiedu.sharepoint.com/:v:/s/OperationResearchORAll_Groups/Eemvg9RP9ARBjlmmNpgASacBbyQxLX-Bg_1Zckj3LhFL6w','Dr.\x20Khaled\x20Karam\x20','https://drive.google.com/file/d/1wXRNcSfPHCavL9KcOL0593oHj78Gs8HF/view?usp=drivesdk','https://drive.google.com/file/d/1Yk_mTfi4DGg0shUBtiBI7sY0vLdVRq3Q/view?usp=drive_link','https://drive.google.com/file/d/1gVzR7HLwta-gfeHxBQkRA6Ladedqh-O_/view?usp=drivesdk','https://drive.google.com/drive/folders/1KkIjXZzRkYfUWn_mQQ5FpIJgHWkQCvXp','2025-05-03T09:00:00','https://drive.google.com/file/d/1HGHVTQcBTpvZCJlhgPzyhTecxi_dge3K/view?usp=drivesdk','https://drive.google.com/file/d/1PRCfP3X6cYEBwqO4AhItKqbhvaxIVYrZ/view?usp=drive_link','https://drive.google.com/file/d/1Yvtt7KxYv96514yzamKPaeSax6vQdr_Z/view?usp=drivesdk','https://drive.google.com/file/d/14M6IxGGohvpVIkAwx3SS0k2yR49q8epr/view?usp=drive_link','mind\x20map','https://drive.google.com/file/d/1AI1XfB8EnyBI_FQZo3zDMxWVDzAo9VdM/view?usp=drivesdk','Sheets','https://drive.google.com/file/d/1XUAxcq2zeFPfyQugdhOFcGh5Lbt1z0e3/view?usp=drive_link','https://drive.google.com/file/d/1CQ0K_FIv5uIP6d-QhUvXECokk10hHREE/view?usp=drivesdk','Transportation','https://drive.google.com/file/d/1MXdjNKzNNgsB18mvCB1lq6OADmxOU1gz/view?usp=drive_link','sec\x204','https://htiedu.sharepoint.com/:v:/s/OperationResearchORAll_Groups/EUkjHY-a11lOrBpdEhQ1Y8sBvSzq1tWWTD5rCA9-0-BWng','شابتر\x203,4','كويزات\x20قديمه','https://drive.google.com/file/d/1uQfa2xyFsIILJtWe1IGHxYnO-LXYWiq-/view?usp=drive_link','8\x20big\x20M\x20revision\x20part\x202\x20','Operations\x20Research\x20(OR)\x20is\x20a\x20discipline\x20that\x20uses\x20mathematical\x20and\x20analytical\x20methods\x20to\x20help\x20make\x20better\x20decisions.\x20It\x20focuses\x20on\x20optimizing\x20processes,\x20improving\x20efficiency,\x20and\x20solving\x20complex\x20problems\x20in\x20areas\x20like\x20logistics,\x20scheduling,\x20resource\x20allocation,\x20and\x20decision-making.\x20OR\x20combines\x20tools\x20from\x20mathematics,\x20statistics,\x20computer\x20science,\x20and\x20economics\x20to\x20find\x20the\x20best\x20possible\x20solutions\x20in\x20real-world\x20scenarios.','exams\x20','كويز\x20شابتر\x202\x20د.خالد\x20model\x20B','\x20ميد\x2025','Chapter4\x20eigen\x20values\x20&\x20eigen\x20vectors','https://drive.google.com/file/d/1lBM9KazIYK_xQ5f1mcEqhC3T1iken7YG/view?usp=drivesdk','شابتر\x20تلاته','presentation','https://drive.google.com/file/d/1smJUMBQw6uOPYvgecTgxC-5JsGC5SDZe/view?usp=sharing','2025-04-06','Lec\x204','شرح\x20الزيرو','https://drive.google.com/file/d/11fR_LtRVnf2JKYm3gEK7r7oFZKKkeNW9/view?usp=drive_link','2025-04-20','https://drive.google.com/file/d/1dFxfjm6mJ-nsb7BojpMG4uXGQfFxWh7t/view?usp=drivesdk','Book','sec\x202','An\x20introduction\x20to\x20random\x20variables\x20and\x20expectation,\x20explaining\x20how\x20to\x20represent\x20outcomes\x20numerically\x20and\x20calculate\x20their\x20average\x20value.','https://drive.google.com/file/d/1_O_SKSYdG8TPCJkOyI18eo-iLQ76ohFu/view?usp=drive_link','/preview.html?path=section\x201.html','Dr.\x20Abu\x20Zeid','https://drive.google.com/file/d/17w3P5b8j9RASOTlqcvJBsZBwJ3Dx8U25/view?usp=sharing','https://drive.google.com/file/d/1L5RyKhjZ7gyrnKsLl7SuqiAgeZciY5lQ/view?usp=drive_link','2025-04-05','-\x20في\x20lec\x205\x20سلايد\x20٢٢\x20في\x20مسألة\x20تتحل\x20و\x20تتسلم\x0a-\x20في\x20lec\x205\x20سلايد\x20٤\x20تقريباً\x20في\x20comparison\x20هنكتبها.\x0a-\x20ريبورت\x20عن\x20الtransform\x20coding\x20\x20في\u00a0lec\u00a06\u00a0سلايد\u00a0٨.','تاسكات(\x20سكشن\x20)','BS\x20102','8-Format.ipynb','Lec2\x20summary','https://drive.google.com/file/d/1Fz-MFAoUMhFq2_vXTvsjPFblRVyClxQp/view?usp=drivesdk','Sheet\x2014\x20','Part\x201','سكشن\x20مقدمه','https://drive.google.com/file/d/1lPoobDVULGhu0e_rMAFZ9KA2FSOk2BEN/view?usp=drivesdk','https://drive.google.com/file/d/1_CyxrlFI1F0Q2yJPnMUx2AdpdGVuhVhP/view?usp=drive_link','https://drive.google.com/file/d/1Elfvcz6XPJAEWMT71XWR5Ah-pETcle9J/view?usp=sharing','VID\x20:\x20\x20شرح\x20دكتور\x20رانيا\x20','تلخيص\x20سكشن\x204','https://drive.google.com/file/d/1hYGdDTxySR_qarksUGiTF6ALYI0ueYqt/view?usp=drivesdk','Chapter\x201\x20Summary\x202','https://drive.google.com/file/d/1Jir8xeMU9Z9032kdleFq2e8eZAcrYtSg/view?usp=drivesdk','Chapter\x202\x20Summary','task1\x20(1).docx','#VIP\x20مراجعات\x20وكويزات\x20الدكاتره\x20والإمتحانات\x20القديمه','https://drive.google.com/file/d/1KSIm-yyk4GIzdgZ1keNhgKboG70q0CRy/view?usp=drivesdk','2025-04-18','https://drive.google.com/file/d/1J6qWNq1cv5u_-Jdydrtf4rmL1Tz8YaZr/view?usp=drivesdk','BS10508','An\x20introduction\x20to\x20probability\x20and\x20sample\x20space,\x20focusing\x20on\x20calculating\x20the\x20likelihood\x20of\x20events\x20and\x20understanding\x20all\x20possible\x20outcomes.','Introduction\x20to\x20Database','Lecture\x2010','The\x20file\x20talks\x20about\x20how\x20to\x20be\x20good\x20at\x20work.It\x20shows\x20what\x20makes\x20people\x20behave\x20well\x20or\x20badly.It\x20also\x20gives\x20ideas\x20to\x20help\x20people\x20do\x20the\x20right\x20thing.In\x20the\x20end,\x20it\x20shows\x20the\x20difference\x20between\x20good\x20and\x20bad\x20workplaces.','https://drive.google.com/file/d/1IVijWr112labt6b7K7rHfiugcbCpjuWN/view?usp=drive_link','https://drive.google.com/file/d/1K-WXXfg3Dl5WhtaNJh7n02iiMeFTD1Nz/view?usp=drive_link','https://drive.google.com/file/d/1QQAob1bLhNUO4v7QATkdaBRTv2hlx7A2/view?usp=sharing','Revision\x20Ch2\x20(سكشن)','pdf','quiz6.pdf','https://drive.google.com/file/d/1pb9blJl2WE5IFwJkRlmYYl7fE0e1VrSM/view?usp=sharing','https://drive.google.com/file/d/1LUxQAQEsgH1boJxR2u9MpuV82z0xaLxS/view?usp=drive_link','ملخص\x20شابتر\x203','Lecture\x204','Chapter1\x20probability\x20and\x20sample\x20space','https://drive.google.com/file/d/1r9miQTKwpzwomuUXJTBBOamH6pHmPu6G/view?usp=sharing','H203','This\x20chapter\x20explains\x20the\x20concept\x20of\x20variables\x20in\x20programming\x20—\x20how\x20they\x20are\x20used\x20to\x20store\x20data,\x20and\x20how\x20to\x20name\x20and\x20assign\x20values\x20to\x20them.\x20It\x20also\x20introduces\x20the\x20idea\x20of\x20scope,\x20which\x20defines\x20where\x20a\x20variable\x20can\x20be\x20accessed\x20or\x20modified\x20within\x20a\x20program.\x20Students\x20will\x20learn\x20the\x20difference\x20between\x20local\x20and\x20global\x20variables,\x20and\x20how\x20scope\x20affects\x20the\x20behavior\x20of\x20a\x20program.\x20Understanding\x20variables\x20and\x20scope\x20is\x20essential\x20for\x20writing\x20clear\x20and\x20error-free\x20code.','quiz4.pdf','كويزات\x20وامتحانات','https://drive.google.com/file/d/1ecjDH2YJ6NRazyTF_0_NUnSIkr-I-RkF/view?usp=drive_link','/preview.html?path=05.1\x20If\x20Elif\x20and\x20Else\x20Statements.html','1093476cnskAV','https://docs.google.com/document/d/1_WovY7kerisArUQxBwz2mmMJ4vspsbUc/edit?usp=drive_link&ouid=102649701545915830921&rtpof=true&sd=true','https://drive.google.com/file/d/1MezAWB8SoruV0bGpiEOu1Quq9c9SdP95/view?usp=drive_link','https://drive.google.com/file/d/1KhxbZLUDHKTCfQNl6Shbzva75tg0XY8G/view?usp=drive_link','https://htiedu.sharepoint.com/:v:/s/OperationResearchORAll_Groups/ETz5cZqYjuhKoQtOIy_thUYBtDKkSMERSHJM7afMKzvjSA','Chapter\x209','307596HIWbtt','Data\x20Resource\x20\x20Management\x20is\x20the\x20efficient\x20organization\x20,\x20storage\x20,\x20and\x20utilization\x20of\x20data\x20to\x20ensure\x20its\x20availability\x20and\x20quality\x20for\x20supporting\x20decision-making\x20and\x20achieving\x20organizational\x20goals','https://drive.google.com/file/d/1MmuPdCNR8D0bY_6ZpHqgQZATqOO2_R6h/view?usp=drive_link','Sheet\x205','https://drive.google.com/file/d/1m69uZr4H9-DVnY3JKsbaOjEdBC83udpi/view?usp=drivesdk','Lec\x202','https://htiedu.sharepoint.com/:v:/s/OperationResearchORAll_Groups/ESGGcqFMgOVDmRjWNULL8mgBZggSJsFvwn2bTKvEhObqDg','3\x20Graphical\x20revision\x20','تلخيص\x20سكشن\x202','summary\x20for\x20solve','Lec\x203','Inner\x20product\x20space\x20is\x20a\x20vector\x20space\x20with\x20an\x20additional\x20structure\x20called\x20an\x20inner\x20product,\x20which\x20allows\x20measuring\x20angles\x20and\x20lengths.\x20It\x20helps\x20define\x20concepts\x20like\x20orthogonality,\x20distance,\x20and\x20projection\x20between\x20vectors.','Chapter\x202\x20','https://drive.google.com/file/d/1R1W9nuo21eCqaEC34TQ5OTkmWp9PxUVT/view?usp=drive_link','database\x20sec\x202\x20/\x20Comparison\x20Conditions','Importance\x20of\x20Quality\x20Assurance\x20&\x20Control.','Introduction\x20To\x20\x20Information\x20Systems','item104','تلخيص\x20سكشن\x203','2-variables.ipynb','https://drive.google.com/file/d/1WN_rmAp-bh3MIJrleeomneGwgXsaiRPj/view?usp=drive_link','https://drive.google.com/file/d/1cmaE-78cUVf5pWNfAE39NCWg0EZN66Fn/view?usp=drive_link','Sections\x20Explain','sec\x202\x20cont','Chapter\x204\x20Summary','2025-04-27T09:00:00','https://drive.google.com/file/d/1oLySEkgLsten_LhfBCOqcqkz-AXYkFsr/view?usp=sharing','امتحانات\x20سابقه','This\x20chapter\x20introduces\x20vector\x20spaces—a\x20fundamental\x20structure\x20where\x20vectors\x20(not\x20just\x20arrows\x20in\x20space,\x20but\x20also\x20matrices,\x20functions,\x20etc.)\x20can\x20be\x20added\x20and\x20scaled.\x20','https://drive.google.com/file/d/1TVr_SXj8NIl06sEYx5PYEIE7AKtTasR7/view?usp=drive_link','https://drive.google.com/file/d/1ciQNRh_03Mez3rMbh_oMiwKL_DSD_cZW/view?usp=drive_link','https://drive.google.com/file/d/1KbtpcLmeYN7eSfB-P6HNsWMXqQ5tkFqd/view?usp=drive_link','Chapter3\x20Inner\x20product\x20space','Exams\x20','Lecture\x206','https://drive.google.com/file/d/1wHYZnWzI_0pKHGkIUO5nHWTs09AV-3SP/view?usp=drive_link','https://drive.google.com/file/d/1TcPhu-PSjQPcqYEYsPDhp0gofjZ8fWhl/view?usp=drivesdk','Chapter2','https://drive.google.com/file/d/1JOL6Wlg8InEFMqLJfTpCUKVgja9A575u/view?usp=drivesdk','https://drive.google.com/file/d/1mgkD9l9aRmJaKvk37t1vmsDeml-NMX_R/view?usp=sharing','Sheetss\x20for\x20OR','This\x20file\x20is\x20the\x20second\x20lecture\x20in\x20the\x20Business\x20Ethics\x20course.\x20It\x20explains\x20work\x20ethics\x20in\x20Christianity\x20and\x20Islam.\x20It\x20shows\x20how\x20both\x20religions\x20value\x20hard\x20work,\x20honesty,\x20responsibility,\x20and\x20fairness.\x20It\x20also\x20talks\x20about\x20the\x20importance\x20of\x20doing\x20your\x20job\x20well,\x20respecting\x20others,\x20and\x20being\x20honest\x20at\x20work.','https://drive.google.com/file/d/1iLvHFtcnXteFJuMrKe0qlqM1hYzgnTFL/view?usp=drive_link','Chapter\x205','This\x20chapter\x20introduces\x20software\x20testing\x20as\x20a\x20critical\x20process\x20to\x20ensure\x20software\x20quality,\x20reliability,\x20and\x20user\x20satisfaction\x20by\x20identifying\x20defects\x20before\x20deployment.','6\x20big\x20M\x20','https://drive.google.com/file/d/1Ic3nIhnrbwXksT-BgmzxX75wnbteCx70/view?usp=drive_link','05.2\x20For\x20loops.html','3024792CoqiMm','https://drive.google.com/file/d/1Ma1O-B6R3WMa0C8_MxChZTVbXGkPyEd3/view?usp=drive_link','Lecture\x203','Final\x2022','https://drive.google.com/file/d/1vTK2xh3l8Bn3cTGjD_W2oIZTzu_DH_h5/view?usp=drivesdk','https://drive.google.com/file/d/11J9sGLh8DawdgrccRBHKTFe_P8nZnPVr/view?usp=drivesdk','https://docs.google.com/presentation/d/1T4pVwWJ5cKyjAMrHd9J6873MOlDs9SMl/edit?usp=drivesdk&ouid=115425437692932239906&rtpof=true&sd=true','https://drive.google.com/file/d/1cKPjZt1-FDk6AniywVJ3wgYD73I73bmk/view?usp=drivesdk','This\x20chapter\x20covers\x20selection\x20control\x20statements,\x20which\x20allow\x20programs\x20to\x20make\x20decisions\x20and\x20execute\x20different\x20actions\x20based\x20on\x20certain\x20conditions.\x20Students\x20will\x20learn\x20how\x20to\x20use\x20conditional\x20statements\x20to\x20control\x20the\x20flow\x20of\x20a\x20program,\x20such\x20as\x20executing\x20specific\x20blocks\x20of\x20code\x20only\x20when\x20particular\x20conditions\x20are\x20true.\x20These\x20statements\x20are\x20essential\x20for\x20building\x20programs\x20that\x20can\x20react\x20to\x20user\x20input\x20or\x20changing\x20data.\x20The\x20chapter\x20also\x20emphasizes\x20logical\x20thinking\x20and\x20decision-making\x20in\x20programming.','Chapter\x203','9\x20assignment','https://drive.google.com/file/d/1lkgNtbagcxEp9bIyBpIo804YReeWIKbP/view?usp=sharing','https://drive.google.com/file/d/1MoIXPYFccD8FDGgJcjYYjGvov9g5TzL-/view?usp=drive_link','https://drive.google.com/file/d/18WmgECDDbKu_IZiDEJl79hnEMNVrgQYQ/view?usp=drive_link','https://drive.google.com/file/d/1E9e4VNpUYSScEQexO6GpsDsVAZ5CiXKd/view?usp=drivesdk','https://drive.google.com/file/d/1-KZaJlrCe962vLQV9mas0XmxgZk1C-r9/view?usp=drivesdk','https://drive.google.com/file/d/1ciwzLAKT1jGQ8rR8VZyTiIkn_bmU37bY/view?usp=drive_link','https://htiedu.sharepoint.com/:b:/s/OperationResearchORAll_Groups/EZlNgixrbQRGqPZvo3q4aBMB8ughv9u8HeHYD148f476Xg','This\x20course\x20introduces\x20the\x20basic\x20concepts\x20of\x20programming\x20using\x20Python\x20as\x20the\x20primary\x20language','/preview.html?path=03.18-21\x20Lists.html','https://drive.google.com/file/d/1bVFseZ4H61MyCUJpuuoVedrnwZ9pITMs/view?usp=drive_link','https://drive.google.com/file/d/1GhG7V13GVr2eLfwGKbEhMSTZdUwiaUQU/view?usp=drive_link','cs20503','https://docs.google.com/document/d/14q4DcOpGUOU2OZr2I_kfj1qEa1pumPOR/edit?usp=drive_link&ouid=102649701545915830921&rtpof=true&sd=true','https://drive.google.com/file/d/1Ypp7WOCWv0dPj-J9f5F39G9zJq8Qqclo/view?usp=drivesdk','https://drive.google.com/file/d/1k7-yjegHr4tB1H5GMroUaBJ3kcHS5dlB/view?usp=sharing','7264848soJbar','مقدمة\x20د.مجدي','Lecture\x205','كويز\x20برمجة\x20حاسبات.pdf','https://drive.google.com/file/d/13-XlTVSK2VW0k_G0V6-4SHsj41_6WEDA/view?usp=drivesdk','Lecture\x201','https://drive.google.com/file/d/19PufnBRYVv5EI104Fjx6RGeIOUhVaDQW/view?usp=drive_link','https://drive.google.com/file/d/1HSym1SZ5pl4CiKuz7gq-YElkk5lBzXsC/view?usp=drivesdk','https://htiedu.sharepoint.com/:b:/s/OperationResearchORAll_Groups/EZDyS0XVKPZLjL5FMMIXcFkBWu1Pde2p8QJf2TWnozZA5w','https://drive.google.com/file/d/1dVuOx2c9PdgcFO_ujT2NmbCGeUrG1Ec0/view?usp=drivesdk','This\x20chapter\x20explains\x20the\x20key\x20differences\x20between\x20Quality\x20Control\x20(QC)\x20and\x20Quality\x20Assurance\x20(QA),\x20two\x20essential\x20practices\x20for\x20maintaining\x20product/service\x20quality.','7-String_methods.ipynb','Dr.\x20Naji\x20Hijazi\x20','VIdeos\x20OR\x20Playlist','2765800IFRtEU','Dr\x20Rania','https://drive.google.com/file/d/1QIjRQfdpRvaLISTg6efJ01OXlMhG1g6M/view?usp=drivesdk','https://drive.google.com/file/d/1WvzvBwiAsTe0XYH94R6e8Nn4T1zCQJWf/view?usp=drive_link','97274TzSqMS','intro\x20to\x20python\x20(chapter\x201)','des','SQL\x20Functions','loop\x20control\x20statements\x20(ch5)','4-Arithmetic_operators.ipynb','H\x20201','No\x20description','https://drive.google.com/file/d/1f8NeEo4Q3mXX_Dq8UE0QajieHTdpROVH/view?usp=sharing','https://drive.google.com/file/d/1EYhLDyzhL6BXTo4tAuzVs-770VE1jWfW/view?usp=drivesdk','https://drive.google.com/file/d/1JLEJelE6Tw2mXn1L0SxcV26-TMRY1R-T/view?usp=drive_link','Lecture\x209','NO\x20description','Chapter\x204\x20مكتوب','2GzFisZ','https://drive.google.com/file/d/1JXTH1WVLV-kbx4uG_Vg6baY42LffSNwS/view?usp=drivesdk','https://drive.google.com/file/d/1N8deIu5Ohdrm2F1NYyVVJ6X6z7roCKKU/view?usp=sharing','Bs\x20105','https://drive.google.com/file/d/1egY0eIyhi_SzN-HBUHw_Dc2NYNC4q_nr/view?usp=drive_link','اخلاقيات\x20عمل\x20','How\x20to\x20deal\x20with\x20Oracle\x20SQL\x20Developer','https://drive.google.com/file/d/1c0MrcLxB_jhmL-qnnLkzNwdpJ7z6vARX/view?usp=drivesdk','ميد\x2024','https://drive.google.com/file/d/1N1JlX8C9x3ekx4aPjZai7MnATLa0LXPq/view?usp=drivesdk','جبر\x20خطي\x20د.خالد','chapter\x201','https://drive.google.com/file/d/1QWa8LDGIcd7Mrs76brD4QEYyAhYnBIKv/view?usp=drive_link','sec\x203','https://drive.google.com/file/d/1enYjl_ixHk09xo683-anZ_d6BKTF6SV4/view?usp=drive_link','https://drive.google.com/file/d/1Ttd9uNetio0BvgD4cl5yxFd9zEvWRI1i/view?usp=drivesdk','https://drive.google.com/file/d/1tSs2i59XKh8Ehyc1V7orNGbb5RCuaBrs/view?usp=drivesdk','Sheet\x2011','True&false\x20and\x20mcq','امتحانات','/preview.html?path=04.1,2\x20Comparison\x20Operators\x20in\x20Python.html','This\x20chapter\x20introduces\x20collections,\x20which\x20are\x20special\x20data\x20types\x20used\x20to\x20store\x20and\x20manage\x20groups\x20of\x20values.\x20Students\x20will\x20learn\x20about\x20different\x20types\x20of\x20collections\x20such\x20as\x20lists,\x20tuples,\x20sets,\x20and\x20dictionaries.\x20The\x20chapter\x20focuses\x20on\x20how\x20to\x20create,\x20access,\x20modify,\x20and\x20iterate\x20over\x20these\x20collections.\x20Understanding\x20collections\x20is\x20key\x20to\x20writing\x20efficient\x20and\x20organized\x20code,\x20as\x20they\x20allow\x20programmers\x20to\x20work\x20with\x20multiple\x20pieces\x20of\x20data\x20in\x20a\x20structured\x20way.','BS105','Bs\x20102','multi\x20media\x20DR\x20Sara','https://drive.google.com/file/d/1QTTjii74SkN9408mQ-R4XccOqWIQ039R/view?usp=drivesdk','https://drive.google.com/file/d/1GDF4RMr69Pr6q4JSTJrMd1XHgcajFkjW/view?usp=sharing','computer\x20software\x20refers\x20to\x20the\x20set\x20of\x20instructions\x20and\x20programs\x20that\x20tell\x20a\x20computer\x20what\x20to\x20do\x20and\x20how\x20to\x20operate','https://drive.google.com/file/d/1Mhmj1DFY2UqRlRYknOwT_9JFI3G9utcK/view?usp=sharing','تلخيص\x20سكشن\x201','03.12-17\x20String\x20Properties\x20and\x20Methods.html','https://drive.google.com/file/d/1r1Ytc2AF9zbJ6y5E4U1x7uOXXt3qDDds/view?usp=drivesdk','\x20كويز\x20شابتر1\x20جبر\x20د.خالد\x20كرم','Part\x202','كويز\x20شابتر1\x20جبر\x20د.ابو\x20زيد\x20','/preview.html?path=06.1-5\x20Functions\x20and\x20methods.html','12:30:00','https://htiedu.sharepoint.com/:v:/s/OperationResearchORAll_Groups/EbFgTJuHu_xArdy_3UKYnwsBGqXfSlXwSIy2S4DoU5wTVA','https://htiedu.sharepoint.com/:b:/s/OperationResearchORAll_Groups/EUVrx4WVAMJAvu7hudaQ39kB7onL90HP2dzH7ffrk_0vEg','03.26-31\x20Typles,\x20sets\x20and\x20boolean.html','Chapter1','كويز\x20شابتر\x202\x20جبر\x20د.خالد\x20كرم\x20','2025-04-27','https://docs.google.com/document/d/1hNGLRC-Vf9yIPsA4feDNoO7YK5i5Dx5S/edit?usp=drivesdk&ouid=115425437692932239906&rtpof=true&sd=true','Sheet\x2015\x20','Chapter\x203\x20Summary','https://drive.google.com/file/d/1Fd-Yqo3uRCcU2Oi2EPtcZyR8Q4mKoBxZ/view?usp=drivesdk','Chapter\x203\x20كامل\x20','Prof.\x20Michael\x20Chen','https://drive.google.com/file/d/1zsuQcjyUXCfSMWhVQKEBqoPUtY_cOEpG/view?usp=drive_link','https://drive.google.com/file/d/1HOg9BqeDGKQLZZuG71Hd6NFZgazLx7an/view?usp=sharing','Sheet\x2010\x20','https://drive.google.com/file/d/1WMU5vLiSOqmJh_qace0nwbtdpV3-AOSy/view?usp=drive_link','Lec1\x20summary','https://drive.google.com/file/d/1xgt6fzL3APwi0aEPwA8uaKT4InfQmI2V/view?usp=drive_link','https://drive.google.com/file/d/1_nwXWvB3flBWe6MBBzLsPEeAPNATazsA/view?usp=drive_link','1-first.ipynb','sec\x201','Chapter\x203\x20probability\x20distribution','https://drive.google.com/file/d/1GOpbaXDDG3ltaAcig9HSG5eeuCkPT1eS/view?usp=drive_link','This\x20file\x20is\x20the\x20third\x20lecture\x20in\x20the\x20Business\x20Ethics\x20course.\x20It\x20talks\x20about\x20bad\x20behaviors\x20at\x20work,\x20such\x20as\x20corruption,\x20bribery,\x20and\x20cheating.\x20It\x20explains\x20different\x20types\x20of\x20unethical\x20actions,\x20their\x20causes,\x20and\x20how\x20to\x20deal\x20with\x20them.\x20The\x20lecture\x20also\x20discusses\x20how\x20to\x20build\x20good\x20work\x20ethics\x20and\x20the\x20importance\x20of\x20honesty\x20and\x20responsibility\x20in\x20the\x20job.','item107','https://drive.google.com/file/d/1NNP8yC_tHA1fp_CSd438LBDHwAj1SkGB/view?usp=drive_link','https://drive.google.com/file/d/1rubiOh9UU0-9s5INdLUoWm9j1muxXx0E/view?usp=drivesdk','Chapter\x204\x20Correlation\x20and\x20Regression','https://drive.google.com/file/d/1cdRfDukxcATW6fpMa6i_4grYrvaNbubI/view?usp=drive_link','item101','https://drive.google.com/file/d/1kzOkCQYhi0SIQN2Scod-_KAv47746DOY/view?usp=drive_link','Mid\x20term\x2024','5\x20simplex\x20special\x20cases\x20','https://drive.google.com/file/d/1iWU5F0ajkGfevGejxwp_LLBaAhzzaNG4/view?usp=sharing','تكامل\x20','This\x20file\x20is\x20a\x20lecture\x20from\x20the\x20Business\x20Ethics\x20course.\x20It\x20talks\x20about\x20what\x20ethics\x20means,\x20what\x20a\x20code\x20of\x20conduct\x20is,\x20where\x20it\x20comes\x20from,\x20and\x20why\x20it\x27s\x20important\x20at\x20work.\x20It\x20also\x20explains\x20why\x20some\x20employees\x20might\x20act\x20badly\x20and\x20what\x20it\x20means\x20to\x20be\x20a\x20public\x20employee.','Quiz.html','1\x20Formulation\x20','DR\x20.\x20Rasha','This\x20chapter\x20highlights\x20the\x20importance\x20of\x20QA/QC\x20in\x20ensuring\x20product/service\x20quality,\x20customer\x20satisfaction,\x20and\x20organizational\x20success.\x20It\x20contrasts\x20proactive\x20QA\x20with\x20reactive\x20QC\x20and\x20explains\x20their\x20interconnected\x20roles.','شرح\x20كامل\x20لبشمهندسه\x20ايه','H\x20204','https://drive.google.com/file/d/1ynwPuW5qEF8poDd2RLm_Xsg0zgWANvLW/view?usp=drive_link','https://drive.google.com/file/d/1gJh7ad83cmiI5huIpNVjoWU9qQGGXMM0/view?usp=drive_link','https://drive.google.com/file/d/1EYq6Ys-ltn2MrmlCt4wFBzpCcKZFoN0n/view?usp=drivesdk','QA\x20vs\x20QC.','Chapter2\x20Random\x20variables\x20and\x20expectation','Developing\x20Business/IT\x20Solutions','https://drive.google.com/file/d/1pOTLraqs8ch5MudHpTDin9dZP4HTJG7o/view?usp=drive_link','Dr.\x20Sarah\x20Johnson','https://drive.google.com/file/d/17GLYx6l5iAkyk8HX0rdX3YTRmmTSFuAg/view?usp=drive_link','https://drive.google.com/file/d/1PbpuUYgpC3WY3jSavBLN-2BWvuVKxMBG/view?usp=drivesdk','BOOK','597604weMtDu','sheet\x202','https://drive.google.com/file/d/1LIdrxkBHa58UyRcJyD3os5o5dphBHpia/view?usp=drivesdk','https://htiedu.sharepoint.com/:b:/s/OperationResearchORAll_Groups/EZwLpAqhVMREmos42x7HYW0BCjttCAc88Fq5UZCx8WQpjQ','Chapter\x202','عمل\x20ريبورت\x20لا\x20يقل\x20عن\x205\x20صفحات\x20بعنوان\x20Game\x20theory\x20in\x20operation\x20research\x20تطبعوه\x20عليه\x20اسمك\x20والاى\x20دي\x20ورقم\x20الجروب\x20وتسليم\x20اول\x20خمس\x20شيتات','https://drive.google.com/file/d/1cX8xSkBMz9UGBxGK4oCJc80oFCJDCLcp/view?usp=drive_link','sec\x203\x20SQL\x20Functions','Sheet\x206','فويس\x20تلخيص\x20','introduction\x20to\x20information\x20systems\x20is\x20the\x20study\x20of\x20how\x20people\x20,\x20technology\x20,\x20and\x20organizations\x20use\x20systems\x20to\x20collect\x20,\x20process\x20,\x20store\x20,\x20and\x20distribute\x20information','https://drive.google.com/file/d/1gaa3p2ofBSnFXMYo-nK-gR4pHfWSBTIN/view?usp=drive_link','item103','https://drive.google.com/file/d/1GkFBmzMgraVFOe6eelzGWR1xxHDzh11P/view?usp=drivesdk','chapter\x201\x20','تلخيص\x20الشابتر\x20','كويز\x20شابتر\x202\x20د.خالد\x20model\x20A','https://drive.google.com/file/d/1hJXUhxztEJndJlGbtxFWp8PZwcUcriAI/view?usp=drivesdk','Mcq','https://drive.google.com/file/d/1gaqoY14-KrVwVXPx2ma-6AcyflyipsH2/view?usp=drive_link','ملخص\x20شابتر\x202','ملخص\x20شابتر\x201','بحث\x20عن\x20انترنت\x201\x20و\x202','10:00:00','Part\x204','/preview.html?path=03.12-17\x20String\x20Properties\x20and\x20Methods.html','Sheet\x201','https://drive.google.com/file/d/1FaOybNhCWSEpdwaCtTMH79QC4Pb15yVS/view?usp=drivesdk','كل\x20حاجه\x20خدناها','منهج\x20بايثون\x20مع\x20الزيرو','5-Comparison_Logical.ipynb','Sheet\x209','شرح\x20تاسك\x201.pdf','Chapter\x204\x20Summary\x202','شرح\x20كامل\x20لدكتور\x20رانيا\x20','2025-04-17','Chapter\x204\x20مكتوب\x20','Exams\x20for\x20OR','sections'];_0x2b48=function(){return _0x5e43fd;};return _0x2b48();}(function(_0x3427fd,_0x1aa985){const _0x45ee26=_0x6988,_0x5e9ab7=_0x3427fd();while(!![]){try{const _0x3e1fff=-parseInt(_0x45ee26(0x1d5))/0x1*(parseInt(_0x45ee26(0x1e3))/0x2)+-parseInt(_0x45ee26(0x366))/0x3+parseInt(_0x45ee26(0x360))/0x4+parseInt(_0x45ee26(0x1d1))/0x5+parseInt(_0x45ee26(0x396))/0x6+parseInt(_0x45ee26(0x23d))/0x7+-parseInt(_0x45ee26(0x1c3))/0x8;if(_0x3e1fff===_0x1aa985)break;else _0x5e9ab7['push'](_0x5e9ab7['shift']());}catch(_0x1c419b){_0x5e9ab7['push'](_0x5e9ab7['shift']());}}}(_0x2b48,0x4b399));const lectureData=[{'id':0x1,'title':_0x251eb8(0x2f2),'date':_0x251eb8(0x331),'time':_0x251eb8(0x254),'location':'Hall\x20A','instructor':_0x251eb8(0x239)},{'id':0x2,'title':_0x251eb8(0x2fb),'date':_0x251eb8(0x323),'time':_0x251eb8(0x207),'location':_0x251eb8(0x2cc),'instructor':_0x251eb8(0x213)}],courseData={0x1:[{'id':_0x251eb8(0x349),'title':'Probability\x20&\x20Statistics','instructor':'Dr:Khaled\x20Karam','description':_0x251eb8(0x2b5),'chapters':[{'title':_0x251eb8(0x358),'description':_0x251eb8(0x34a),'materials':[{'title':_0x251eb8(0x293),'type':_0x251eb8(0x352),'date':_0x251eb8(0x260),'link':_0x251eb8(0x2d5)},{'title':_0x251eb8(0x218),'type':_0x251eb8(0x2d6),'date':_0x251eb8(0x260),'link':_0x251eb8(0x1c7)},{'title':_0x251eb8(0x2ba),'type':_0x251eb8(0x352),'date':_0x251eb8(0x260),'link':'https://drive.google.com/file/d/1Dk8gz4oFhDw-5OzvtULAsbRT2YRpuSsU/view?usp=drivesdk'},{'title':_0x251eb8(0x336),'type':_0x251eb8(0x2d6),'date':_0x251eb8(0x260),'link':_0x251eb8(0x268)},{'title':_0x251eb8(0x27f),'type':_0x251eb8(0x352),'date':_0x251eb8(0x260),'link':_0x251eb8(0x24a)},{'title':_0x251eb8(0x2ab),'type':_0x251eb8(0x352),'date':_0x251eb8(0x260),'link':_0x251eb8(0x309)},{'title':'Chapter\x201\x20summary','type':_0x251eb8(0x2d6),'date':_0x251eb8(0x260),'link':_0x251eb8(0x1ca)}]},{'title':_0x251eb8(0x236),'description':_0x251eb8(0x32b),'materials':[{'title':_0x251eb8(0x293),'type':_0x251eb8(0x352),'date':'2025-04-17','link':_0x251eb8(0x38c)},{'title':_0x251eb8(0x218),'type':_0x251eb8(0x2d6),'date':'2025-04-17','link':_0x251eb8(0x1de)},{'title':_0x251eb8(0x2ba),'type':'pdf','date':_0x251eb8(0x260),'link':_0x251eb8(0x346)},{'title':_0x251eb8(0x336),'type':_0x251eb8(0x2d6),'date':_0x251eb8(0x260),'link':'https://drive.google.com/file/d/1EcCru-SlQ9fzenRYpCbEqRAIebR0D42r/view?usp=drivesdk'},{'title':'Examples','type':_0x251eb8(0x352),'date':'2025-04-17','link':'https://drive.google.com/file/d/1jRw13w4hJ25Essec8TjyS-djWIW0Ly0i/view?usp=drivesdk'},{'title':_0x251eb8(0x22a),'type':_0x251eb8(0x352),'date':'2025-04-17','link':_0x251eb8(0x3a4)},{'title':'Chapter\x202\x20كامل\x20','type':_0x251eb8(0x352),'date':_0x251eb8(0x260),'link':_0x251eb8(0x28c)},{'title':'Chapter2\x20summary','type':_0x251eb8(0x2d6),'date':'2025-04-17','link':'https://drive.google.com/file/d/1MV7Ke26d-FZMTvlByERDvOdEq2e5A4xV/view?usp=drivesdk'}]},{'title':_0x251eb8(0x21d),'description':_0x251eb8(0x2ae),'materials':[{'title':_0x251eb8(0x293),'type':_0x251eb8(0x352),'date':_0x251eb8(0x260),'link':'https://drive.google.com/file/d/1QR_PYYNpDisG25GO_3l3sBot3TbU79gs/view?usp=drivesdk'},{'title':'Lec2','type':'pdf','date':_0x251eb8(0x260),'link':_0x251eb8(0x289)},{'title':_0x251eb8(0x27f),'type':'pdf','date':_0x251eb8(0x260),'link':_0x251eb8(0x290)},{'title':_0x251eb8(0x2a6),'type':_0x251eb8(0x352),'date':_0x251eb8(0x260),'link':_0x251eb8(0x31f)},{'title':_0x251eb8(0x212),'type':'pdf','date':_0x251eb8(0x260),'link':'https://drive.google.com/file/d/1lF5UgvveCgwEObpV8kDs_4ZF54Z6sPNQ/view?usp=drivesdk'}]},{'title':_0x251eb8(0x223),'description':_0x251eb8(0x274),'materials':[{'title':'Chapter4\x20كامل\x20','type':_0x251eb8(0x352),'date':_0x251eb8(0x327),'link':'https://drive.google.com/file/d/1oPJxSSn-kDHyG-R0gJk7h-XuEETL_KWn/view?usp=drivesdk'},{'title':_0x251eb8(0x1e2),'type':_0x251eb8(0x352),'date':_0x251eb8(0x29c),'link':_0x251eb8(0x26b)}]},{'title':_0x251eb8(0x35d),'description':'VIP\x20Exams\x20and\x20quizzes\x20','materials':[{'title':'كويز\x20شابتر1\x20د.خالد\x20كرم\x20احصاء','type':_0x251eb8(0x2ac),'date':_0x251eb8(0x327),'link':_0x251eb8(0x1e4)},{'title':'كويز\x20شابتر\x201\x20د.ابو\x20زيد\x20احصاء','type':_0x251eb8(0x2ac),'date':_0x251eb8(0x327),'link':_0x251eb8(0x2f3)},{'title':_0x251eb8(0x24d),'type':'assignment','date':_0x251eb8(0x327),'link':'https://drive.google.com/file/d/1Tm2A8M38gvhqGfpUtELs16STn4CXvErg/view?usp=drivesdk'},{'title':_0x251eb8(0x31c),'type':'assignment','date':_0x251eb8(0x327),'link':_0x251eb8(0x38a)},{'title':'Midterm\x202023','type':_0x251eb8(0x2ac),'date':'2025-04-20','link':'https://drive.google.com/file/d/1UVlywXPzszSkfQpZasbqr5XIceKMn6wh/view?usp=drivesdk'},{'title':_0x251eb8(0x2db),'type':'assignment','date':_0x251eb8(0x327),'link':_0x251eb8(0x39d)},{'title':'Midterm\x202025','type':_0x251eb8(0x2ac),'date':_0x251eb8(0x327),'link':_0x251eb8(0x1ea)}]}]},{'id':_0x251eb8(0x1f9),'title':_0x251eb8(0x285),'instructor':'Dr.\x20Abu\x20Zeid','description':_0x251eb8(0x2b5),'chapters':[{'title':'Chapter1\x20probability\x20and\x20sample\x20space.','description':_0x251eb8(0x34a),'materials':[{'title':_0x251eb8(0x20b),'type':'pdf','date':_0x251eb8(0x327),'link':'https://drive.google.com/file/d/1JHMb9bhX1FAfC7jsGfoZNt734rOkkirP/view?usp=drive_link'}]},{'title':_0x251eb8(0x2a3),'description':_0x251eb8(0x32b),'materials':[{'title':_0x251eb8(0x38b),'type':'pdf','date':_0x251eb8(0x327),'link':'https://drive.google.com/file/d/1m7rA9Hz8Lxh8q3zvh6-9cS2DvBlGPrbL/view?usp=drive_link'}]},{'title':'Chapter\x203\x20probability\x20distribution.','description':_0x251eb8(0x2ae),'materials':[{'title':_0x251eb8(0x39f),'type':'pdf','date':'2025-04-20','link':_0x251eb8(0x23a)}]}]},{'id':_0x251eb8(0x334),'title':'Linear\x20Algebra','instructor':_0x251eb8(0x32e),'description':_0x251eb8(0x28a),'chapters':[{'title':_0x251eb8(0x2f8),'description':'Covers\x20matrices,\x20operations\x20(addition,\x20multiplication,\x20inversion),\x20determinants,\x20and\x20methods\x20for\x20solving\x20linear\x20systems\x20(Gauss-Jordan,\x20Cramer’s\x20Rule).','materials':[{'title':_0x251eb8(0x27d),'type':_0x251eb8(0x352),'date':_0x251eb8(0x260),'link':_0x251eb8(0x3a3)},{'title':_0x251eb8(0x36b),'type':'pdf','date':_0x251eb8(0x260),'link':_0x251eb8(0x32c)},{'title':_0x251eb8(0x370),'type':'pdf','date':_0x251eb8(0x260),'link':_0x251eb8(0x21e)},{'title':'Lec\x204','type':_0x251eb8(0x352),'date':_0x251eb8(0x260),'link':'https://drive.google.com/file/d/1ShE5fKuvaRYZhvfFJ3v4rytZOLa7uQ7p/view?usp=drive_link'},{'title':'كويز\x201\x20جبر\x20د.محمد\x20ابو\x20زيد\x20','type':'pdf','date':_0x251eb8(0x260),'link':'https://drive.google.com/file/d/1PbpuUYgpC3WY3jSavBLN-2BWvuVKxMBG/view?usp=drive_link...................0;;;;;;;;;;;;/'}]},{'title':'Vactor\x20space\x20','description':_0x251eb8(0x2cd),'materials':[{'title':'Lec\x201','type':_0x251eb8(0x352),'date':_0x251eb8(0x260),'link':'https://drive.google.com/file/d/162ITMVkEo4yU-k5aKCnFpkH3w5l-fDmP/view?usp=drive_link'},{'title':_0x251eb8(0x36b),'type':_0x251eb8(0x352),'date':_0x251eb8(0x260),'link':_0x251eb8(0x214)},{'title':_0x251eb8(0x370),'type':_0x251eb8(0x352),'date':_0x251eb8(0x260),'link':_0x251eb8(0x232)},{'title':_0x251eb8(0x324),'type':'pdf','date':'2025-04-17','link':_0x251eb8(0x2be)}]},{'title':_0x251eb8(0x2e1),'description':_0x251eb8(0x2df),'materials':[{'title':_0x251eb8(0x39f),'type':_0x251eb8(0x352),'date':'2025-04-20','link':_0x251eb8(0x226)}]},{'title':_0x251eb8(0x2ef),'description':_0x251eb8(0x266),'materials':[{'title':_0x251eb8(0x2f4),'type':_0x251eb8(0x352),'date':'2025-04-20','link':'https://drive.google.com/file/d/1Rz6mV5_pPzeLX98yOlZ7nPxM6GSdeIdn/view?usp=drive_link'}]}]},{'id':_0x251eb8(0x291),'title':'Linear\x20Algebra.','instructor':_0x251eb8(0x303),'description':'Linear\x20Algebra\x20is\x20a\x20fundamental\x20branch\x20of\x20mathematics\x20that\x20studies\x20vectors,\x20vector\x20spaces,\x20linear\x20transformations','chapters':[{'title':_0x251eb8(0x2dd),'description':_0x251eb8(0x288),'materials':[{'title':_0x251eb8(0x27d),'type':_0x251eb8(0x352),'date':'2025-04-16','link':_0x251eb8(0x34f)},{'title':_0x251eb8(0x36b),'type':_0x251eb8(0x352),'date':_0x251eb8(0x2a7),'link':'https://drive.google.com/file/d/1GF2Mr-Fe_S96o3BihBA29DNoRy2SukQG/view?usp=drive_link'},{'title':_0x251eb8(0x370),'type':_0x251eb8(0x352),'date':_0x251eb8(0x2a7),'link':_0x251eb8(0x1be)},{'title':_0x251eb8(0x324),'type':_0x251eb8(0x352),'date':_0x251eb8(0x2a7),'link':_0x251eb8(0x270)},{'title':_0x251eb8(0x27e),'type':_0x251eb8(0x352),'date':'2025-04-16','link':_0x251eb8(0x2d2)}]},{'title':'Vector\x20Spaces\x20','description':_0x251eb8(0x382),'materials':[{'title':'Lec\x201','type':_0x251eb8(0x352),'date':_0x251eb8(0x2a7),'link':_0x251eb8(0x2fc)},{'title':_0x251eb8(0x36b),'type':_0x251eb8(0x352),'date':_0x251eb8(0x2a7),'link':'https://drive.google.com/file/d/1Hz95hK1Am82pWGsrkF8dgjxFHsTCoPZk/view?usp=drive_link'},{'title':_0x251eb8(0x370),'type':'pdf','date':'2025-04-17','link':_0x251eb8(0x1c9)},{'title':_0x251eb8(0x324),'type':_0x251eb8(0x352),'date':_0x251eb8(0x260),'link':_0x251eb8(0x1ef)},{'title':_0x251eb8(0x29b),'type':_0x251eb8(0x352),'date':_0x251eb8(0x260),'link':'https://drive.google.com/file/d/1T2Sha7IzVCmcip7J_tObfpU-Nnn4bCBG/view?usp=drive_link'},{'title':_0x251eb8(0x271),'type':'pdf','date':'2025-04-24','link':_0x251eb8(0x202)}]},{'title':_0x251eb8(0x386),'description':_0x251eb8(0x371),'materials':[{'title':_0x251eb8(0x27d),'type':'pdf','date':_0x251eb8(0x327),'link':_0x251eb8(0x33b)}]},{'title':_0x251eb8(0x31e),'description':'Eigenvalues\x20and\x20eigenvectors\x20are\x20special\x20solutions\x20in\x20linear\x20algebra.\x20An\x20eigenvector\x20shows\x20a\x20direction\x20that\x20doesn’t\x20change\x20under\x20a\x20transformation,\x20and\x20its\x20eigenvalue\x20tells\x20how\x20much\x20the\x20vector\x20is\x20stretched\x20or\x20compressed\x20along\x20that\x20direction.','materials':[{'title':'Chapter\x204\x20كامل\x20','type':'pdf','date':'2025-04-20','link':'https://drive.google.com/file/d/1oUaJu7uM6uroI5W18aVmrW8l0uGhrzfr/view?usp=drivesdk'},{'title':_0x251eb8(0x261),'type':_0x251eb8(0x352),'date':_0x251eb8(0x29c),'link':_0x251eb8(0x2c5)}]},{'title':'كويزات\x20وامتحانات\x20ومراجعات','description':_0x251eb8(0x345),'materials':[{'title':_0x251eb8(0x351),'type':_0x251eb8(0x352),'date':_0x251eb8(0x327),'link':'https://drive.google.com/file/d/1XrxBHmKF0B6U3Y1gGJXQOfvwjnc6Zx4j/view?usp=drivesdk'},{'title':_0x251eb8(0x2af),'type':_0x251eb8(0x352),'date':_0x251eb8(0x327),'link':_0x251eb8(0x1cc)},{'title':_0x251eb8(0x203),'type':_0x251eb8(0x2ac),'date':_0x251eb8(0x327),'link':_0x251eb8(0x342)},{'title':_0x251eb8(0x205),'type':'assignment','date':'2025-04-20','link':_0x251eb8(0x23b)},{'title':_0x251eb8(0x20c),'type':'assignment','date':_0x251eb8(0x327),'link':'https://drive.google.com/file/d/1Tqw0i8jhb6f2uIWL5r4xioK4Oxy66QPd/view?usp=drivesdk'},{'title':_0x251eb8(0x317),'type':_0x251eb8(0x2ac),'date':_0x251eb8(0x327),'link':_0x251eb8(0x328)},{'title':'Midterm\x202023','type':_0x251eb8(0x2ac),'date':_0x251eb8(0x327),'link':_0x251eb8(0x2c1)}]}]},{'id':_0x251eb8(0x26d),'title':'introduction\x20to\x20information\x20systems','instructor':'DR\x20Ahmed\x20\x20/\x20DR\x20Bassant\x20/\x20DR\x20Magdy','description':_0x251eb8(0x247),'chapters':[{'title':_0x251eb8(0x376),'description':_0x251eb8(0x247),'materials':[{'title':_0x251eb8(0x1ee),'type':_0x251eb8(0x352),'date':_0x251eb8(0x347),'link':_0x251eb8(0x34e)},{'title':'Chapter\x201\x20Summary','type':_0x251eb8(0x352),'date':'2025-04-18','link':'https://drive.google.com/file/d/1-GR1l0H9WkMGlVNxsHIAVWMP1yrYJLsa/view?usp=drive_link'},{'title':_0x251eb8(0x341),'type':_0x251eb8(0x352),'date':'2025-04-18','link':'https://drive.google.com/file/d/1z3fW690c7zX3gHtCCUx59zHCL6HThNtj/view?usp=sharing'},{'title':'sheet\x201','type':_0x251eb8(0x352),'date':_0x251eb8(0x347),'link':_0x251eb8(0x243)}]},{'title':_0x251eb8(0x2a4),'description':'\x20Computer\x20Hardware\x20refers\x20to\x20the\x20physical\x20components\x20of\x20a\x20computer\x20system\x20,\x20such\x20as\x20the\x20CPU\x20,\x20RAM\x20,\x20hard\x20drive,\x20and\x20motherboard','materials':[{'title':_0x251eb8(0x2a2),'type':_0x251eb8(0x352),'date':_0x251eb8(0x347),'link':'https://drive.google.com/file/d/1a7amT3YD8t2-GEWiSQZw9vgafJ_mHQiz/view?usp=drive_link'},{'title':_0x251eb8(0x343),'type':_0x251eb8(0x352),'date':_0x251eb8(0x347),'link':_0x251eb8(0x2a1)},{'title':_0x251eb8(0x2ff),'type':_0x251eb8(0x352),'date':_0x251eb8(0x347),'link':_0x251eb8(0x26f)},{'title':_0x251eb8(0x23e),'type':_0x251eb8(0x352),'date':_0x251eb8(0x347),'link':'https://drive.google.com/file/d/1cVBsn5rRVVLCv5C034GZKz_muGwwEwxY/view?usp=drive_link'}]},{'title':'Computer\x20Software','description':_0x251eb8(0x1fe),'materials':[{'title':_0x251eb8(0x26a),'type':'pdf','date':'2025-04-18','link':_0x251eb8(0x1df)},{'title':_0x251eb8(0x210),'type':_0x251eb8(0x352),'date':'2025-04-18','link':'https://drive.google.com/file/d/1bQI_KoxfXmOPmW_rzPiq8Ol4DIrGpzcP/view?usp=drive_link'},{'title':_0x251eb8(0x287),'type':_0x251eb8(0x352),'date':'2025-04-18','link':_0x251eb8(0x224)},{'title':_0x251eb8(0x2eb),'type':_0x251eb8(0x352),'date':_0x251eb8(0x347),'link':_0x251eb8(0x384)}]},{'title':_0x251eb8(0x272),'description':_0x251eb8(0x367),'materials':[{'title':'chapter\x204','type':_0x251eb8(0x352),'date':_0x251eb8(0x347),'link':'https://drive.google.com/file/d/1crAl7_hvmcTSftfib1QAwBIk-seSyNXI/view?usp=drive_link'},{'title':_0x251eb8(0x37e),'type':'pdf','date':_0x251eb8(0x347),'link':_0x251eb8(0x362)},{'title':_0x251eb8(0x25e),'type':_0x251eb8(0x352),'date':_0x251eb8(0x347),'link':_0x251eb8(0x3a6)}]},{'title':'Telecommunications\x20and\x20Networks','description':_0x251eb8(0x1dc),'materials':[{'title':'Chapter\x205','type':'pdf','date':_0x251eb8(0x2d8),'link':_0x251eb8(0x38d)}]},{'title':'Decision\x20Support\x20Systems','description':_0x251eb8(0x1e1),'materials':[{'title':_0x251eb8(0x365),'type':'pdf','date':_0x251eb8(0x2d8),'link':_0x251eb8(0x2c2)}]},{'title':'Developing\x20Business/IT\x20Solutions','description':'NO\x20description','materials':[{'title':_0x251eb8(0x237),'type':_0x251eb8(0x352),'date':_0x251eb8(0x2d8),'link':_0x251eb8(0x1ff)}]},{'title':'Exams','description':_0x251eb8(0x31b),'materials':[{'title':_0x251eb8(0x399),'type':'assignment','date':_0x251eb8(0x347),'link':_0x251eb8(0x37b)},{'title':_0x251eb8(0x227),'type':_0x251eb8(0x2ac),'date':'2025-04-18','link':_0x251eb8(0x30a)}]},{'title':_0x251eb8(0x21c),'description':_0x251eb8(0x34b),'materials':[{'title':_0x251eb8(0x21c),'type':_0x251eb8(0x352),'date':_0x251eb8(0x347),'link':_0x251eb8(0x1bd)},{'title':_0x251eb8(0x200),'type':_0x251eb8(0x352),'date':_0x251eb8(0x29c),'link':_0x251eb8(0x27a)},{'title':_0x251eb8(0x246),'type':'video','date':'2025-04-24','link':'https://drive.google.com/file/d/1eaS6TyLjnodLUBBok36aFHuqmP91DDNt/view?usp=drive_link'}]},{'title':_0x251eb8(0x32a),'description':_0x251eb8(0x2c7),'materials':[{'title':'sec\x202','type':'pdf','date':_0x251eb8(0x347),'link':_0x251eb8(0x2cf)},{'title':_0x251eb8(0x36e),'type':_0x251eb8(0x352),'date':'2025-04-24','link':_0x251eb8(0x2e6)},{'title':_0x251eb8(0x246),'type':_0x251eb8(0x2d6),'date':_0x251eb8(0x29c),'link':_0x251eb8(0x35e)},{'title':_0x251eb8(0x37d),'type':'pdf','date':'2025-04-18','link':_0x251eb8(0x390)},{'title':_0x251eb8(0x374),'type':_0x251eb8(0x352),'date':_0x251eb8(0x347),'link':_0x251eb8(0x250)}]},{'title':_0x251eb8(0x1f0),'description':_0x251eb8(0x1e9),'materials':[{'title':'sec\x203','type':'pdf','date':_0x251eb8(0x347),'link':'https://drive.google.com/file/d/1SuVin7nJ2QfT5s9IPc-v1JyR3du2O-UV/view?usp=drive_link'},{'title':_0x251eb8(0x378),'type':_0x251eb8(0x352),'date':_0x251eb8(0x29c),'link':_0x251eb8(0x385)},{'title':_0x251eb8(0x246),'type':'video','date':'2025-04-24','link':_0x251eb8(0x1e7)},{'title':_0x251eb8(0x244),'type':_0x251eb8(0x352),'date':_0x251eb8(0x347),'link':_0x251eb8(0x2c4)}]},{'title':_0x251eb8(0x314),'description':_0x251eb8(0x1d8),'materials':[{'title':_0x251eb8(0x314),'type':_0x251eb8(0x352),'date':_0x251eb8(0x347),'link':_0x251eb8(0x3a2)},{'title':_0x251eb8(0x33f),'type':_0x251eb8(0x352),'date':_0x251eb8(0x29c),'link':_0x251eb8(0x355)},{'title':_0x251eb8(0x246),'type':_0x251eb8(0x2d6),'date':_0x251eb8(0x29c),'link':_0x251eb8(0x1f1)}]},{'title':_0x251eb8(0x333),'description':'.........','materials':[{'title':'ِTask(1)\x20answers📝','type':_0x251eb8(0x352),'date':_0x251eb8(0x29c),'link':'https://docs.google.com/document/d/1P9qp18wCLGqLJJijK05XE5YLMX8MLyfGfVRkz4mzdZ4/edit?usp=drive_link'},{'title':'ِTask(2)\x20answers📝','type':_0x251eb8(0x352),'date':_0x251eb8(0x29c),'link':_0x251eb8(0x27c)},{'title':'Sheet\x20answers\x20','type':'pdf','date':_0x251eb8(0x29c),'link':_0x251eb8(0x217)}]}]},{'id':'CS\x20102','title':_0x251eb8(0x2ea),'instructor':_0x251eb8(0x2b0),'description':_0x251eb8(0x1bb),'chapters':[{'title':'BOOK','description':_0x251eb8(0x329),'materials':[{'title':_0x251eb8(0x23c),'type':_0x251eb8(0x352),'date':'2025-04-21','link':_0x251eb8(0x258)}]},{'title':_0x251eb8(0x1d6),'description':'This\x20chapter\x20provides\x20an\x20overview\x20of\x20Python,\x20one\x20of\x20the\x20most\x20popular\x20and\x20beginner-friendly\x20programming\x20languages','materials':[{'title':'4-03.1-11\x20Python\x20Object\x20and\x20Data\x20Structure\x20Basics.html','type':'pdf','date':'2025-04-18','link':_0x251eb8(0x284)},{'title':'section\x201.html','type':_0x251eb8(0x352),'date':_0x251eb8(0x2e2),'link':_0x251eb8(0x32d)}]},{'title':_0x251eb8(0x273),'description':_0x251eb8(0x35b),'materials':[{'title':_0x251eb8(0x269),'type':_0x251eb8(0x352),'date':_0x251eb8(0x347),'link':_0x251eb8(0x2ec)},{'title':'String\x20(1).html','type':_0x251eb8(0x352),'date':_0x251eb8(0x347),'link':'/preview.html?path=String\x20(1).html'}]},{'title':_0x251eb8(0x2d1),'description':_0x251eb8(0x39e),'materials':[{'title':'05.1\x20If\x20Elif\x20and\x20Else\x20Statements.html','type':'pdf','date':_0x251eb8(0x2e2),'link':_0x251eb8(0x35f)},{'title':_0x251eb8(0x29d),'type':_0x251eb8(0x352),'date':'2025-04-21','link':_0x251eb8(0x1f7)}]},{'title':'collections\x20(CH4)','description':_0x251eb8(0x1f8),'materials':[{'title':_0x251eb8(0x201),'type':_0x251eb8(0x352),'date':'2025-04-18','link':_0x251eb8(0x256)},{'title':'03.18-21\x20Lists.html','type':_0x251eb8(0x352),'date':'2025-04-18','link':_0x251eb8(0x1bc)},{'title':'03.22-25\x20Dictionaries.html','type':_0x251eb8(0x352),'date':_0x251eb8(0x347),'link':'/preview.html?path=03.22-25\x20Dictionaries.html'},{'title':_0x251eb8(0x20a),'type':_0x251eb8(0x352),'date':'2025-04-21','link':'/preview.html?path=03.26-31\x20Typles,\x20sets\x20and\x20boolean.html'},{'title':_0x251eb8(0x29f),'type':_0x251eb8(0x352),'date':'2025-04-21','link':_0x251eb8(0x2bc)},{'title':'06.1-5\x20Functions\x20and\x20methods.html','type':'pdf','date':_0x251eb8(0x2e2),'link':_0x251eb8(0x206)}]},{'title':_0x251eb8(0x1d9),'description':_0x251eb8(0x2e5),'materials':[{'title':_0x251eb8(0x395),'type':_0x251eb8(0x352),'date':_0x251eb8(0x2e2),'link':'/preview.html?path=05.2\x20For\x20loops.html'}]},{'title':_0x251eb8(0x263),'description':_0x251eb8(0x263),'materials':[{'title':_0x251eb8(0x21b),'type':_0x251eb8(0x352),'date':_0x251eb8(0x347),'link':'https://drive.google.com/file/d/1CmifsVmL66jQmydY99NHVfmbQ2uqU2vy/view?usp=drive_link'},{'title':'١','type':_0x251eb8(0x2d6),'date':_0x251eb8(0x347),'link':_0x251eb8(0x313)},{'title':_0x251eb8(0x379),'type':_0x251eb8(0x352),'date':_0x251eb8(0x347),'link':'https://drive.google.com/file/d/1Rr4EQGV3iUHM7NPxUaBrTDA95fUtcKyk/view?usp=drive_link'},{'title':'٢','type':_0x251eb8(0x2d6),'date':'2025-04-18','link':_0x251eb8(0x397)},{'title':'3-concatenation.ipynb','type':_0x251eb8(0x352),'date':_0x251eb8(0x347),'link':_0x251eb8(0x2aa)},{'title':'3','type':_0x251eb8(0x2d6),'date':'2025-04-18','link':_0x251eb8(0x281)},{'title':_0x251eb8(0x25d),'type':_0x251eb8(0x352),'date':_0x251eb8(0x347),'link':_0x251eb8(0x28d)},{'title':_0x251eb8(0x344),'type':_0x251eb8(0x352),'date':'2025-04-18','link':_0x251eb8(0x1c0)},{'title':_0x251eb8(0x1da),'type':_0x251eb8(0x352),'date':_0x251eb8(0x347),'link':_0x251eb8(0x330)},{'title':'4','type':_0x251eb8(0x2d6),'date':_0x251eb8(0x347),'link':_0x251eb8(0x330)},{'title':_0x251eb8(0x25b),'type':_0x251eb8(0x352),'date':_0x251eb8(0x347),'link':_0x251eb8(0x295)},{'title':'5','type':_0x251eb8(0x2d6),'date':'2025-04-18','link':'https://drive.google.com/file/d/1MkROhwKXi0W-6nGpVkvIQ4QBX2tpDhpv/view?usp=drive_link'},{'title':_0x251eb8(0x2bb),'type':_0x251eb8(0x352),'date':_0x251eb8(0x347),'link':_0x251eb8(0x238)},{'title':'6','type':'video','date':'2025-04-18','link':_0x251eb8(0x368)},{'title':_0x251eb8(0x1ce),'type':_0x251eb8(0x352),'date':_0x251eb8(0x347),'link':'https://drive.google.com/file/d/1vGAjdMlh6j91cIM-ZJnh_xZSVd-SjXum/view?usp=drive_link'},{'title':'7','type':'video','date':_0x251eb8(0x347),'link':'https://drive.google.com/file/d/1MoF8bYwFDlPmvuWoubMpM2rfgxA9Es6d/view?usp=drive_link'},{'title':'Task2.docx','type':_0x251eb8(0x352),'date':'2025-04-18','link':_0x251eb8(0x361)},{'title':'شرح\x20تاسك2.pdf','type':'pdf','date':_0x251eb8(0x347),'link':_0x251eb8(0x2a9)},{'title':_0x251eb8(0x335),'type':'pdf','date':_0x251eb8(0x347),'link':_0x251eb8(0x2f0)}]},{'title':_0x251eb8(0x1f6),'description':'امتحانات','materials':[{'title':'امتحان\x20الميد23','type':'assignment','date':_0x251eb8(0x347),'link':_0x251eb8(0x221)},{'title':_0x251eb8(0x1c6),'type':'assignment','date':'2025-04-18','link':_0x251eb8(0x2a5)},{'title':'python\x20questions.pdf','type':_0x251eb8(0x2ac),'date':_0x251eb8(0x347),'link':_0x251eb8(0x1d4)},{'title':'Quiz\x20(1).ipynb','type':_0x251eb8(0x2ac),'date':_0x251eb8(0x347),'link':_0x251eb8(0x383)},{'title':_0x251eb8(0x22c),'type':_0x251eb8(0x2ac),'date':_0x251eb8(0x347),'link':_0x251eb8(0x394)},{'title':_0x251eb8(0x2e7),'type':_0x251eb8(0x2ac),'date':_0x251eb8(0x347),'link':_0x251eb8(0x2cb)},{'title':_0x251eb8(0x35c),'type':'assignment','date':_0x251eb8(0x347),'link':_0x251eb8(0x326)},{'title':_0x251eb8(0x267),'type':_0x251eb8(0x2ac),'date':'2025-04-18','link':_0x251eb8(0x363)},{'title':_0x251eb8(0x353),'type':_0x251eb8(0x2ac),'date':_0x251eb8(0x347),'link':_0x251eb8(0x318)}]},{'title':_0x251eb8(0x25a),'description':_0x251eb8(0x325),'materials':[{'title':_0x251eb8(0x2bd),'type':_0x251eb8(0x352),'date':_0x251eb8(0x2e2),'link':_0x251eb8(0x2dc)}]}]},{'id':_0x251eb8(0x231),'title':_0x251eb8(0x2f1),'instructor':'Dr.\x20Nelly','description':_0x251eb8(0x2b7),'chapters':[{'title':_0x251eb8(0x235),'description':_0x251eb8(0x1cd),'materials':[{'title':_0x251eb8(0x27d),'type':_0x251eb8(0x352),'date':_0x251eb8(0x2a7),'link':_0x251eb8(0x219)},{'title':_0x251eb8(0x252),'type':'pdf','date':_0x251eb8(0x2a7),'link':_0x251eb8(0x2b3)}]},{'title':_0x251eb8(0x375),'description':'This\x20chapter\x20highlights\x20the\x20importance\x20of\x20QA/QC\x20in\x20ensuring\x20product/service\x20quality,\x20customer\x20satisfaction,\x20and\x20organizational\x20success.\x20It\x20contrasts\x20proactive\x20QA\x20with\x20reactive\x20QC\x20and\x20explains\x20their\x20interconnected\x20roles.','materials':[{'title':_0x251eb8(0x36b),'type':_0x251eb8(0x352),'date':_0x251eb8(0x2a7),'link':_0x251eb8(0x2e4)},{'title':_0x251eb8(0x251),'type':_0x251eb8(0x352),'date':_0x251eb8(0x2a7),'link':_0x251eb8(0x2f5)}]},{'title':'The\x20(\x20QA\x20/\x20QC\x20)\x20Plan.','description':_0x251eb8(0x2e0),'materials':[{'title':_0x251eb8(0x370),'type':'pdf','date':'2025-04-16','link':_0x251eb8(0x292)},{'title':'ملخص\x20شابتر\x203','type':'pdf','date':_0x251eb8(0x2a7),'link':_0x251eb8(0x305)}]},{'title':_0x251eb8(0x27b),'description':_0x251eb8(0x392),'materials':[{'title':_0x251eb8(0x324),'type':_0x251eb8(0x352),'date':_0x251eb8(0x2a7),'link':_0x251eb8(0x233)}]}]},{'id':_0x251eb8(0x298),'title':_0x251eb8(0x264),'instructor':_0x251eb8(0x1d2),'description':'Operations\x20Research\x20(OR)\x20is\x20a\x20discipline\x20that\x20uses\x20mathematical\x20and\x20analytical\x20methods\x20to\x20help\x20make\x20better\x20decisions.\x20It\x20focuses\x20on\x20optimizing\x20processes,\x20improving\x20efficiency,\x20and\x20solving\x20complex\x20problems\x20in\x20areas\x20like\x20logistics,\x20scheduling,\x20resource\x20allocation,\x20and\x20decision-making.\x20OR\x20combines\x20tools\x20from\x20mathematics,\x20statistics,\x20computer\x20science,\x20and\x20economics\x20to\x20find\x20the\x20best\x20possible\x20solutions\x20in\x20real-world\x20scenarios.','chapters':[{'title':'VID\x20:\x20\x20شرح\x20دكتور\x20رانيا\x20','description':_0x251eb8(0x25f),'materials':[{'title':_0x251eb8(0x1d0),'type':'video','date':_0x251eb8(0x327),'link':'https://youtube.com/playlist?list=PLCXxeGQt1gBwgIJm6VGCBYJ6BgLTtnTeg&si=1mwEWEsp5XXffjFQ'}]},{'title':_0x251eb8(0x37c),'description':'شرح\x20كامل\x20لبشمهندسه\x20ايه','materials':[{'title':_0x251eb8(0x2a0),'type':_0x251eb8(0x2d6),'date':_0x251eb8(0x327),'link':_0x251eb8(0x364)},{'title':'2\x20Graphical','type':_0x251eb8(0x2d6),'date':_0x251eb8(0x327),'link':_0x251eb8(0x315)},{'title':'3\x20Graphical\x20revision\x20','type':_0x251eb8(0x2d6),'date':_0x251eb8(0x327),'link':_0x251eb8(0x294)},{'title':'4\x20Simplex\x20','type':_0x251eb8(0x2d6),'date':'2025-04-20','link':'https://htiedu.sharepoint.com/:v:/s/OperationResearchORAll_Groups/Eemvg9RP9ARBjlmmNpgASacBbyQxLX-Bg_1Zckj3LhFL6w'},{'title':_0x251eb8(0x228),'type':_0x251eb8(0x2d6),'date':'2025-04-20','link':'https://htiedu.sharepoint.com/:v:/s/OperationResearchORAll_Groups/ERIRhDonSYJAmDz5m_iMS00B6jNeRH0waqXhhxaad6pdvw'},{'title':_0x251eb8(0x393),'type':_0x251eb8(0x2d6),'date':_0x251eb8(0x327),'link':'https://htiedu.sharepoint.com/:v:/s/OperationResearchORAll_Groups/Ed1FT9t2TwNNikxNLRhKiskBe33QHkkdQVR7GFkrW5fRKQ'},{'title':'7\x20big\x20M\x20revision\x20part\x201','type':'video','date':_0x251eb8(0x327),'link':_0x251eb8(0x2ca)},{'title':_0x251eb8(0x319),'type':_0x251eb8(0x2d6),'date':_0x251eb8(0x327),'link':_0x251eb8(0x208)},{'title':_0x251eb8(0x312),'type':_0x251eb8(0x2d6),'date':_0x251eb8(0x327),'link':'https://htiedu.sharepoint.com/:v:/s/OperationResearchORAll_Groups/EWsDMwm4JBJIno0tgGqbEHUBO9_DmNAiLEHqGmdCcAUwTw'},{'title':_0x251eb8(0x3a0),'type':_0x251eb8(0x2d6),'date':_0x251eb8(0x327),'link':_0x251eb8(0x36c)}]},{'title':_0x251eb8(0x30f),'description':_0x251eb8(0x38e),'materials':[{'title':_0x251eb8(0x22d),'type':'pdf','date':_0x251eb8(0x327),'link':_0x251eb8(0x1ba)},{'title':_0x251eb8(0x2f7),'type':'pdf','date':'2025-04-20','link':_0x251eb8(0x240)},{'title':'3\x20simplex\x20','type':'pdf','date':_0x251eb8(0x327),'link':_0x251eb8(0x1cb)},{'title':_0x251eb8(0x300),'type':_0x251eb8(0x352),'date':_0x251eb8(0x327),'link':_0x251eb8(0x278)},{'title':'Sheet\x205','type':_0x251eb8(0x352),'date':_0x251eb8(0x327),'link':_0x251eb8(0x209)},{'title':'Solve\x20for\x20Sheets','type':_0x251eb8(0x352),'date':_0x251eb8(0x327),'link':_0x251eb8(0x354)},{'title':'summary\x20for\x20solve','type':'pdf','date':'2025-04-20','link':_0x251eb8(0x33d)}]},{'title':_0x251eb8(0x387),'description':_0x251eb8(0x262),'materials':[{'title':_0x251eb8(0x31d),'type':_0x251eb8(0x352),'date':_0x251eb8(0x327),'link':_0x251eb8(0x304)},{'title':_0x251eb8(0x1eb),'type':_0x251eb8(0x352),'date':_0x251eb8(0x327),'link':'https://drive.google.com/drive/folders/1KkIjXZzRkYfUWn_mQQ5FpIJgHWkQCvXp'},{'title':'امتحانات\x20سابقه','type':'pdf','date':_0x251eb8(0x327),'link':_0x251eb8(0x2ad)}]}]},{'id':'H203','title':_0x251eb8(0x26e),'instructor':_0x251eb8(0x22e),'description':_0x251eb8(0x2fe),'chapters':[{'title':_0x251eb8(0x1c8),'description':_0x251eb8(0x1d7),'materials':[{'title':'Part\x201','type':_0x251eb8(0x352),'date':_0x251eb8(0x327),'link':_0x251eb8(0x211)},{'title':_0x251eb8(0x204),'type':_0x251eb8(0x352),'date':_0x251eb8(0x327),'link':'https://drive.google.com/file/d/1rubiOh9UU0-9s5INdLUoWm9j1muxXx0E/view?usp=drivesdk'}]},{'title':_0x251eb8(0x2d3),'description':_0x251eb8(0x1d7),'materials':[{'title':_0x251eb8(0x339),'type':_0x251eb8(0x352),'date':_0x251eb8(0x327),'link':_0x251eb8(0x24e)},{'title':_0x251eb8(0x204),'type':'pdf','date':_0x251eb8(0x327),'link':_0x251eb8(0x30b)},{'title':_0x251eb8(0x2d0),'type':_0x251eb8(0x352),'date':_0x251eb8(0x327),'link':'https://drive.google.com/file/d/1N1JlX8C9x3ekx4aPjZai7MnATLa0LXPq/view?usp=drivesdk'},{'title':_0x251eb8(0x255),'type':'pdf','date':_0x251eb8(0x327),'link':_0x251eb8(0x277)},{'title':_0x251eb8(0x283),'type':_0x251eb8(0x352),'date':_0x251eb8(0x327),'link':_0x251eb8(0x23f)}]},{'title':_0x251eb8(0x398),'description':_0x251eb8(0x1d7),'materials':[{'title':'Part\x201','type':_0x251eb8(0x352),'date':_0x251eb8(0x327),'link':'https://drive.google.com/file/d/1f86mSlmMvyCTXiVfQXiLAFpm7YzfdJe4/view?usp=drivesdk'},{'title':'Comprehension','type':_0x251eb8(0x352),'date':_0x251eb8(0x327),'link':'https://drive.google.com/file/d/1rmh4NH4pMU-9IaXdhhgMzFSSUpoa3mvh/view?usp=drivesdk'},{'title':_0x251eb8(0x2f6),'type':_0x251eb8(0x352),'date':_0x251eb8(0x327),'link':_0x251eb8(0x1f2)},{'title':_0x251eb8(0x2f6),'type':_0x251eb8(0x352),'date':_0x251eb8(0x327),'link':'https://drive.google.com/file/d/1Ypp7WOCWv0dPj-J9f5F39G9zJq8Qqclo/view?usp=drivesdk'},{'title':_0x251eb8(0x283),'type':'pdf','date':_0x251eb8(0x327),'link':'https://drive.google.com/file/d/1sR4lpF1CqGRv9H8WikjgltFwQaFyDEtJ/view?usp=drivesdk'}]},{'title':_0x251eb8(0x357),'description':_0x251eb8(0x1d7),'materials':[{'title':_0x251eb8(0x339),'type':_0x251eb8(0x352),'date':'2025-04-20','link':_0x251eb8(0x348)},{'title':_0x251eb8(0x204),'type':_0x251eb8(0x352),'date':_0x251eb8(0x327),'link':'https://drive.google.com/file/d/1_8H55CBUiCwVqXfC6_Em_e85qePDw5YS/view?usp=drivesdk'}]},{'title':_0x251eb8(0x1c5),'description':'des','materials':[{'title':'Part\x201','type':_0x251eb8(0x352),'date':_0x251eb8(0x327),'link':_0x251eb8(0x2c9)},{'title':_0x251eb8(0x204),'type':_0x251eb8(0x352),'date':_0x251eb8(0x327),'link':'https://drive.google.com/file/d/1hYGdDTxySR_qarksUGiTF6ALYI0ueYqt/view?usp=drivesdk'},{'title':_0x251eb8(0x2d0),'type':'pdf','date':_0x251eb8(0x327),'link':'https://drive.google.com/file/d/1vTK2xh3l8Bn3cTGjD_W2oIZTzu_DH_h5/view?usp=drivesdk'},{'title':'Part\x204','type':_0x251eb8(0x352),'date':_0x251eb8(0x327),'link':_0x251eb8(0x1fc)},{'title':_0x251eb8(0x2f6),'type':_0x251eb8(0x352),'date':'2025-04-20','link':_0x251eb8(0x39b)},{'title':'Comprehension','type':_0x251eb8(0x352),'date':'2025-04-20','link':_0x251eb8(0x1f3)}]},{'title':_0x251eb8(0x388),'description':'des','materials':[{'title':_0x251eb8(0x339),'type':_0x251eb8(0x352),'date':'2025-04-20','link':_0x251eb8(0x29a)},{'title':_0x251eb8(0x204),'type':'pdf','date':_0x251eb8(0x327),'link':_0x251eb8(0x30e)},{'title':_0x251eb8(0x24f),'type':_0x251eb8(0x352),'date':_0x251eb8(0x327),'link':'https://drive.google.com/file/d/1DSpBsocPE0rYVxxEePZCLPdwmpWsPmWR/view?usp=drivesdk'},{'title':_0x251eb8(0x1f5),'type':_0x251eb8(0x352),'date':_0x251eb8(0x327),'link':_0x251eb8(0x234)}]},{'title':_0x251eb8(0x1e0),'description':'des','materials':[{'title':_0x251eb8(0x339),'type':_0x251eb8(0x352),'date':_0x251eb8(0x327),'link':_0x251eb8(0x311)},{'title':_0x251eb8(0x204),'type':_0x251eb8(0x352),'date':_0x251eb8(0x327),'link':_0x251eb8(0x337)},{'title':_0x251eb8(0x2d0),'type':_0x251eb8(0x352),'date':_0x251eb8(0x327),'link':_0x251eb8(0x306)}]},{'title':_0x251eb8(0x34c),'description':_0x251eb8(0x1d7),'materials':[{'title':_0x251eb8(0x339),'type':_0x251eb8(0x321),'date':'2025-04-20','link':_0x251eb8(0x39c)},{'title':_0x251eb8(0x204),'type':'document','date':_0x251eb8(0x327),'link':_0x251eb8(0x20e)}]},{'title':'Lecture\x2011','description':_0x251eb8(0x1d7),'materials':[{'title':'Part\x201','type':_0x251eb8(0x352),'date':_0x251eb8(0x327),'link':_0x251eb8(0x2b6)},{'title':_0x251eb8(0x204),'type':_0x251eb8(0x352),'date':_0x251eb8(0x327),'link':_0x251eb8(0x3a5)},{'title':_0x251eb8(0x2d0),'type':_0x251eb8(0x352),'date':'2025-04-20','link':_0x251eb8(0x265)},{'title':_0x251eb8(0x255),'type':_0x251eb8(0x352),'date':'2025-04-20','link':_0x251eb8(0x36a)},{'title':_0x251eb8(0x283),'type':_0x251eb8(0x352),'date':'2025-04-20','link':_0x251eb8(0x1d3)}]}]},{'id':_0x251eb8(0x1db),'title':_0x251eb8(0x1e8),'instructor':'Dr.\x20Naji\x20Hijazi\x20','description':'Business\x20Ethics\x20is\x20the\x20study\x20of\x20moral\x20principles\x20and\x20values\x20that\x20guide\x20behavior\x20in\x20the\x20world\x20of\x20business.\x20It\x20helps\x20people\x20understand\x20what\x20is\x20right\x20and\x20wrong\x20in\x20business\x20situations,\x20such\x20as\x20dealing\x20with\x20customers,\x20employees,\x20and\x20the\x20environment.\x20The\x20goal\x20is\x20to\x20promote\x20honesty,\x20fairness,\x20and\x20responsibility\x20in\x20business\x20activities.','chapters':[{'title':_0x251eb8(0x2c3),'description':_0x251eb8(0x22b),'materials':[{'title':_0x251eb8(0x2c3),'type':_0x251eb8(0x352),'date':_0x251eb8(0x327),'link':_0x251eb8(0x389)},{'title':_0x251eb8(0x30d),'type':_0x251eb8(0x352),'date':_0x251eb8(0x327),'link':_0x251eb8(0x21a)},{'title':_0x251eb8(0x2ce),'type':_0x251eb8(0x2d6),'date':_0x251eb8(0x327),'link':_0x251eb8(0x2e9)}]},{'title':'Chapter\x202','description':'This\x20file\x20is\x20the\x20second\x20lecture\x20in\x20the\x20Business\x20Ethics\x20course.\x20It\x20explains\x20work\x20ethics\x20in\x20Christianity\x20and\x20Islam.\x20It\x20shows\x20how\x20both\x20religions\x20value\x20hard\x20work,\x20honesty,\x20responsibility,\x20and\x20fairness.\x20It\x20also\x20talks\x20about\x20the\x20importance\x20of\x20doing\x20your\x20job\x20well,\x20respecting\x20others,\x20and\x20being\x20honest\x20at\x20work.','materials':[{'title':'Chapter\x202','type':_0x251eb8(0x352),'date':_0x251eb8(0x327),'link':'https://drive.google.com/file/d/1R1W9nuo21eCqaEC34TQ5OTkmWp9PxUVT/view?usp=drive_link'},{'title':'mind\x20map','type':_0x251eb8(0x352),'date':'2025-04-20','link':_0x251eb8(0x26c)},{'title':'ملخص\x20','type':'video','date':_0x251eb8(0x327),'link':_0x251eb8(0x33c)}]},{'title':_0x251eb8(0x39f),'description':_0x251eb8(0x21f),'materials':[{'title':_0x251eb8(0x39f),'type':_0x251eb8(0x352),'date':_0x251eb8(0x327),'link':'https://drive.google.com/file/d/11M_S-kYuRknl_f9J6L2oKmwtl9afvNze/view?usp=drive_link'},{'title':_0x251eb8(0x24c),'type':'pdf','date':_0x251eb8(0x327),'link':_0x251eb8(0x30c)},{'title':_0x251eb8(0x246),'type':_0x251eb8(0x2d6),'date':_0x251eb8(0x327),'link':_0x251eb8(0x2d7)}]},{'title':_0x251eb8(0x2f4),'description':_0x251eb8(0x34d),'materials':[{'title':'Chapter\x204','type':_0x251eb8(0x352),'date':_0x251eb8(0x327),'link':'https://drive.google.com/file/d/1XUAxcq2zeFPfyQugdhOFcGh5Lbt1z0e3/view?usp=drive_link'},{'title':_0x251eb8(0x280),'type':_0x251eb8(0x352),'date':'2025-04-20','link':_0x251eb8(0x37a)},{'title':_0x251eb8(0x246),'type':'video','date':_0x251eb8(0x327),'link':'https://drive.google.com/file/d/1_nSdzZIpSZXmOSpZ9cAk1FnWY-MA-nvF/view?usp=drive_link'}]},{'title':_0x251eb8(0x391),'description':_0x251eb8(0x299),'materials':[{'title':'Chapter\x205','type':_0x251eb8(0x352),'date':'2025-04-20','link':_0x251eb8(0x248)}]}]}],0x2:[{'id':_0x251eb8(0x231),'title':'Quality\x20control\x20and\x20Quality\x20assurance.','instructor':'Dr.\x20Nelly','description':'Quality\x20Control\x20(QC)\x20and\x20Quality\x20Assurance\x20(QA)\x20are\x20systematic\x20processes\x20designed\x20to\x20ensure\x20that\x20products\x20or\x20services\x20meet\x20specified\x20requirements\x20and\x20standards.\x20While\x20QC\x20focuses\x20on\x20identifying\x20defects\x20in\x20finished\x20products,\x20QA\x20emphasizes\x20preventing\x20defects\x20through\x20improved\x20processes.','chapters':[{'title':_0x251eb8(0x235),'description':_0x251eb8(0x1cd),'materials':[{'title':_0x251eb8(0x27d),'type':_0x251eb8(0x352),'date':_0x251eb8(0x2a7),'link':_0x251eb8(0x219)},{'title':_0x251eb8(0x252),'type':_0x251eb8(0x352),'date':_0x251eb8(0x2a7),'link':_0x251eb8(0x2b3)}]},{'title':'Importance\x20of\x20Quality\x20Assurance\x20&\x20Control.','description':_0x251eb8(0x22f),'materials':[{'title':_0x251eb8(0x36b),'type':'pdf','date':_0x251eb8(0x2a7),'link':'https://drive.google.com/file/d/1DmavK4btraCsNKSRv7gm-NAlu6x1uYgP/view?usp=drive_link'},{'title':_0x251eb8(0x251),'type':_0x251eb8(0x352),'date':_0x251eb8(0x2a7),'link':'https://drive.google.com/file/d/1LLB60cg-GrylLgfvy6-DjZmI54ujhGz5/view?usp=drive_link'}]},{'title':'The\x20(\x20QA\x20/\x20QC\x20)\x20Plan.','description':'This\x20chapter\x20explains\x20how\x20to\x20develop\x20and\x20implement\x20a\x20structured\x20Quality\x20Assurance\x20and\x20Control\x20(QA/QC)\x20Plan\x20to\x20ensure\x20consistent,\x20high-quality\x20outputs\x20in\x20projects.\x20It\x20emphasizes\x20formalizing\x20QA/QC\x20procedures,\x20defining\x20roles,\x20and\x20integrating\x20checks\x20throughout\x20project\x20phases.','materials':[{'title':_0x251eb8(0x370),'type':_0x251eb8(0x352),'date':_0x251eb8(0x2a7),'link':_0x251eb8(0x292)},{'title':_0x251eb8(0x356),'type':_0x251eb8(0x352),'date':'2025-04-16','link':_0x251eb8(0x305)}]},{'title':_0x251eb8(0x27b),'description':'This\x20chapter\x20introduces\x20software\x20testing\x20as\x20a\x20critical\x20process\x20to\x20ensure\x20software\x20quality,\x20reliability,\x20and\x20user\x20satisfaction\x20by\x20identifying\x20defects\x20before\x20deployment.','materials':[{'title':_0x251eb8(0x324),'type':_0x251eb8(0x352),'date':_0x251eb8(0x2a7),'link':'https://drive.google.com/file/d/1gJh7ad83cmiI5huIpNVjoWU9qQGGXMM0/view?usp=drive_link'}]}]},{'id':'BS\x20201','title':_0x251eb8(0x264),'instructor':'Dr\x20Rania','description':_0x251eb8(0x31a),'chapters':[{'title':_0x251eb8(0x33e),'description':_0x251eb8(0x25f),'materials':[{'title':'VIdeos\x20OR','type':_0x251eb8(0x2d6),'date':'2025-04-20','link':'https://youtube.com/playlist?list=PLCXxeGQt1gBwgIJm6VGCBYJ6BgLTtnTeg&si=1mwEWEsp5XXffjFQ'}]},{'title':_0x251eb8(0x37c),'description':_0x251eb8(0x230),'materials':[{'title':'1\x20Formulation','type':_0x251eb8(0x2d6),'date':_0x251eb8(0x327),'link':_0x251eb8(0x364)},{'title':_0x251eb8(0x2b9),'type':_0x251eb8(0x2d6),'date':_0x251eb8(0x327),'link':_0x251eb8(0x315)},{'title':_0x251eb8(0x36d),'type':_0x251eb8(0x2d6),'date':_0x251eb8(0x327),'link':_0x251eb8(0x294)},{'title':_0x251eb8(0x2d9),'type':'video','date':_0x251eb8(0x327),'link':_0x251eb8(0x302)},{'title':_0x251eb8(0x228),'type':'video','date':_0x251eb8(0x327),'link':_0x251eb8(0x2e3)},{'title':_0x251eb8(0x393),'type':_0x251eb8(0x2d6),'date':_0x251eb8(0x327),'link':'https://htiedu.sharepoint.com/:v:/s/OperationResearchORAll_Groups/Ed1FT9t2TwNNikxNLRhKiskBe33QHkkdQVR7GFkrW5fRKQ'},{'title':'7\x20big\x20M\x20revision\x20part\x201','type':'video','date':_0x251eb8(0x327),'link':_0x251eb8(0x2ca)},{'title':_0x251eb8(0x319),'type':_0x251eb8(0x2d6),'date':_0x251eb8(0x327),'link':'https://htiedu.sharepoint.com/:v:/s/OperationResearchORAll_Groups/EbFgTJuHu_xArdy_3UKYnwsBGqXfSlXwSIy2S4DoU5wTVA'},{'title':_0x251eb8(0x3a0),'type':_0x251eb8(0x2d6),'date':_0x251eb8(0x327),'link':_0x251eb8(0x36c)}]},{'title':_0x251eb8(0x30f),'description':_0x251eb8(0x38e),'materials':[{'title':'1\x20Formulation\x20','type':_0x251eb8(0x352),'date':_0x251eb8(0x327),'link':_0x251eb8(0x1ba)},{'title':_0x251eb8(0x2f7),'type':_0x251eb8(0x352),'date':_0x251eb8(0x327),'link':'https://htiedu.sharepoint.com/:b:/s/OperationResearchORAll_Groups/EZwLpAqhVMREmos42x7HYW0BCjttCAc88Fq5UZCx8WQpjQ'},{'title':'3\x20simplex\x20','type':'pdf','date':_0x251eb8(0x327),'link':'https://htiedu.sharepoint.com/:b:/s/OperationResearchORAll_Groups/EZDyS0XVKPZLjL5FMMIXcFkBWu1Pde2p8QJf2TWnozZA5w'},{'title':'Solve\x20for\x20Sheets','type':_0x251eb8(0x352),'date':'2025-04-20','link':_0x251eb8(0x354)},{'title':_0x251eb8(0x36f),'type':_0x251eb8(0x352),'date':_0x251eb8(0x327),'link':_0x251eb8(0x33d)}]},{'title':_0x251eb8(0x387),'description':_0x251eb8(0x262),'materials':[{'title':_0x251eb8(0x31d),'type':_0x251eb8(0x352),'date':'2025-04-20','link':_0x251eb8(0x304)},{'title':_0x251eb8(0x1eb),'type':_0x251eb8(0x352),'date':_0x251eb8(0x327),'link':_0x251eb8(0x307)},{'title':_0x251eb8(0x381),'type':_0x251eb8(0x352),'date':'2025-04-20','link':_0x251eb8(0x2ad)}]}]},{'id':_0x251eb8(0x35a),'title':_0x251eb8(0x26e),'instructor':_0x251eb8(0x22e),'description':'Report\x20Writing\x20is\x20the\x20process\x20of\x20organizing\x20and\x20presenting\x20information\x20clearly\x20and\x20systematically.\x20It\x20involves\x20collecting\x20data,\x20analyzing\x20it,\x20and\x20structuring\x20the\x20content\x20in\x20a\x20formal\x20format\x20to\x20inform,\x20explain,\x20or\x20recommend\x20actions\x20to\x20a\x20specific\x20audience.\x20Reports\x20are\x20often\x20used\x20in\x20academic,\x20business,\x20and\x20technical\x20fields\x20to\x20communicate\x20findings\x20and\x20support\x20decision-making.','chapters':[{'title':'Lecture\x201','description':_0x251eb8(0x1d7),'materials':[{'title':_0x251eb8(0x339),'type':_0x251eb8(0x352),'date':_0x251eb8(0x327),'link':_0x251eb8(0x211)},{'title':_0x251eb8(0x204),'type':_0x251eb8(0x352),'date':'2025-04-20','link':_0x251eb8(0x222)}]},{'title':_0x251eb8(0x2d3),'description':'des','materials':[{'title':_0x251eb8(0x339),'type':_0x251eb8(0x352),'date':_0x251eb8(0x327),'link':'https://drive.google.com/file/d/1hJXUhxztEJndJlGbtxFWp8PZwcUcriAI/view?usp=drivesdk'},{'title':_0x251eb8(0x204),'type':_0x251eb8(0x352),'date':_0x251eb8(0x327),'link':'https://drive.google.com/file/d/1Yvtt7KxYv96514yzamKPaeSax6vQdr_Z/view?usp=drivesdk'},{'title':_0x251eb8(0x2d0),'type':_0x251eb8(0x352),'date':'2025-04-20','link':_0x251eb8(0x1ec)},{'title':'Part\x204','type':_0x251eb8(0x352),'date':_0x251eb8(0x327),'link':'https://drive.google.com/file/d/1Y9KWw4i9Lvqt9TXFPrvhAsbUc5pQ9VBD/view?usp=drivesdk'},{'title':_0x251eb8(0x283),'type':_0x251eb8(0x352),'date':_0x251eb8(0x327),'link':'https://drive.google.com/file/d/1LIdrxkBHa58UyRcJyD3os5o5dphBHpia/view?usp=drivesdk'}]},{'title':'Lecture\x203','description':_0x251eb8(0x1d7),'materials':[{'title':_0x251eb8(0x339),'type':_0x251eb8(0x352),'date':_0x251eb8(0x327),'link':'https://drive.google.com/file/d/1f86mSlmMvyCTXiVfQXiLAFpm7YzfdJe4/view?usp=drivesdk'},{'title':_0x251eb8(0x2f6),'type':_0x251eb8(0x352),'date':_0x251eb8(0x327),'link':_0x251eb8(0x2b8)},{'title':_0x251eb8(0x2f6),'type':_0x251eb8(0x352),'date':_0x251eb8(0x327),'link':_0x251eb8(0x1f2)},{'title':_0x251eb8(0x2f6),'type':'pdf','date':_0x251eb8(0x327),'link':_0x251eb8(0x1c1)},{'title':_0x251eb8(0x283),'type':_0x251eb8(0x352),'date':'2025-04-20','link':_0x251eb8(0x301)}]},{'title':_0x251eb8(0x357),'description':'des','materials':[{'title':_0x251eb8(0x339),'type':'pdf','date':_0x251eb8(0x327),'link':_0x251eb8(0x348)},{'title':_0x251eb8(0x204),'type':_0x251eb8(0x352),'date':_0x251eb8(0x327),'link':'https://drive.google.com/file/d/1_8H55CBUiCwVqXfC6_Em_e85qePDw5YS/view?usp=drivesdk'}]},{'title':_0x251eb8(0x1c5),'description':'des','materials':[{'title':_0x251eb8(0x339),'type':_0x251eb8(0x352),'date':_0x251eb8(0x327),'link':_0x251eb8(0x2c9)},{'title':_0x251eb8(0x204),'type':_0x251eb8(0x352),'date':_0x251eb8(0x327),'link':_0x251eb8(0x340)},{'title':'Part\x203','type':'pdf','date':_0x251eb8(0x327),'link':_0x251eb8(0x39a)},{'title':'Part\x204','type':_0x251eb8(0x352),'date':'2025-04-20','link':_0x251eb8(0x1fc)},{'title':'Comprehension','type':_0x251eb8(0x352),'date':_0x251eb8(0x327),'link':_0x251eb8(0x39b)},{'title':_0x251eb8(0x2f6),'type':'pdf','date':_0x251eb8(0x327),'link':_0x251eb8(0x1f3)}]},{'title':_0x251eb8(0x388),'description':_0x251eb8(0x1d7),'materials':[{'title':_0x251eb8(0x339),'type':_0x251eb8(0x352),'date':_0x251eb8(0x327),'link':_0x251eb8(0x29a)},{'title':_0x251eb8(0x204),'type':_0x251eb8(0x352),'date':_0x251eb8(0x327),'link':'https://drive.google.com/file/d/1AI1XfB8EnyBI_FQZo3zDMxWVDzAo9VdM/view?usp=drivesdk'},{'title':_0x251eb8(0x24f),'type':'pdf','date':_0x251eb8(0x327),'link':'https://drive.google.com/file/d/1DSpBsocPE0rYVxxEePZCLPdwmpWsPmWR/view?usp=drivesdk'},{'title':_0x251eb8(0x1f5),'type':_0x251eb8(0x352),'date':'2025-04-20','link':_0x251eb8(0x234)}]},{'title':_0x251eb8(0x1e0),'description':_0x251eb8(0x1d7),'materials':[{'title':_0x251eb8(0x339),'type':_0x251eb8(0x352),'date':_0x251eb8(0x327),'link':_0x251eb8(0x311)},{'title':_0x251eb8(0x204),'type':_0x251eb8(0x352),'date':_0x251eb8(0x327),'link':'https://drive.google.com/file/d/1Fz-MFAoUMhFq2_vXTvsjPFblRVyClxQp/view?usp=drivesdk'},{'title':'Part\x203','type':'pdf','date':_0x251eb8(0x327),'link':_0x251eb8(0x306)}]},{'title':_0x251eb8(0x34c),'description':_0x251eb8(0x1d7),'materials':[{'title':_0x251eb8(0x339),'type':'presentation','date':'2025-04-20','link':_0x251eb8(0x39c)},{'title':_0x251eb8(0x204),'type':_0x251eb8(0x275),'date':_0x251eb8(0x327),'link':_0x251eb8(0x20e)}]},{'title':_0x251eb8(0x2ee),'description':'des','materials':[{'title':_0x251eb8(0x339),'type':_0x251eb8(0x352),'date':_0x251eb8(0x327),'link':_0x251eb8(0x2b6)},{'title':_0x251eb8(0x204),'type':_0x251eb8(0x352),'date':_0x251eb8(0x327),'link':'https://drive.google.com/file/d/1-KZaJlrCe962vLQV9mas0XmxgZk1C-r9/view?usp=drivesdk'},{'title':_0x251eb8(0x2d0),'type':_0x251eb8(0x352),'date':_0x251eb8(0x327),'link':'https://drive.google.com/file/d/1d1LSvr-Pmc4xRki7hc7qW2oHfKs3_zka/view?usp=drivesdk'},{'title':'Part\x204','type':'pdf','date':'2025-04-20','link':_0x251eb8(0x36a)},{'title':_0x251eb8(0x283),'type':_0x251eb8(0x352),'date':_0x251eb8(0x327),'link':_0x251eb8(0x1d3)}]}]},{'id':_0x251eb8(0x1db),'title':_0x251eb8(0x1e8),'instructor':_0x251eb8(0x1cf),'description':_0x251eb8(0x2bf),'chapters':[{'title':_0x251eb8(0x2c3),'description':_0x251eb8(0x22b),'materials':[{'title':_0x251eb8(0x2c3),'type':'pdf','date':_0x251eb8(0x327),'link':_0x251eb8(0x389)},{'title':_0x251eb8(0x30d),'type':_0x251eb8(0x352),'date':_0x251eb8(0x327),'link':_0x251eb8(0x21a)},{'title':_0x251eb8(0x2ce),'type':_0x251eb8(0x2d6),'date':_0x251eb8(0x327),'link':'https://drive.google.com/file/d/1_7g5SnY9DwAENWV24uJCkWd6evMgfd1X/view?usp=drive_link'}]},{'title':_0x251eb8(0x241),'description':_0x251eb8(0x38f),'materials':[{'title':'Chapter\x202','type':_0x251eb8(0x352),'date':_0x251eb8(0x327),'link':_0x251eb8(0x373)},{'title':_0x251eb8(0x30d),'type':_0x251eb8(0x352),'date':_0x251eb8(0x327),'link':'https://drive.google.com/file/d/1_z6Mg3aBTGIYLnXlBCyuqN2qXYTeEOM7/view?usp=drive_link'},{'title':'ملخص\x20','type':'video','date':_0x251eb8(0x327),'link':_0x251eb8(0x33c)}]},{'title':_0x251eb8(0x39f),'description':_0x251eb8(0x21f),'materials':[{'title':_0x251eb8(0x39f),'type':_0x251eb8(0x352),'date':'2025-04-20','link':_0x251eb8(0x2ed)},{'title':_0x251eb8(0x24c),'type':_0x251eb8(0x352),'date':_0x251eb8(0x327),'link':_0x251eb8(0x30c)},{'title':_0x251eb8(0x246),'type':'video','date':_0x251eb8(0x327),'link':_0x251eb8(0x2d7)}]},{'title':_0x251eb8(0x2f4),'description':_0x251eb8(0x34d),'materials':[{'title':_0x251eb8(0x2f4),'type':'pdf','date':_0x251eb8(0x327),'link':_0x251eb8(0x310)},{'title':_0x251eb8(0x280),'type':_0x251eb8(0x352),'date':_0x251eb8(0x327),'link':_0x251eb8(0x37a)},{'title':_0x251eb8(0x246),'type':_0x251eb8(0x2d6),'date':_0x251eb8(0x327),'link':_0x251eb8(0x2da)}]},{'title':'Chapter\x205','description':'This\x20file\x20is\x20about\x20computers\x20and\x20the\x20internet.It\x20shows\x20how\x20they\x20help\x20us,\x20but\x20also\x20how\x20some\x20people\x20use\x20them\x20to\x20do\x20bad\x20things.It\x20talks\x20about\x20how\x20to\x20be\x20good\x20when\x20using\x20computers,\x20and\x20how\x20to\x20stay\x20safe\x20online.It\x20says\x20we\x20should\x20not\x20steal,\x20spy,\x20or\x20hurt\x20others\x20using\x20a\x20computer.','materials':[{'title':_0x251eb8(0x391),'type':_0x251eb8(0x352),'date':_0x251eb8(0x327),'link':_0x251eb8(0x248)}]}]},{'id':'cs20503','title':'Multi\x20media','instructor':_0x251eb8(0x297),'description':_0x251eb8(0x2a8),'chapters':[{'title':_0x251eb8(0x24b),'description':_0x251eb8(0x2a8),'materials':[{'title':'lecture1_multimedia','type':_0x251eb8(0x352),'date':_0x251eb8(0x20d),'link':_0x251eb8(0x32f)}]},{'title':_0x251eb8(0x372),'description':'No\x20Description\x20','materials':[{'title':_0x251eb8(0x276),'type':'pdf','date':_0x251eb8(0x20d),'link':'https://drive.google.com/file/d/1AwgLyTclbAszFfiNDTmWTwKmqYr9qPar/view?usp=sharing'}]},{'title':'Chapter\x203','description':'No\x20Description\x20','materials':[{'title':_0x251eb8(0x2c8),'type':_0x251eb8(0x352),'date':'2025-04-27','link':'https://drive.google.com/file/d/1ObEs41zv49enuUd8E-VhWHxrr9WDZ6dN/view?usp=sharing'}]},{'title':_0x251eb8(0x2f4),'description':_0x251eb8(0x2a8),'materials':[{'title':'lecture5_multimedia','type':_0x251eb8(0x352),'date':'2025-04-27','link':_0x251eb8(0x1e5)}]},{'title':_0x251eb8(0x391),'description':_0x251eb8(0x2a8),'materials':[{'title':_0x251eb8(0x2e8),'type':'pdf','date':_0x251eb8(0x20d),'link':_0x251eb8(0x1dd)}]},{'title':'1,2,3\x20Summary','description':_0x251eb8(0x2a8),'materials':[{'title':'Summary\x20before\x20mid-term','type':_0x251eb8(0x352),'date':'2025-04-27','link':_0x251eb8(0x286)}]},{'title':_0x251eb8(0x30f),'description':'No\x20Description\x20','materials':[{'title':_0x251eb8(0x257),'type':_0x251eb8(0x2ac),'date':_0x251eb8(0x20d),'link':_0x251eb8(0x359)},{'title':'Sheet\x202','type':'assignment','date':'2025-04-27','link':_0x251eb8(0x2de)},{'title':_0x251eb8(0x2fd),'type':'assignment','date':_0x251eb8(0x20d),'link':_0x251eb8(0x1c2)},{'title':'Sheet\x204','type':_0x251eb8(0x2ac),'date':'2025-04-27','link':_0x251eb8(0x322)},{'title':_0x251eb8(0x369),'type':_0x251eb8(0x2ac),'date':'2025-04-27','link':_0x251eb8(0x350)},{'title':_0x251eb8(0x245),'type':_0x251eb8(0x2ac),'date':_0x251eb8(0x20d),'link':_0x251eb8(0x229)},{'title':'Sheet\x207','type':_0x251eb8(0x2ac),'date':_0x251eb8(0x20d),'link':'https://drive.google.com/file/d/1GjatYDvHXunBvaGYz4pUfU5SuzCjqODm/view?usp=sharing'},{'title':_0x251eb8(0x2fa),'type':_0x251eb8(0x2ac),'date':_0x251eb8(0x20d),'link':_0x251eb8(0x380)},{'title':_0x251eb8(0x25c),'type':'assignment','date':_0x251eb8(0x20d),'link':_0x251eb8(0x1fd)},{'title':_0x251eb8(0x216),'type':_0x251eb8(0x2ac),'date':_0x251eb8(0x20d),'link':_0x251eb8(0x28e)},{'title':_0x251eb8(0x1f4),'type':'assignment','date':_0x251eb8(0x20d),'link':_0x251eb8(0x282)},{'title':'Sheet\x2012','type':_0x251eb8(0x2ac),'date':_0x251eb8(0x20d),'link':_0x251eb8(0x2d4)},{'title':_0x251eb8(0x296),'type':_0x251eb8(0x2ac),'date':_0x251eb8(0x20d),'link':_0x251eb8(0x3a1)},{'title':_0x251eb8(0x338),'type':_0x251eb8(0x2ac),'date':_0x251eb8(0x20d),'link':_0x251eb8(0x215)},{'title':_0x251eb8(0x20f),'type':_0x251eb8(0x2ac),'date':'2025-04-27','link':_0x251eb8(0x2b1)}]}]}]},examTaskData={0x1:[{'id':_0x251eb8(0x225),'title':'بحوث\x20عمليات\x20د.رانيا','type':'task','course':'Bs\x20105','deadline':_0x251eb8(0x2f9),'details':_0x251eb8(0x242)},{'id':'item102','title':_0x251eb8(0x1ed),'type':_0x251eb8(0x2c6),'course':_0x251eb8(0x1fa),'deadline':'2025-04-28T09:00:00','details':_0x251eb8(0x316)},{'id':_0x251eb8(0x249),'title':_0x251eb8(0x29e),'type':_0x251eb8(0x2c6),'course':_0x251eb8(0x1e6),'deadline':_0x251eb8(0x2f9),'details':_0x251eb8(0x316)},{'id':_0x251eb8(0x377),'title':_0x251eb8(0x2b4),'type':_0x251eb8(0x28f),'course':_0x251eb8(0x28b),'deadline':'2025-04-26T09:00:00','details':'شابتر\x2010\x20بريزنتيشن'},{'id':_0x251eb8(0x279),'title':_0x251eb8(0x33a),'type':'exam','course':_0x251eb8(0x28b),'deadline':'2025-04-28T09:00:00','details':_0x251eb8(0x259)},{'id':_0x251eb8(0x2c0),'title':'احصاء\x20واحتمالات\x20د.ابو\x20زيد','type':'exam','course':'Bs\x20105','deadline':_0x251eb8(0x2b2),'details':_0x251eb8(0x320)},{'id':_0x251eb8(0x220),'title':'جبر\x20خطي\x20:\x20د.ابو\x20زيد','type':_0x251eb8(0x2c6),'course':_0x251eb8(0x1fa),'deadline':_0x251eb8(0x37f),'details':_0x251eb8(0x320)},{'id':'item108','title':_0x251eb8(0x1c4),'type':_0x251eb8(0x28f),'course':_0x251eb8(0x28b),'deadline':'2025-04-30T09:00:00','details':_0x251eb8(0x253)}],0x2:[{'id':'item109','title':_0x251eb8(0x1fb),'type':_0x251eb8(0x28f),'course':_0x251eb8(0x1bf),'deadline':_0x251eb8(0x308),'details':_0x251eb8(0x332)}]};            
             const app = {
 
                 // State Management
@@ -2620,11 +2654,48 @@ function _0x6988(_0x5667b6,_0x271281){const _0x2b486f=_0x2b48();return _0x6988=f
                 },
 
                 // Initialize Application
-                init: function () {
+                init: async function () {
+                    console.log("App init started...");
+
+                    // --- START: Get Firebase Database Reference (Moved Here) ---
+                    try {
+                        // Check if the app instance was successfully initialized in the head
+                        if (!window._firebaseAppInstance) {
+                            throw new Error("Firebase app instance not found. Initialization in head likely failed.");
+                        }
+                        // Dynamically import getDatabase function here, inside async init
+                        const { getDatabase } = await import("https://www.gstatic.com/firebasejs/11.6.1/firebase-database.js");
+                        db = getDatabase(window._firebaseAppInstance); // Assign to the outer 'db' variable
+                        console.log("Firebase Database Reference Obtained");
+
+                    } catch (error) {
+                        console.error("Failed to get Firebase Database Reference:", error);
+                        alert("Error connecting to data services. Some features might be unavailable. Please try refreshing.");
+                        // db will remain undefined, the check below will handle it
+                    }
+                    // --- END: Get Firebase Database Reference ---
+                    // --- START: Show Loading Indicators ---
+                    // Simple example: Add loading text to key areas
+                    document.getElementById('upcoming-lectures').innerHTML = '<p class="text-gray-500 dark:text-gray-400 text-center p-4">Loading lectures...</p>';
+                    document.getElementById('recent-materials').innerHTML = '<p class="text-gray-500 dark:text-gray-400 text-center p-4">Loading materials...</p>';
+                    document.getElementById('dashboard-news').innerHTML = '<p class="text-gray-500 dark:text-gray-400 text-center p-4">Loading news...</p>';
+                    document.getElementById('courses-container').innerHTML = '<p class="text-gray-500 dark:text-gray-400 text-center p-4">Loading courses...</p>';
+                    document.getElementById('lecture-list').innerHTML = '<tr><td colspan="4" class="text-center p-4 text-gray-500 dark:text-gray-400">Loading schedule...</td></tr>';
+                    document.getElementById('news-container').innerHTML = '<p class="text-gray-500 dark:text-gray-400 text-center p-4">Loading news...</p>';
+                    document.getElementById('exam-tracker-container').innerHTML = '<p class="text-gray-500 dark:text-gray-400 text-center p-4">Loading deadlines...</p>';
+                    // --- END: Show Loading Indicators ---
                     this.loadUserData();
                     this.setupEventListeners(); // Keep this early
                     this.setupFullCalendar();
-                    this.loadMockData(); // Load data needed for routing/rendering
+                    if (db) { // Only load if db connection was successful
+                        await this.loadFirebaseData();
+                    } else {
+                        console.warn("Skipping Firebase data load because database reference failed.");
+                        // Show error messages in the UI sections
+                        document.getElementById('courses-container').innerHTML = '<p class="text-red-500 text-center p-4">Could not connect to data services.</p>';
+                        // Add similar messages to other sections
+                    }  // Load data needed for routing/rendering
+
                     // this.renderCurrentPage(); // Remove this - routing logic below handles initial page
                     this.updateUIWithUserData();
                     this.renderNotifications();
@@ -3024,10 +3095,9 @@ function _0x6988(_0x5667b6,_0x271281){const _0x2b486f=_0x2b48();return _0x6988=f
                     // Reload mock data based on new user info
                     this.loadMockData();
                 },
-
-                navigateTo: function (page, id = null) { // Add id parameter
+                navigateTo: function (page, id = null) {
                     console.log(`Navigating to: ${page}` + (id ? ` with ID: ${id}` : ''));
-                    const targetChapterIndexForState = this.state.targetChapterIndex;
+                    const targetChapterIndexForState = this.state.targetChapterIndex; // Keep this
 
                     // Update internal state FIRST
                     const previousPage = this.state.currentPage;
@@ -3035,95 +3105,110 @@ function _0x6988(_0x5667b6,_0x271281){const _0x2b486f=_0x2b48();return _0x6988=f
                     this.state.selectedCourseId = id; // Store the ID if provided
                     console.log(`App state updated - currentPage: ${this.state.currentPage}, selectedCourseId: ${this.state.selectedCourseId}`);
 
-
                     // --- Construct the new URL Hash ---
                     let newHash = `#/${page}`;
                     if (page === 'course-details' && id) {
-                        newHash += `/${encodeURIComponent(id)}`; // Ensure ID is URL-safe
+                        newHash += `/${encodeURIComponent(id)}`;
                     }
                     const pageTitle = this.capitalizeFirstLetter(page) + (id ? ` (${id})` : '');
 
                     // --- Update History State and URL ---
                     const currentStateHash = window.location.hash;
                     if (newHash !== currentStateHash) {
-                        // Push state including page and id
-                        history.pushState({ page: page, id: id }, pageTitle, newHash);
+                        history.pushState({ page: page, id: id, chapterIndex: targetChapterIndexForState }, pageTitle, newHash); // Include chapterIndex in state
                         console.log(`History state pushed: ${newHash}`);
                     } else {
                         console.log(`Skipping history pushState, hash already matches: ${newHash}`);
                     }
 
                     // --- Logic for showing/hiding pages ---
-                    // Hide all pages first
                     document.querySelectorAll('.page-container').forEach(pageEl => {
                         pageEl.classList.add('hidden');
                     });
 
-                    // Handle course details specifically to load data
+                    // Handle course details specifically
                     if (page === 'course-details') {
                         if (!id) {
                             console.error("NavigateTo 'course-details' called without an ID.");
-                            this.navigateTo('courses'); // Redirect to courses list if no ID
+                            this.navigateTo('courses');
                             return;
                         }
-                        // Find the course using the ID
-                        const course = this.mockData.courses.find(c => c.id === id);
-                        if (!course) {
-                            console.error(`Course with ID ${id} not found.`);
-                            alert(`Error: Course with ID ${id} could not be found.`); // User feedback
+
+                        // --- CORRECTED: Find course across all years ---
+                        let foundCourse = null;
+                        for (const year in this.mockData.courses) {
+                            const coursesForYear = this.mockData.courses[year] || [];
+                            foundCourse = coursesForYear.find(c => c && c.id === id); // Add check for c existence
+                            if (foundCourse) {
+                                break; // Stop searching once found
+                            }
+                        }
+                        // --- End Correction ---
+
+                        if (!foundCourse) {
+                            console.error(`Course with ID ${id} not found in any year.`);
+                            alert(`Error: Course with ID ${id} could not be found.`);
                             this.navigateTo('courses'); // Redirect
                             return;
                         }
-                        this.state.selectedCourse = course; // Set the selected course in state
+
+                        this.state.selectedCourse = foundCourse; // Set the selected course
                         const targetPageElement = document.getElementById('course-details-page');
                         if (targetPageElement) {
                             targetPageElement.classList.remove('hidden');
-                            document.getElementById('current-page-breadcrumb').textContent = `Courses / ${course.title}`; // Update breadcrumb
-                            this.renderCourseDetails(); // Render *after* finding course and showing page
+                            document.getElementById('current-page-breadcrumb').textContent = `Courses / ${foundCourse.title}`;
+                            this.renderCourseDetails(); // Render *after* finding course
                         } else {
                             console.error("Course details page element not found!");
-                            this.navigateTo('courses'); // Fallback
+                            this.navigateTo('courses');
                         }
 
                     } else if (page === 'courses') {
-                        // Handle back navigation from course details
-                        this.state.selectedCourse = null;
+                        this.state.selectedCourse = null; // Clear selected course when going back to list
                         this.state.selectedCourseId = null;
                         const targetPageElement = document.getElementById('courses-page');
                         if (targetPageElement) {
                             targetPageElement.classList.remove('hidden');
                             document.getElementById('current-page-breadcrumb').textContent = 'Courses';
+                            // Ensure courses are rendered for the correct year when navigating TO the courses page
+                            this.renderCourses();
                         } else {
                             console.error("Courses page element not found!");
                             this.navigateTo('dashboard');
                         }
                     }
-                    // Handle other pages (ensure IDs exist)
+                    // Handle other pages (rest of the logic remains the same)
                     else {
                         const targetPageElement = document.getElementById(`${page}-page`);
                         if (targetPageElement) {
                             targetPageElement.classList.remove('hidden');
                             document.getElementById('current-page-breadcrumb').textContent = this.capitalizeFirstLetter(page);
 
-                            // Special rendering for calendar if navigating to lectures
+                            // Special rendering triggers
                             if (page === 'lectures' && this.calendar) {
-                                setTimeout(() => this.calendar.render(), 0); // Render slightly deferred
+                                setTimeout(() => this.calendar.render(), 0);
                             }
-                            // Re-render tools if navigating there
                             if (page === 'tools') {
-                                this.renderToolsPage?.(); // Use optional chaining in case method doesn't exist yet
+                                this.renderToolsPage?.();
                             }
-                            // Re-render exam tracker
                             if (page === 'exam-tracker') {
                                 this.renderExamTracker?.();
                             }
+                            // Re-render dashboard if navigating back? Optional.
+                            // if (page === 'dashboard') {
+                            //    this.renderDashboard();
+                            // }
 
                         } else {
                             console.error(`Page element not found for id: ${page}-page`);
-                            this.navigateTo('dashboard'); // Fallback to dashboard
+                            this.navigateTo('dashboard'); // Fallback
                         }
                     }
-                }, // End of navigateTo function// Toggle Dark Mode
+                    // Reset target chapter index AFTER navigation logic is complete
+                    this.state.targetChapterIndex = null;
+
+
+                }, // End of navigateTo function
                 toggleDarkMode: function (forcedState) {
                     const newState = forcedState !== undefined ? forcedState : !this.state.darkMode;
 
@@ -3274,29 +3359,139 @@ function _0x6988(_0x5667b6,_0x271281){const _0x2b486f=_0x2b48();return _0x6988=f
                     });
                 },
 
-                // Load Mock Data for the Application
-                loadMockData: function () {
-                    // Load data based on user's year and university
-                    const year = this.state.userData.year || '1';
+                // // Load Mock Data for the Application
+                // loadMockData: function () {
+                //     // Load data based on user's year and university
+                //     const year = this.state.userData.year || '1';
 
-                    // Generate courses for the user's year
+                //     // Generate courses for the user's year
+                //     this.mockData = {
+                //         courses: this.generateMockCourses(year),
+                //         lectures: this.generateMockLectures(year),
+                //         news: this.generateMockNews(),
+                //         examTasks: examTaskData
+                //     };
+
+                //     // Render data
+                //     this.renderDashboard();
+                //     this.renderCourses();
+                //     this.renderLectures();
+                //     this.renderNews();
+                //     this.populateCalendar();
+                //     this.renderExamTracker();
+                // },
+                loadFirebaseData: async function () {
+                    console.log("Loading data from CLOUD FIRESTORE...");
+
+                    // Initialize mockData structure
                     this.mockData = {
-                        courses: this.generateMockCourses(year),
-                        lectures: this.generateMockLectures(year),
-                        news: this.generateMockNews(),
-                        examTasks: examTaskData
+                        courses: {}, // Keyed by year e.g., { 1: [courseObj1, ...], 2: [...] }
+                        lectures: [],
+                        news: [],
+                        examTasks: {} // Keyed by year e.g., { 1: [taskObj1, ...], 2: [...] }
                     };
 
-                    // Render data
-                    this.renderDashboard();
-                    this.renderCourses();
-                    this.renderLectures();
-                    this.renderNews();
-                    this.populateCalendar();
-                    this.renderExamTracker();
-                },
+                    let fsDB;
+                    try {
+                        // --- Import Firestore modular functions ---
+                        const { getFirestore, collection, getDocs, doc, query, orderBy } = await import("https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js");
 
-                // Render Current Page
+                        // Check if Firebase App instance exists
+                        if (!window._firebaseAppInstance) {
+                            throw new Error("Firebase App is not initialized.");
+                        }
+                        fsDB = getFirestore(window._firebaseAppInstance);
+                        console.log("Firestore instance obtained.");
+
+                        // --- Fetch Data Concurrently (Lectures and News) ---
+                        console.log("Fetching Lectures and News from Firestore...");
+
+                        const lecturesQuery = query(collection(fsDB, "lectures"), orderBy("date", "desc"));
+                        const newsQuery = query(collection(fsDB, "news"), orderBy("date", "desc"));
+
+                        const [lecturesSnapshot, newsSnapshot] = await Promise.all([
+                            getDocs(lecturesQuery),
+                            getDocs(newsQuery)
+                        ]);
+                        console.log("Lectures and News fetched.");
+
+                        // --- Process Lectures ---
+                        this.mockData.lectures = lecturesSnapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+
+                        // --- Process News ---
+                        this.mockData.news = newsSnapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+                        console.log(`Processed ${this.mockData.news.length} news items.`); // Log count
+                        // Log the actual processed news data
+                        if (this.mockData.news.length > 0) {
+                            console.log("Processed News Data Sample:", JSON.stringify(this.mockData.news.slice(0, 2), null, 2)); // Log first 2 items
+                        } else {
+                            console.log("No news documents found or processed.");
+                        }
+
+                        // --- Define which years to fetch data for ---
+                        // *** THIS IS THE FIX: Define years explicitly ***
+                        const yearsToFetch = ["1", "2"]; // <-- Adjust this array based on the years you pushed data for (e.g., ["1", "2", "3", "4"])
+
+                        // --- Fetch Courses, Chapters, and Tasks (Year by Year) ---
+                        console.log(`Fetching Course/Task data for years: ${yearsToFetch.join(', ')}...`);
+
+                        for (const year of yearsToFetch) {
+                            console.log(`Fetching data for Year ${year}...`);
+
+                            // --- Fetch Courses and Chapters for the current year ---
+                            const coursesCollectionRef = collection(fsDB, "academic_years", year, "courses");
+                            const coursesSnapshot = await getDocs(coursesCollectionRef);
+                            const coursesForYear = [];
+
+                            for (const courseDoc of coursesSnapshot.docs) {
+                                const courseDataItem = { id: courseDoc.id, ...courseDoc.data(), chapters: [] }; // Initialize chapters array
+
+                                // Fetch chapters subcollection
+                                const chaptersCollectionRef = collection(courseDoc.ref, "chapters");
+                                const chaptersSnapshot = await getDocs(chaptersCollectionRef);
+
+                                courseDataItem.chapters = chaptersSnapshot.docs.map(chapterDoc => ({
+                                    id: chapterDoc.id, // e.g., "chapter_0"
+                                    ...chapterDoc.data()
+                                })).sort((a, b) => { // Optional: Sort chapters if needed
+                                    const indexA = parseInt(a.id.split('_')[1] || 0);
+                                    const indexB = parseInt(b.id.split('_')[1] || 0);
+                                    return indexA - indexB;
+                                });
+                                coursesForYear.push(courseDataItem);
+                            }
+                            this.mockData.courses[year] = coursesForYear; // Assign array to the year key
+                            console.log(`Year ${year} Courses processed.`);
+
+                            // --- Fetch Exam Tasks for the current year ---
+                            const tasksCollectionRef = collection(fsDB, "academic_years", year, "examTasks");
+                            const tasksSnapshot = await getDocs(tasksCollectionRef);
+                            this.mockData.examTasks[year] = tasksSnapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+                            console.log(`Year ${year} Tasks processed.`);
+                        } // End of year loop
+
+
+                        console.log("Firestore data loaded and processed:", this.mockData);
+
+                        // --- Render data AFTER it's loaded ---
+                        this.renderDashboard();
+                        this.renderCourses();
+                        this.renderLectures();
+                        this.renderNews();
+                        this.populateCalendar();
+                        this.renderExamTracker();
+                        // --- END: Render data ---
+
+                    } catch (error) {
+                        console.error("Error loading Cloud Firestore data:", error);
+                        // Show UI Error
+                        document.getElementById('courses-container').innerHTML = '<p class="text-red-500 text-center p-4">Could not load course data. Please check connection and refresh.</p>';
+                        // Add similar error messages to other sections
+                        this.mockData = { courses: {}, lectures: [], news: [], examTasks: {} }; // Reset data on error
+                    } finally {
+                        console.log("Finished loading Firestore data process.");
+                    }
+                }, // <<< End of loadFirebaseData (Firestore version)
                 renderCurrentPage: function () {
                     this.navigateTo(this.state.currentPage);
                 },
@@ -3356,37 +3551,46 @@ function _0x6988(_0x5667b6,_0x271281){const _0x2b486f=_0x2b48();return _0x6988=f
                         container.appendChild(lectureEl);
                     });
                 },
-
                 renderRecentMaterials: function () {
                     const container = document.getElementById('recent-materials');
                     container.innerHTML = ''; // Clear previous items
 
-                    // Collect all materials WITH courseId and chapterIndex
+                    // --- CORRECTED LOGIC TO FLATTEN COURSES ---
                     const allMaterials = [];
-                    this.mockData.courses.forEach(course => {
-                        if (!course || !course.chapters) return; // Safety check
-                        course.chapters.forEach((chapter, chapterIndex) => { // Get chapterIndex
-                            if (!chapter || !chapter.materials) return; // Safety check
-                            chapter.materials.forEach(material => {
-                                allMaterials.push({
-                                    // Keep existing properties
-                                    title: material.title,
-                                    type: material.type,
-                                    courseTitle: course.title, // Keep original title for display
-                                    chapterTitle: chapter.title, // Keep original title for display
-                                    date: material.date,
-                                    // Add necessary navigation data
-                                    courseId: course.id,      // <<< Add Course ID
-                                    chapterIndex: chapterIndex  // <<< Add Chapter Index
+                    // Iterate through the years in the courses object
+                    for (const year in this.mockData.courses) {
+                        const coursesForYear = this.mockData.courses[year] || []; // Get the array for the year
+                        // Iterate through courses within that year
+                        coursesForYear.forEach(course => {
+                            if (!course || !Array.isArray(course.chapters)) return; // Safety check
+
+                            course.chapters.forEach((chapter, chapterIndex) => {
+                                if (!chapter || !Array.isArray(chapter.materials)) return; // Safety check
+
+                                chapter.materials.forEach(material => {
+                                    allMaterials.push({
+                                        // Keep existing properties
+                                        title: material.title,
+                                        type: material.type,
+                                        courseTitle: course.title, // Keep original title for display
+                                        chapterTitle: chapter.title, // Keep original title for display
+                                        date: material.date,
+                                        // Add necessary navigation data
+                                        courseId: course.id,      // Course ID
+                                        chapterIndex: chapterIndex, // Chapter Index
+                                        // Add year if needed for linking or display (optional)
+                                        academicYear: year
+                                    });
                                 });
                             });
                         });
-                    });
+                    }
+                    // --- END CORRECTED LOGIC ---
 
-                    // Sort materials by date (newest first)
+                    // Sort materials by date (newest first) - Remains the same
                     allMaterials.sort((a, b) => new Date(b.date) - new Date(a.date));
 
-                    // Take the most recent 3 materials
+                    // Take the most recent 3 materials - Remains the same
                     const displayMaterials = allMaterials.slice(0, 3);
 
                     if (displayMaterials.length === 0) {
@@ -3394,11 +3598,11 @@ function _0x6988(_0x5667b6,_0x271281){const _0x2b486f=_0x2b48();return _0x6988=f
                         return;
                     }
 
+                    // --- Rendering Logic (Remains mostly the same) ---
                     displayMaterials.forEach(material => {
                         const materialDate = new Date(material.date);
                         const formattedDate = materialDate.toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
 
-                        // Determine icon and background color (existing logic)
                         let icon = 'fa-file-alt';
                         let bgColor = 'bg-gray-100 dark:bg-gray-900 text-gray-600 dark:text-gray-300'; // Default
                         switch (material.type?.toLowerCase()) { // Add optional chaining and lower case
@@ -3409,61 +3613,52 @@ function _0x6988(_0x5667b6,_0x271281){const _0x2b486f=_0x2b48();return _0x6988=f
                             case 'document': icon = 'fa-file-word'; bgColor = 'bg-blue-100 dark:bg-blue-900 text-blue-700 dark:text-blue-500'; break;
                         }
 
-                        // Use a button element for click interaction
+
                         const materialEl = document.createElement('button');
                         materialEl.className = 'w-full text-left flex items-start p-2 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-700 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-opacity-50 transition-colors recent-material-item'; // Add common class
-                        // Add data attributes for navigation
                         materialEl.setAttribute('data-course-id', material.courseId);
                         materialEl.setAttribute('data-chapter-index', material.chapterIndex);
-                        // Add ARIA label for accessibility
                         materialEl.setAttribute('aria-label', `View material ${material.title} in course ${material.courseTitle}`);
 
                         materialEl.innerHTML = `
-                            <div class="flex-shrink-0 w-10 h-10 rounded-md ${bgColor} flex items-center justify-center mr-3">
-                                <i class="fas ${icon}"></i>
-                            </div>
-                            <div class="flex-1 overflow-hidden"> <!-- Added overflow-hidden -->
-                                <div class="flex justify-between items-center">
-                                    <h4 class="font-medium text-gray-900 dark:text-white truncate" title="${material.title}">${material.title}</h4> <!-- Added truncate and title -->
-                                    <span class="text-xs text-gray-500 dark:text-gray-400 whitespace-nowrap ml-2">${formattedDate}</span> <!-- Added whitespace-nowrap -->
-                                </div>
-                                <p class="text-sm text-gray-600 dark:text-gray-300 truncate" title="${material.courseTitle} - ${material.chapterTitle}"> <!-- Added truncate and title -->
-                                    ${material.courseTitle} - ${material.chapterTitle}
-                                </p>
-                            </div>
-                        `;
+                    <div class="flex-shrink-0 w-10 h-10 rounded-md ${bgColor} flex items-center justify-center mr-3">
+                        <i class="fas ${icon}"></i>
+                    </div>
+                    <div class="flex-1 overflow-hidden">
+                        <div class="flex justify-between items-center">
+                            <h4 class="font-medium text-gray-900 dark:text-white truncate" title="${material.title}">${material.title}</h4>
+                            <span class="text-xs text-gray-500 dark:text-gray-400 whitespace-nowrap ml-2">${formattedDate}</span>
+                        </div>
+                        <p class="text-sm text-gray-600 dark:text-gray-300 truncate" title="${material.courseTitle} - ${material.chapterTitle}">
+                            ${material.courseTitle} - ${material.chapterTitle}
+                        </p>
+                    </div>
+                `;
                         container.appendChild(materialEl);
                     });
+                    // --- End Rendering Logic ---
 
-                    // --- Event Delegation for Clicks ---
-                    // Remove previous listener if any to prevent duplicates
+                    // --- Event Delegation (Remains the same) ---
                     if (this.recentMaterialClickListener) {
                         container.removeEventListener('click', this.recentMaterialClickListener);
                     }
-                    // Define the new listener function
                     this.recentMaterialClickListener = (event) => {
-                        const clickedItem = event.target.closest('.recent-material-item'); // Find the button element
+                        const clickedItem = event.target.closest('.recent-material-item');
                         if (clickedItem) {
                             const courseId = clickedItem.dataset.courseId;
-                            const chapterIndex = parseInt(clickedItem.dataset.chapterIndex, 10); // Parse as integer
-
+                            const chapterIndex = parseInt(clickedItem.dataset.chapterIndex, 10);
                             if (courseId && !isNaN(chapterIndex)) {
-                                console.log(`Clicked recent material: Course ID ${courseId}, Chapter Index ${chapterIndex}`);
-                                // Set the target chapter index in state BEFORE navigating
                                 this.state.targetChapterIndex = chapterIndex;
-                                // Navigate to the course details page
                                 this.navigateTo('course-details', courseId);
                             } else {
                                 console.warn('Clicked recent material item missing required data attributes.');
                             }
                         }
                     };
-                    // Add the listener to the container
                     container.addEventListener('click', this.recentMaterialClickListener);
+                    // --- End Event Delegation ---
 
-
-                }, // End of renderRecentMaterials
-                // Render Dashboard News
+                }, // End of renderRecentMaterials// Render Dashboard News
                 renderDashboardNews: function () {
                     const container = document.getElementById('dashboard-news');
                     container.innerHTML = '';
@@ -3496,42 +3691,60 @@ function _0x6988(_0x5667b6,_0x271281){const _0x2b486f=_0x2b48();return _0x6988=f
                     });
                 },
 
-                // Render Courses
                 renderCourses: function () {
                     const container = document.getElementById('courses-container');
-                    container.innerHTML = '';
+                    container.innerHTML = ''; // Clear previous items
 
-                    this.mockData.courses.forEach(course => {
+                    // --- Get courses for the current user's year ---
+                    const userYear = this.state.userData.year || '1'; // Default to '1' if not set
+                    const coursesToRender = this.mockData?.courses?.[userYear] || []; // Get array for the user's year
+
+                    console.log(`Rendering courses for year: ${userYear}`, coursesToRender); // Debugging log
+
+                    if (coursesToRender.length === 0) {
+                        container.innerHTML = `<p class="text-gray-500 dark:text-gray-400 text-center p-4 col-span-full">No courses found for Year ${userYear}.</p>`;
+                        return;
+                    }
+
+                    // --- Iterate over the specific year's courses ---
+                    coursesToRender.forEach(course => {
+                        if (!course || !course.id) { // Add a check for valid course object
+                            console.warn("Skipping invalid course object during rendering:", course);
+                            return;
+                        }
                         const courseEl = document.createElement('div');
                         courseEl.className = 'bg-white dark:bg-gray-800 rounded-xl shadow-md overflow-hidden card-hover';
+                        // Ensure chapters is treated as an array for length check
+                        const chapterCount = Array.isArray(course.chapters) ? course.chapters.length : 0;
+
                         courseEl.innerHTML = `
-                            <div class="h-24 gradient-bg flex items-center justify-center">
-                                <i class="fas fa-book text-4xl text-white opacity-75"></i>
-                            </div>
-                            <div class="p-5">
-                                <h3 class="text-xl font-semibold mb-2">${course.id} : ${course.title}</h3>
-                                <p class="text-gray-600 dark:text-gray-300 mb-4">${course.instructor}</p>
-                                <div class="flex justify-between items-center">
-                                    <span class="text-sm text-gray-500 dark:text-gray-400">${course.chapters.length} Chapters</span>
-                                    <button data-course-id="${course.id}" class="view-course-btn px-4 py-2 rounded-md bg-indigo-600 text-white text-sm hover:bg-indigo-700 transition-colors">View Course</button>
-                                </div>
-                            </div>
-                        `;
+                    <div class="h-24 gradient-bg flex items-center justify-center">
+                        <i class="fas fa-book text-4xl text-white opacity-75"></i>
+                    </div>
+                    <div class="p-5">
+                        <h3 class="text-xl font-semibold mb-2">${course.id} : ${course.title}</h3>
+                        <p class="text-gray-600 dark:text-gray-300 mb-4">${course.instructor || 'N/A'}</p>
+                        <div class="flex justify-between items-center">
+                            <span class="text-sm text-gray-500 dark:text-gray-400">${chapterCount} Chapters</span>
+                            <button data-course-id="${course.id}" class="view-course-btn px-4 py-2 rounded-md bg-indigo-600 text-white text-sm hover:bg-indigo-700 transition-colors">View Course</button>
+                        </div>
+                    </div>
+                `;
 
                         container.appendChild(courseEl);
                     });
 
-                    // Add event listeners to view-course-buttons
+                    // --- Re-add event listeners (important!) ---
                     document.querySelectorAll('.view-course-btn').forEach(button => {
+                        // Remove existing listener first to prevent duplicates if renderCourses is called multiple times
+                        button.removeEventListener('click', this.handleViewCourseClick); // Use a named handler if possible, or handle inline
+                        // Add listener inline (simpler for now)
                         button.addEventListener('click', (e) => {
                             const courseId = e.target.dataset.courseId;
-                            // Call navigateTo instead of setting state directly
                             this.navigateTo('course-details', courseId);
                         });
                     });
-                },
-
-                // Filter Courses by Search Term
+                },// Filter Courses by Search Term
                 filterCourses: function (searchTerm) {
                     document.querySelectorAll('#courses-container > div').forEach(courseEl => {
                         const title = courseEl.querySelector('h3').textContent.toLowerCase();
@@ -3690,6 +3903,7 @@ function _0x6988(_0x5667b6,_0x271281){const _0x2b486f=_0x2b48();return _0x6988=f
                 renderLectures: function () {
                     const tbody = document.getElementById('lecture-list');
                     tbody.innerHTML = '';
+                    const lecturesToRender = this.mockData?.lectures || []; // Use loaded data
 
                     this.mockData.lectures.forEach(lecture => {
                         const lectureDate = new Date(lecture.date + 'T' + lecture.time);
@@ -3766,38 +3980,95 @@ function _0x6988(_0x5667b6,_0x271281){const _0x2b486f=_0x2b48();return _0x6988=f
                     return colors[Math.floor(Math.random() * colors.length)];
                 },
 
-                // Render News
                 renderNews: function () {
                     const container = document.getElementById('news-container');
                     container.innerHTML = '';
+                    console.log("Attempting to render News Page. Data available:", JSON.stringify(this.mockData?.news, null, 2)); // Log data
 
-                    // Sort news by date (latest first)
-                    const sortedNews = this.mockData.news.sort((a, b) => new Date(b.date) - new Date(a.date));
+                    const newsData = this.mockData?.news || []; // Ensure it's an array
+
+                    if (!newsData || newsData.length === 0) {
+                        console.log("No news data found to render on news page.");
+                        container.innerHTML = '<p class="text-gray-500 dark:text-gray-400 text-center p-4">No news available at the moment.</p>';
+                        return; // Exit if no news
+                    }
+
+                    // Create a copy before sorting
+                    const sortedNews = [...newsData].sort((a, b) => {
+                        // Handle Firestore Timestamp or string date, provide default if missing
+                        const dateA = a?.date?.toDate ? a.date.toDate() : new Date(a?.date || 0);
+                        const dateB = b?.date?.toDate ? b.date.toDate() : new Date(b?.date || 0);
+                        return dateB - dateA; // Sort descending (newest first)
+                    });
+
 
                     sortedNews.forEach(news => {
-                        const newsDate = new Date(news.date);
-                        const formattedDate = newsDate.toLocaleDateString('en-US', { weekday: 'long', month: 'long', day: 'numeric', year: 'numeric' });
+                        try { // Add try-catch for robustness during rendering individual items
+                            // Handle potential Firestore Timestamp or string date
+                            const newsDate = news?.date?.toDate ? news.date.toDate() : new Date(news?.date || Date.now()); // Default to now if date is invalid/missing
+                            const formattedDate = newsDate.toLocaleDateString('en-US', { weekday: 'long', month: 'long', day: 'numeric', year: 'numeric' });
 
-                        const newsEl = document.createElement('div');
-                        newsEl.className = 'bg-white dark:bg-gray-800 rounded-xl shadow-md overflow-hidden news-item';
-                        newsEl.innerHTML = `
-            <div class="p-6">
-                <div class="flex justify-between items-start mb-4">
-                    <h3 class="text-xl font-semibold">${news.title}</h3>
-                    <span class="text-sm text-gray-500 dark:text-gray-400">${formattedDate}</span>
-                </div>
-                
-                <div class="news-content">
-                    <p class="text-gray-600 dark:text-gray-300">${news.content}</p>
-                </div>
-                
-                <div class="mt-4 flex items-center text-sm">
-                    <span class="text-gray-500 dark:text-gray-400">Source: ${news.source}</span>
-                </div>
-            </div>
-        `;
+                            const newsEl = document.createElement('div');
+                            newsEl.className = 'bg-white dark:bg-gray-800 rounded-xl shadow-md overflow-hidden news-item mb-4'; // Added mb-4 for spacing
+                            newsEl.innerHTML = `
+                 <div class="p-6">
+                     <div class="flex justify-between items-start mb-4 flex-wrap gap-2">
+                         <h3 class="text-xl font-semibold text-gray-900 dark:text-white">${news?.title || 'Untitled News'}</h3>
+                         <span class="text-sm text-gray-500 dark:text-gray-400 whitespace-nowrap">${formattedDate}</span>
+                     </div>
+                     <div class="news-content">
+                         <p class="text-gray-600 dark:text-gray-300">${news?.content || 'No content provided.'}</p>
+                     </div>
+                     <div class="mt-4 flex items-center text-sm">
+                         <span class="text-gray-500 dark:text-gray-400">Source: ${news?.source || 'Unknown'}</span>
+                     </div>
+                 </div>
+                 `;
+                            container.appendChild(newsEl);
+                        } catch (renderError) {
+                            console.error("Error rendering news item:", news, renderError);
+                        }
+                    });
+                },
 
-                        container.appendChild(newsEl);
+                renderDashboardNews: function () {
+                    const container = document.getElementById('dashboard-news');
+                    container.innerHTML = '';
+                    console.log("Attempting to render Dashboard News. Data available:", JSON.stringify(this.mockData?.news, null, 2)); // Log data
+
+                    const newsData = this.mockData?.news || []; // Ensure it's an array
+
+                    if (!newsData || newsData.length === 0) {
+                        console.log("No news data found to render on dashboard.");
+                        container.innerHTML = '<p class="text-gray-500 dark:text-gray-400 text-center p-4">No news available</p>';
+                        return; // Exit if no news
+                    }
+
+                    // Sort by date descending, then take top 3
+                    const topNews = [...newsData].sort((a, b) => {
+                        const dateA = a?.date?.toDate ? a.date.toDate() : new Date(a?.date || 0);
+                        const dateB = b?.date?.toDate ? b.date.toDate() : new Date(b?.date || 0);
+                        return dateB - dateA;
+                    }).slice(0, 3);
+
+                    topNews.forEach(news => {
+                        try {
+                            const newsDate = news?.date?.toDate ? news.date.toDate() : new Date(news?.date || Date.now()); // Handle Timestamp or string
+                            const formattedDate = newsDate.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' });
+
+                            const newsEl = document.createElement('div');
+                            newsEl.className = 'p-2 rounded-lg hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors border-l-4 border-indigo-500 mb-3'; // Style for dashboard
+                            newsEl.innerHTML = `
+                 <div class="flex justify-between items-center mb-1">
+                     <h4 class="font-medium text-gray-900 dark:text-white truncate" title="${news?.title || ''}">${news?.title || 'Untitled News'}</h4>
+                     <span class="text-xs text-gray-500 dark:text-gray-400 whitespace-nowrap ml-2">${formattedDate}</span>
+                 </div>
+                 <p class="text-sm text-gray-600 dark:text-gray-300 line-clamp-2">${news?.content || 'No content.'}</p>
+                 `;
+                            container.appendChild(newsEl);
+                        } catch (renderError) {
+                            console.error("Error rendering dashboard news item:", news, renderError);
+                        }
                     });
                 },
                 // START: New function to render Exam Tracker
@@ -3809,7 +4080,7 @@ function _0x6988(_0x5667b6,_0x271281){const _0x2b486f=_0x2b48();return _0x6988=f
                     const userYear = this.state.userData.year || '1'; // Default to year 1 if not set
                     yearSpan.textContent = `Year ${userYear}`;
 
-                    const itemsForYear = this.mockData.examTasks[userYear] || [];
+                    const itemsForYear = this.mockData?.examTasks?.[userYear] || []; // Use loaded data
 
                     // Filter for upcoming items only
                     const now = new Date();
@@ -3893,7 +4164,7 @@ function _0x6988(_0x5667b6,_0x271281){const _0x2b486f=_0x2b48();return _0x6988=f
                 // Updated function to load courses from the dataset
                 generateMockCourses: function (year) {
                     const yearNum = parseInt(year);
-                    return courseData[yearNum] || [];
+                    return this.mockData?.courses?.[yearNum] || [];
                 },
 
                 // Generate Mock Lectures
@@ -3903,7 +4174,6 @@ function _0x6988(_0x5667b6,_0x271281){const _0x2b486f=_0x2b48();return _0x6988=f
 
                 // Generate Mock News
                 generateMockNews: function () {
-                    const _0x23907a = _0x364f; function _0x9bb8() { const _0x178bcb = ['6iatJLi', '24ODbaFK', '502764xrmqFj', '2870500eUudww', 'Team\x20Shoky', '199916FLxikI', 'Now\x20you\x20can\x20open\x20computer\x20programming\x20files\x20without\x20downloading\x20them\x20at\x20Year(1).', '3fSPGhI', '16408JdbwCX', '1001wWzhTl', 'Welcome\x20to\x20TeamShoky\x20Helper', 'New\x20Feature\x20Aded', '534370bgfSAF', '231Bzpxmm', 'Welcome\x20to\x20the\x20TeamShoky\x20Helper\x20application!\x20We\x20are\x20excited\x20to\x20have\x20you\x20here.\x20This\x20application\x20is\x20designed\x20to\x20assist\x20you\x20with\x20your\x20academic\x20journey.', '60596XiYvZz', '2025-04-24', '425574jokfcn']; _0x9bb8 = function () { return _0x178bcb; }; return _0x9bb8(); } (function (_0x2cc93e, _0x5e0f9d) { const _0x4e606f = _0x364f, _0x5ebfb0 = _0x2cc93e(); while (!![]) { try { const _0x69bad8 = -parseInt(_0x4e606f(0xcf)) / 0x1 * (-parseInt(_0x4e606f(0xcd)) / 0x2) + -parseInt(_0x4e606f(0xc9)) / 0x3 * (-parseInt(_0x4e606f(0xc5)) / 0x4) + -parseInt(_0x4e606f(0xd4)) / 0x5 * (-parseInt(_0x4e606f(0xc8)) / 0x6) + parseInt(_0x4e606f(0xd1)) / 0x7 * (parseInt(_0x4e606f(0xd0)) / 0x8) + -parseInt(_0x4e606f(0xc7)) / 0x9 + parseInt(_0x4e606f(0xcb)) / 0xa + parseInt(_0x4e606f(0xd5)) / 0xb * (-parseInt(_0x4e606f(0xca)) / 0xc); if (_0x69bad8 === _0x5e0f9d) break; else _0x5ebfb0['push'](_0x5ebfb0['shift']()); } catch (_0x4ef91a) { _0x5ebfb0['push'](_0x5ebfb0['shift']()); } } }(_0x9bb8, 0x2c3a8)); function _0x364f(_0x375060, _0x5ca93d) { const _0x9bb8ce = _0x9bb8(); return _0x364f = function (_0x364fe7, _0xbed4e8) { _0x364fe7 = _0x364fe7 - 0xc5; let _0x5566cf = _0x9bb8ce[_0x364fe7]; return _0x5566cf; }, _0x364f(_0x375060, _0x5ca93d); } const news = [{ 'id': 0x1, 'title': _0x23907a(0xd2), 'date': '2025-04-20', 'content': _0x23907a(0xd6), 'source': _0x23907a(0xcc) }, { 'id': 0x2, 'title': _0x23907a(0xd3), 'date': _0x23907a(0xc6), 'content': _0x23907a(0xce), 'source': _0x23907a(0xcc) }];
                     return news;
                 },
 

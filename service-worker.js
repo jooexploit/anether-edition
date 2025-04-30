@@ -2,11 +2,10 @@
 
 /*
  Service Worker for Team Shoky Helper
- Version: v5 
+ Version: v9
 */
 
-
-const CACHE_NAME = "team-shoky-helper-v8"; // <-- INCREMENTED VERSION!
+const CACHE_NAME = "team-shoky-helper-v9"; // <-- INCREMENTED VERSION!
 
 // Essential files for the App Shell to load offline
 const APP_SHELL_URLS = [
