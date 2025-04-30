@@ -3380,100 +3380,99 @@
                 //     this.populateCalendar();
                 //     this.renderExamTracker();
                 // },
+                CACHE_KEY: 'appDataCache',
+                CACHE_TIMESTAMP_KEY: 'appDataCacheTimestamp',
+                CACHE_DURATION_MS: 60 * 60 * 1000, // 1 hour cache duration (adjust as needed)
+
                 loadFirebaseData: async function () {
-                    console.log("Loading data from CLOUD FIRESTORE...");
+                    console.log("Checking cache before loading Firestore data...");
 
-                    // Initialize mockData structure
-                    this.mockData = {
-                        courses: {}, // Keyed by year e.g., { 1: [courseObj1, ...], 2: [...] }
-                        lectures: [],
-                        news: [],
-                        examTasks: {} // Keyed by year e.g., { 1: [taskObj1, ...], 2: [...] }
-                    };
+                    const cachedData = localStorage.getItem(this.CACHE_KEY);
+                    const cachedTimestamp = localStorage.getItem(this.CACHE_TIMESTAMP_KEY);
+                    let isCacheValid = false;
 
+                    if (cachedData && cachedTimestamp) {
+                        const cacheAge = Date.now() - parseInt(cachedTimestamp, 10);
+                        if (cacheAge < this.CACHE_DURATION_MS) {
+                            isCacheValid = true;
+                        }
+                    }
+
+                    if (isCacheValid) {
+                        console.log("Loading data from valid cache.");
+                        this.mockData = JSON.parse(cachedData);
+                        // --- Render data using cached data ---
+                        this.renderDashboard();
+                        this.renderCourses();
+                        this.renderLectures();
+                        this.renderNews();
+                        this.populateCalendar();
+                        this.renderExamTracker();
+                        console.log("Finished rendering from cache.");
+                        // Optional: You could still fetch in the background to update cache later
+                        // this.fetchAndCacheFirebaseData();
+                        return; // Exit early, we used the cache
+                    }
+
+                    console.log("Cache invalid or missing. Fetching from Firestore...");
+                    await this.fetchAndCacheFirebaseData(); // Fetch, render, and cache
+                },
+
+                fetchAndCacheFirebaseData: async function () {
+                    // Your existing Firestore fetching logic goes here...
                     let fsDB;
                     try {
-                        // --- Import Firestore modular functions ---
                         const { getFirestore, collection, getDocs, doc, query, orderBy } = await import("https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js");
 
-                        // Check if Firebase App instance exists
-                        if (!window._firebaseAppInstance) {
-                            throw new Error("Firebase App is not initialized.");
-                        }
+                        if (!window._firebaseAppInstance) throw new Error("Firebase App not initialized.");
                         fsDB = getFirestore(window._firebaseAppInstance);
-                        console.log("Firestore instance obtained.");
 
-                        // --- Fetch Data Concurrently (Lectures and News) ---
-                        console.log("Fetching Lectures and News from Firestore...");
+                        // Initialize mockData structure
+                        this.mockData = { courses: {}, lectures: [], news: [], examTasks: {} };
 
+                        // --- Fetch Data (Your existing logic) ---
                         const lecturesQuery = query(collection(fsDB, "lectures"), orderBy("date", "desc"));
                         const newsQuery = query(collection(fsDB, "news"), orderBy("date", "desc"));
+                        // ... rest of your fetching logic for lectures, news, courses, tasks ...
 
                         const [lecturesSnapshot, newsSnapshot] = await Promise.all([
                             getDocs(lecturesQuery),
                             getDocs(newsQuery)
                         ]);
-                        console.log("Lectures and News fetched.");
 
-                        // --- Process Lectures ---
                         this.mockData.lectures = lecturesSnapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
-
-                        // --- Process News ---
                         this.mockData.news = newsSnapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
-                        console.log(`Processed ${this.mockData.news.length} news items.`); // Log count
-                        // Log the actual processed news data
-                        if (this.mockData.news.length > 0) {
-                            console.log("Processed News Data Sample:", JSON.stringify(this.mockData.news.slice(0, 2), null, 2)); // Log first 2 items
-                        } else {
-                            console.log("No news documents found or processed.");
-                        }
 
-                        // --- Define which years to fetch data for ---
-                        // *** THIS IS THE FIX: Define years explicitly ***
-                        const yearsToFetch = ["1", "2"]; // <-- Adjust this array based on the years you pushed data for (e.g., ["1", "2", "3", "4"])
-
-                        // --- Fetch Courses, Chapters, and Tasks (Year by Year) ---
-                        console.log(`Fetching Course/Task data for years: ${yearsToFetch.join(', ')}...`);
-
+                        const yearsToFetch = ["1", "2"]; // Adjust as needed
                         for (const year of yearsToFetch) {
-                            console.log(`Fetching data for Year ${year}...`);
-
-                            // --- Fetch Courses and Chapters for the current year ---
+                            // Fetch courses & chapters
                             const coursesCollectionRef = collection(fsDB, "academic_years", year, "courses");
                             const coursesSnapshot = await getDocs(coursesCollectionRef);
                             const coursesForYear = [];
-
                             for (const courseDoc of coursesSnapshot.docs) {
-                                const courseDataItem = { id: courseDoc.id, ...courseDoc.data(), chapters: [] }; // Initialize chapters array
-
-                                // Fetch chapters subcollection
+                                const courseDataItem = { id: courseDoc.id, ...courseDoc.data(), chapters: [] };
                                 const chaptersCollectionRef = collection(courseDoc.ref, "chapters");
                                 const chaptersSnapshot = await getDocs(chaptersCollectionRef);
-
-                                courseDataItem.chapters = chaptersSnapshot.docs.map(chapterDoc => ({
-                                    id: chapterDoc.id, // e.g., "chapter_0"
-                                    ...chapterDoc.data()
-                                })).sort((a, b) => { // Optional: Sort chapters if needed
-                                    const indexA = parseInt(a.id.split('_')[1] || 0);
-                                    const indexB = parseInt(b.id.split('_')[1] || 0);
-                                    return indexA - indexB;
-                                });
+                                courseDataItem.chapters = chaptersSnapshot.docs.map(chapterDoc => ({ id: chapterDoc.id, ...chapterDoc.data() })).sort(/* sort logic */);
                                 coursesForYear.push(courseDataItem);
                             }
-                            this.mockData.courses[year] = coursesForYear; // Assign array to the year key
-                            console.log(`Year ${year} Courses processed.`);
+                            this.mockData.courses[year] = coursesForYear;
 
-                            // --- Fetch Exam Tasks for the current year ---
+                            // Fetch exam tasks
                             const tasksCollectionRef = collection(fsDB, "academic_years", year, "examTasks");
                             const tasksSnapshot = await getDocs(tasksCollectionRef);
                             this.mockData.examTasks[year] = tasksSnapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
-                            console.log(`Year ${year} Tasks processed.`);
-                        } // End of year loop
+                        }
 
 
-                        console.log("Firestore data loaded and processed:", this.mockData);
+                        console.log("Firestore data fetched:", this.mockData);
 
-                        // --- Render data AFTER it's loaded ---
+                        // --- Cache the fetched data ---
+                        localStorage.setItem(this.CACHE_KEY, JSON.stringify(this.mockData));
+                        localStorage.setItem(this.CACHE_TIMESTAMP_KEY, Date.now().toString());
+                        console.log("Data saved to cache.");
+
+                        // --- Render data using newly fetched data ---
                         this.renderDashboard();
                         this.renderCourses();
                         this.renderLectures();
@@ -3483,15 +3482,22 @@
                         // --- END: Render data ---
 
                     } catch (error) {
-                        console.error("Error loading Cloud Firestore data:", error);
-                        // Show UI Error
-                        document.getElementById('courses-container').innerHTML = '<p class="text-red-500 text-center p-4">Could not load course data. Please check connection and refresh.</p>';
-                        // Add similar error messages to other sections
-                        this.mockData = { courses: {}, lectures: [], news: [], examTasks: {} }; // Reset data on error
+                        console.error("Error fetching or caching Firestore data:", error);
+                        // Handle error appropriately (e.g., show message to user)
+                        // Clear potentially corrupt cache?
+                        // localStorage.removeItem(this.CACHE_KEY);
+                        // localStorage.removeItem(this.CACHE_TIMESTAMP_KEY);
                     } finally {
-                        console.log("Finished loading Firestore data process.");
+                        console.log("Finished Firestore fetch/cache process.");
                     }
-                }, // <<< End of loadFirebaseData (Firestore version)
+                },
+
+                // Add a function to clear the cache, e.g., on logout or in settings
+                clearDataCache: function () {
+                    localStorage.removeItem(this.CACHE_KEY);
+                    localStorage.removeItem(this.CACHE_TIMESTAMP_KEY);
+                    console.log("App data cache cleared.");
+                },
                 renderCurrentPage: function () {
                     this.navigateTo(this.state.currentPage);
                 },
