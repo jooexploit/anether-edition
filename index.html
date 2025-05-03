@@ -65,6 +65,11 @@
     <noscript>
         <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/shepherd.js@10.0.1/dist/css/shepherd.css">
     </noscript>
+    <!-- ADD jsPDF Libraries -->
+    <script defer src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+    <script defer
+        src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.5.23/jspdf.plugin.autotable.min.js"></script>
+    <!-- END jsPDF Libraries -->
     <!-- Add after your existing CSS links -->
     <script defer src="https://cdn.jsdelivr.net/npm/shepherd.js@10.0.1/dist/js/shepherd.min.js"></script>
     <script type="application/ld+json">
@@ -844,6 +849,119 @@
             overflow: hidden;
             /* Prevent the main sidebar container from scrolling */
         }
+
+        /* Inside the main <style> block */
+
+
+        /* Styles for Exam Schedule Generator Checkboxes */
+        #checkboxContainer label {
+            cursor: pointer;
+        }
+
+        .checkbox-item {
+            display: flex;
+            align-items: center;
+            padding: 0.5rem 0.25rem;
+            /* py-2 px-1 */
+            border-bottom: 1px solid #e5e7eb;
+            /* border-b border-gray-200 */
+        }
+
+        body.dark .checkbox-item {
+            /* Dark mode border */
+            border-bottom-color: #4b5563;
+            /* dark:border-gray-600 */
+        }
+
+        .checkbox-item:last-child {
+            border-bottom: none;
+        }
+
+        .checkbox-item input[type="checkbox"] {
+            margin-left: 0.75rem;
+            /* ml-3 */
+            height: 1rem;
+            /* h-4 */
+            width: 1rem;
+            /* w-4 */
+            accent-color: #4F46E5;
+            /* indigo-600 */
+            flex-shrink: 0;
+            /* Prevent checkbox from shrinking */
+        }
+
+        .checkbox-item label {
+            flex-grow: 1;
+            /* Allow label to take remaining space */
+            word-break: break-word;
+            /* Prevent long names from overflowing */
+        }
+
+
+        /* PDF Font Style (Optional for HTML view, essential for PDF JS) */
+        /* @font-face {
+    font-family: 'Amiri';
+    src: url('Amiri-Regular.ttf') format('truetype'); /* Ensure path is correct */
+        /* }
+.pdf-font {
+    font-family: 'Amiri', serif;
+} */
+        /* Basic table styling for PDF export consistency */
+        #resultsTable th,
+        #resultsTable td {
+            border: 1px solid #ddd;
+            padding: 8px;
+            text-align: right;
+            /* Default to right for Arabic */
+        }
+
+        body.dark #resultsTable th,
+        body.dark #resultsTable td {
+            border-color: #4b5563;
+            /* dark:border-gray-600 */
+        }
+
+        #resultsTable th {
+            background-color: #f3f4f6;
+            /* bg-gray-100 */
+            font-weight: 600;
+            /* font-semibold */
+        }
+
+        body.dark #resultsTable th {
+            background-color: #374151;
+            /* dark:bg-gray-700 */
+            color: #f9fafb;
+            /* dark:text-gray-100 */
+        }
+
+        #resultsTable td {
+            vertical-align: middle;
+        }
+
+        /* Center align specific columns if needed */
+        #resultsTable th:nth-child(3),
+        /* Code */
+        #resultsTable td:nth-child(3),
+        #resultsTable th:nth-child(7),
+        /* Regulation */
+        #resultsTable td:nth-child(7),
+        #resultsTable th:nth-child(2),
+        /* Date */
+        #resultsTable td:nth-child(2),
+        #resultsTable th:nth-child(6),
+        /* Time */
+        #resultsTable td:nth-child(6) {
+            text-align: center;
+        }
+
+        /* Ensure specific fonts for buttons/headings if needed, inheriting from body usually works */
+        #exam-schedule-page h1,
+        #exam-schedule-page h2,
+        #exam-schedule-page button {
+            font-family: inherit;
+            /* Inherit from body */
+        }
     </style>
 </head>
 
@@ -1047,6 +1165,13 @@
                                 class="nav-link w-full flex items-center px-3 py-2 rounded-md font-medium hover:bg-indigo-700 transition-colors">
                                 <i class="fas fa-tools w-6"></i>
                                 <span>Tools</span>
+                            </button>
+                        </li>
+                        <li>
+                            <button data-page="exam-schedule"
+                                class="nav-link w-full flex items-center px-3 py-2 rounded-md font-medium hover:bg-indigo-700 transition-colors">
+                                <i class="fas fa-calendar-alt w-6"></i> <!-- Example Icon -->
+                                <span>Exam Schedule</span>
                             </button>
                         </li>
                         <li>
@@ -1335,6 +1460,80 @@
                             <!-- Dynamically populated -->
                         </div>
                     </div>
+
+                    <!-- Inside <main id="tab-content" class="tab-content"> -->
+
+                    <!-- ... other page containers ... -->
+
+                    <!-- START: Exam Schedule Generator Page -->
+                    <div id="exam-schedule-page" class="page-container hidden animate-fadeIn">
+                        <h1 class="text-2xl font-bold mb-6">Exam Schedule Generator</h1>
+                        <p class="text-gray-600 dark:text-gray-300 mb-6">Select your courses to generate a personalized
+                            final exam schedule based on the official data (Computer Science - May/Jan 2024/2025).</p>
+
+                        <div class="bg-white dark:bg-gray-800 rounded-xl shadow-md p-6">
+                            <!-- Course Selection Area -->
+                            <div
+                                class="mb-8 p-6 bg-indigo-50 dark:bg-indigo-900 rounded-lg border border-indigo-200 dark:border-indigo-700">
+                                <label class="block text-lg font-semibold text-gray-700 dark:text-gray-200 mb-3">Select
+                                    Your Courses:</label>
+                                <div id="checkboxContainer"
+                                    class="mb-4 max-h-60 overflow-y-auto border border-gray-300 dark:border-gray-600 rounded-md p-4 bg-gray-50 dark:bg-gray-700">
+                                    <!-- Checkboxes will be populated here by JavaScript -->
+                                    <p class="text-gray-500 dark:text-gray-400">Loading available courses...</p>
+                                </div>
+                                <button id="generateScheduleBtn" class="mt-4 w-full bg-indigo-600 hover:bg-indigo-700 text-white font-bold py-3 px-6
+                                    rounded-md transition duration-150 ease-in-out focus:outline-none focus:ring-2
+                                    focus:ring-offset-2 focus:ring-indigo-500 text-lg">
+                                    Generate My Schedule
+                                </button>
+                            </div>
+                            <!-- End Course Selection Area -->
+
+                            <!-- Results Area -->
+                            <div id="scheduleOutput" class="mt-10 hidden">
+                                <hr class="my-6 border-gray-300 dark:border-gray-600">
+                                <div class="flex justify-between items-center mb-4 flex-wrap gap-2">
+                                    <!-- Added flex-wrap and gap -->
+                                    <h2 class="text-2xl font-semibold text-indigo-800 dark:text-indigo-300">Your Custom
+                                        Schedule:</h2>
+                                    <button id="exportPdfBtn"
+                                        class="bg-green-600 hover:bg-green-700 text-white font-bold py-2 px-4 rounded-md transition duration-150 ease-in-out focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500">
+                                        <i class="fas fa-file-pdf mr-1"></i> Export PDF
+                                    </button>
+                                </div>
+                                <div class="overflow-x-auto bg-white dark:bg-gray-800 rounded-lg shadow">
+                                    <table id="resultsTable"
+                                        class="w-full text-sm text-right text-gray-700 dark:text-gray-200">
+                                        <!-- Added dark mode text -->
+                                        <thead
+                                            class="text-xs text-gray-800 dark:text-gray-100 uppercase bg-indigo-100 dark:bg-indigo-900">
+                                            <!-- Added dark mode styles -->
+                                            <tr>
+                                                <th scope="col" class="px-6 py-3">Day</th>
+                                                <th scope="col" class="px-6 py-3">Date</th>
+                                                <th scope="col" class="px-6 py-3">Code</th>
+                                                <th scope="col" class="px-6 py-3">Course Name</th>
+                                                <th scope="col" class="px-6 py-3">Period</th>
+                                                <th scope="col" class="px-6 py-3">Time</th>
+                                                <th scope="col" class="px-6 py-3">Regulation</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody id="resultsBody" class="divide-y divide-gray-200 dark:divide-gray-700">
+                                            <!-- Added dark mode divider -->
+                                            <!-- Rows will be inserted here by JavaScript -->
+                                        </tbody>
+                                    </table>
+                                </div>
+                                <p id="noResults" class="text-center text-red-600 font-semibold mt-6 hidden">No exams
+                                    found matching your selected courses.</p>
+                            </div>
+                            <!-- End Results Area -->
+                        </div>
+                    </div>
+                    <!-- END: Exam Schedule Generator Page -->
+
+                    <!-- ... rest of the main content ... -->
 
                     <!-- Settings Page -->
                     <div id="settings-page" class="page-container hidden animate-fadeIn">
@@ -2652,6 +2851,624 @@
                         group: null
                     }
                 },
+                examScheduleData: [
+                    // ... (Keep the full examScheduleData array from the previous version) ...
+                    // Page 1 Data
+                    {
+                        day: "السبت",
+                        date: "2025/05/10",
+                        code: "BSC 114",
+                        name: "لغة إنجليزية (1)",
+                        period: "أولى",
+                        time: "9:30 - 10:30",
+                        regulation: "1",
+                    },
+                    {
+                        day: "السبت",
+                        date: "2025/05/10",
+                        code: "H 102",
+                        name: "اللغة الإنجليزية",
+                        period: "أولى",
+                        time: "9:30 - 10:30",
+                        regulation: "4",
+                    },
+                    {
+                        day: "السبت",
+                        date: "2025/05/10",
+                        code: "H 204",
+                        name: "ضبط وتوكيد الجودة",
+                        period: "ثانية",
+                        time: "11:00 - 12:00",
+                        regulation: "4",
+                    },
+                    {
+                        day: "الاحد",
+                        date: "2025/05/11",
+                        code: "PHE 220",
+                        name: "تربية رياضية (2)",
+                        period: "أولى",
+                        time: "9:30 - 10:30",
+                        regulation: "1",
+                    },
+                    {
+                        day: "الاحد",
+                        date: "2025/05/11",
+                        code: "H 103",
+                        name: "إدارة أعمال",
+                        period: "ثانية",
+                        time: "11:00 - 12:00",
+                        regulation: "4",
+                    },
+                    {
+                        day: "الاثنين",
+                        date: "2025/05/12",
+                        code: "BSC 213",
+                        name: "مبادئ إدارة",
+                        period: "أولى",
+                        time: "9:30 - 10:30",
+                        regulation: "1",
+                    },
+                    {
+                        day: "الاثنين",
+                        date: "2025/05/12",
+                        code: "BSC 214",
+                        name: "لغة إنجليزية (3)",
+                        period: "أولى",
+                        time: "9:30 - 10:30",
+                        regulation: "1",
+                    },
+                    {
+                        day: "الاثنين",
+                        date: "2025/05/12",
+                        code: "H 201",
+                        name: "أخلاقيات العمل",
+                        period: "ثانية",
+                        time: "11:00 - 12:00",
+                        regulation: "4",
+                    },
+                    {
+                        day: "الاثنين",
+                        date: "2025/05/12",
+                        code: "BSC 224",
+                        name: "مبادئ الاقتصاد",
+                        period: "ثالثة",
+                        time: "12:30 - 1:30",
+                        regulation: "1",
+                    },
+                    {
+                        day: "الاثنين",
+                        date: "2025/05/12",
+                        code: "H 101",
+                        name: "مهارات تواصل",
+                        period: "ثالثة",
+                        time: "12:30 - 1:30",
+                        regulation: "4",
+                    },
+                    {
+                        day: "الاربعاء",
+                        date: "2025/05/14",
+                        code: "BSC 410",
+                        name: "لغة إنجليزية (5)",
+                        period: "أولى",
+                        time: "9:30 - 10:30",
+                        regulation: "1",
+                    },
+                    {
+                        day: "الاربعاء",
+                        date: "2025/05/14",
+                        code: "HUM 110",
+                        name: "مقرر ثقافي (1)",
+                        period: "أولى",
+                        time: "9:30 - 10:30",
+                        regulation: "1",
+                    },
+                    {
+                        day: "الاربعاء",
+                        date: "2025/05/14",
+                        code: "HUM 320",
+                        name: "مقرر ثقافي (2)",
+                        period: "ثانية",
+                        time: "11:00 - 12:00",
+                        regulation: "1",
+                    },
+                    {
+                        day: "الاربعاء",
+                        date: "2025/05/14",
+                        code: "H 203",
+                        name: "كتابة تقارير فنية",
+                        period: "ثانية",
+                        time: "11:00 - 12:00",
+                        regulation: "4",
+                    },
+                    {
+                        day: "الاربعاء",
+                        date: "2025/05/14",
+                        code: "BSC 320",
+                        name: "لغة إنجليزية (4)",
+                        period: "ثالثة",
+                        time: "12:30 - 1:30",
+                        regulation: "1",
+                    },
+                    {
+                        day: "الاربعاء",
+                        date: "2025/05/14",
+                        code: "PHE 110",
+                        name: "تربية رياضية (1)",
+                        period: "ثالثة",
+                        time: "12:30 - 1:30",
+                        regulation: "1",
+                    },
+                    {
+                        day: "السبت",
+                        date: "2025/05/17",
+                        code: "INF 320",
+                        name: "نظم دعم واتخاذ القرار",
+                        period: "أولى",
+                        time: "9:30 - 11:00",
+                        regulation: "1",
+                    },
+                    {
+                        day: "السبت",
+                        date: "2025/05/17",
+                        code: "CS 102",
+                        name: "برمجة الحاسبات",
+                        period: "أولى",
+                        time: "9:30 - 11:00",
+                        regulation: "4",
+                    },
+                    {
+                        day: "السبت",
+                        date: "2025/05/17",
+                        code: "CSC 423",
+                        name: "نظم الحاسبات الموزعة والمتوازية",
+                        period: "ثانية",
+                        time: "11:30 - 1:00",
+                        regulation: "1",
+                    },
+                    {
+                        day: "السبت",
+                        date: "2025/05/17",
+                        code: "CS 302",
+                        name: "برمجة الويب",
+                        period: "ثانية",
+                        time: "11:30 - 1:00",
+                        regulation: "4",
+                    },
+                    {
+                        day: "السبت",
+                        date: "2025/05/17",
+                        code: "BSC 112",
+                        name: "مقدمة رسم بالحاسب",
+                        period: "ثالثة",
+                        time: "1:30 - 3:00",
+                        regulation: "1",
+                    },
+                    {
+                        day: "الاحد",
+                        date: "2025/05/18",
+                        code: "BSC 210",
+                        name: "رياضة (3)",
+                        period: "أولى",
+                        time: "9:30 - 11:00",
+                        regulation: "1",
+                    },
+                    {
+                        day: "الاحد",
+                        date: "2025/05/18",
+                        code: "BSC 311",
+                        name: "تراسل البيانات",
+                        period: "أولى",
+                        time: "9:30 - 11:00",
+                        regulation: "1",
+                    },
+                    // Page 2 Data
+                    {
+                        day: "الاحد",
+                        date: "2025/05/18",
+                        code: "CSC 416",
+                        name: "برمجة الشبكات",
+                        period: "أولى",
+                        time: "9:30 - 11:00",
+                        regulation: "1",
+                    },
+                    {
+                        day: "الاحد",
+                        date: "2025/05/18",
+                        code: "CS 204",
+                        name: "مقدمة في قواعد البيانات",
+                        period: "أولى",
+                        time: "9:30 - 11:00",
+                        regulation: "4",
+                    },
+                    {
+                        day: "الاحد",
+                        date: "2025/05/18",
+                        code: "BSC 110",
+                        name: "رياضة (1)",
+                        period: "ثانية",
+                        time: "11:30 - 1:00",
+                        regulation: "1",
+                    },
+                    {
+                        day: "الاحد",
+                        date: "2025/05/18",
+                        code: "BS 101",
+                        name: "التفاضل والتكامل",
+                        period: "ثانية",
+                        time: "11:30 - 1:00",
+                        regulation: "4",
+                    },
+                    {
+                        day: "الاحد",
+                        date: "2025/05/18",
+                        code: "INF 220",
+                        name: "تحليل نظم",
+                        period: "ثالثة",
+                        time: "1:30 - 3:00",
+                        regulation: "1",
+                    },
+                    {
+                        day: "الاحد",
+                        date: "2025/05/18",
+                        code: "INF 310",
+                        name: "تصميم نظم معلومات",
+                        period: "ثالثة",
+                        time: "1:30 - 3:00",
+                        regulation: "1",
+                    },
+                    {
+                        day: "الاثنين",
+                        date: "2025/05/19",
+                        code: "BSC 220",
+                        name: "بحوث عمليات",
+                        period: "أولى",
+                        time: "9:30 - 11:00",
+                        regulation: "1",
+                    },
+                    {
+                        day: "الاثنين",
+                        date: "2025/05/19",
+                        code: "CSC 411",
+                        name: "النمذجة والمحاكاه",
+                        period: "أولى",
+                        time: "9:30 - 11:00",
+                        regulation: "1",
+                    },
+                    {
+                        day: "الاثنين",
+                        date: "2025/05/19",
+                        code: "BS 201",
+                        name: "بحوث العمليات",
+                        period: "أولى",
+                        time: "9:30 - 11:00",
+                        regulation: "4",
+                    },
+                    {
+                        day: "الاثنين",
+                        date: "2025/05/19",
+                        code: "CSC 121",
+                        name: "البرمجة الهيكلية",
+                        period: "ثانية",
+                        time: "11:30 - 1:00",
+                        regulation: "1",
+                    },
+                    {
+                        day: "الاثنين",
+                        date: "2025/05/19",
+                        code: "CSC 323",
+                        name: "رسم بواسطة الحاسب",
+                        period: "ثانية",
+                        time: "11:30 - 1:00",
+                        regulation: "1",
+                    },
+                    {
+                        day: "الاثنين",
+                        date: "2025/05/19",
+                        code: "CS 308",
+                        name: "الرسم بالحاسب",
+                        period: "ثانية",
+                        time: "11:30 - 1:00",
+                        regulation: "4",
+                    },
+                    {
+                        day: "الاثنين",
+                        date: "2025/05/19",
+                        code: "CSC 417",
+                        name: "معالجة الصور",
+                        period: "ثالثة",
+                        time: "1:30 - 3:00",
+                        regulation: "1",
+                    },
+                    {
+                        day: "الثلاثاء",
+                        date: "2025/05/20",
+                        code: "CSC 415",
+                        name: "نظرية مترجمات البرامج",
+                        period: "أولى",
+                        time: "9:30 - 11:00",
+                        regulation: "1",
+                    },
+                    {
+                        day: "الثلاثاء",
+                        date: "2025/05/20",
+                        code: "INF 210",
+                        name: "هياكل بيانات",
+                        period: "أولى",
+                        time: "9:30 - 11:00",
+                        regulation: "1",
+                    },
+                    {
+                        day: "الثلاثاء",
+                        date: "2025/05/20",
+                        code: "CS 201",
+                        name: "هياكل البيانات",
+                        period: "أولى",
+                        time: "9:30 - 11:00",
+                        regulation: "4",
+                    },
+                    {
+                        day: "الثلاثاء",
+                        date: "2025/05/20",
+                        code: "BSC 113",
+                        name: "الكترونيات (1)",
+                        period: "ثانية",
+                        time: "11:30 - 1:00",
+                        regulation: "1",
+                    },
+                    {
+                        day: "الثلاثاء",
+                        date: "2025/05/20",
+                        code: "BSC 122",
+                        name: "الكترونيات (2)",
+                        period: "ثانية",
+                        time: "11:30 - 1:00",
+                        regulation: "1",
+                    },
+                    {
+                        day: "الثلاثاء",
+                        date: "2025/05/20",
+                        code: "BS 104",
+                        name: "الكترونيات",
+                        period: "ثانية",
+                        time: "11:30 - 1:00",
+                        regulation: "4",
+                    },
+                    {
+                        day: "الثلاثاء",
+                        date: "2025/05/20",
+                        code: "CSC 310",
+                        name: "واجهات الحاسبات وطرفياتها",
+                        period: "ثالثة",
+                        time: "1:30 - 3:00",
+                        regulation: "1",
+                    },
+                    {
+                        day: "الاربعاء",
+                        date: "2025/05/21",
+                        code: "CSC 320",
+                        name: "هندسة البرمجيات (1)",
+                        period: "أولى",
+                        time: "9:30 - 11:00",
+                        regulation: "1",
+                    },
+                    {
+                        day: "الاربعاء",
+                        date: "2025/05/21",
+                        code: "CS 104",
+                        name: "مقدمة نظم المعلومات",
+                        period: "أولى",
+                        time: "9:30 - 11:00",
+                        regulation: "4",
+                    },
+                    {
+                        day: "الاربعاء",
+                        date: "2025/05/21",
+                        code: "CSC 426",
+                        name: "الشبكات العصبية",
+                        period: "ثانية",
+                        time: "11:30 - 1:00",
+                        regulation: "1",
+                    },
+                    // Page 3 Data
+                    {
+                        day: "الاربعاء",
+                        date: "2025/05/21",
+                        code: "CS 343",
+                        name: "معالجة الإشارات الرقمية",
+                        period: "ثانية",
+                        time: "11:30 - 1:00",
+                        regulation: "4",
+                    },
+                    {
+                        day: "الاربعاء",
+                        date: "2025/05/21",
+                        code: "INF 311",
+                        name: "نظم ادارة قواعد البيانات (1)",
+                        period: "ثالثة",
+                        time: "1:30 - 3:00",
+                        regulation: "1",
+                    },
+                    {
+                        day: "السبت",
+                        date: "2025/05/24",
+                        code: "CSC 424",
+                        name: "الوسائط المتعددة",
+                        period: "أولى",
+                        time: "9:30 - 11:00",
+                        regulation: "1",
+                    },
+                    {
+                        day: "السبت",
+                        date: "2025/05/24",
+                        code: "CS 205",
+                        name: "أساسيات الوسائط المتعددة",
+                        period: "أولى",
+                        time: "9:30 - 11:00",
+                        regulation: "4",
+                    },
+                    {
+                        day: "السبت",
+                        date: "2025/05/24",
+                        code: "BSC 124",
+                        name: "فيزياء",
+                        period: "ثانية",
+                        time: "11:30 - 1:00",
+                        regulation: "1",
+                    },
+                    {
+                        day: "السبت",
+                        date: "2025/05/24",
+                        code: "INF 221",
+                        name: "تنسيق ملفات",
+                        period: "ثانية",
+                        time: "11:30 - 1:00",
+                        regulation: "1",
+                    },
+                    {
+                        day: "السبت",
+                        date: "2025/05/24",
+                        code: "BS 202",
+                        name: "فيزياء",
+                        period: "ثانية",
+                        time: "11:30 - 1:00",
+                        regulation: "4",
+                    },
+                    {
+                        day: "الاحد",
+                        date: "2025/05/25",
+                        code: "CSC 322",
+                        name: "شبكات الحاسبات",
+                        period: "أولى",
+                        time: "9:30 - 11:00",
+                        regulation: "1",
+                    },
+                    {
+                        day: "الاحد",
+                        date: "2025/05/25",
+                        code: "BS 105",
+                        name: "إحصاء واحتمالات",
+                        period: "أولى",
+                        time: "9:30 - 11:00",
+                        regulation: "4",
+                    },
+                    {
+                        day: "الاحد",
+                        date: "2025/05/25",
+                        code: "CSC 313",
+                        name: "بناء وتنظيم نظم الحاسبات ولغة التجميع",
+                        period: "ثانية",
+                        time: "11:30 - 1:00",
+                        regulation: "1",
+                    },
+                    {
+                        day: "الاحد",
+                        date: "2025/05/25",
+                        code: "CS 301",
+                        name: "لغة التجميع",
+                        period: "ثانية",
+                        time: "11:30 - 1:00",
+                        regulation: "4",
+                    },
+                    {
+                        day: "الاحد",
+                        date: "2025/05/25",
+                        code: "CSC 412",
+                        name: "الذكاء الاصطناعي",
+                        period: "ثالثة",
+                        time: "1:30 - 3:00",
+                        regulation: "1",
+                    },
+                    {
+                        day: "الاحد",
+                        date: "2025/05/25",
+                        code: "CS 403",
+                        name: "الذكاء الاصطناعي",
+                        period: "ثالثة",
+                        time: "1:30 - 3:00",
+                        regulation: "4",
+                    },
+                    {
+                        day: "الاثنين",
+                        date: "2025/05/26",
+                        code: "CSC 420",
+                        name: "النظم الخبيرة",
+                        period: "أولى",
+                        time: "9:30 - 11:00",
+                        regulation: "1",
+                    },
+                    {
+                        day: "الاثنين",
+                        date: "2025/05/26",
+                        code: "BS 102",
+                        name: "الجبر الخطي",
+                        period: "أولى",
+                        time: "9:30 - 11:00",
+                        regulation: "4",
+                    },
+                    {
+                        day: "الاثنين",
+                        date: "2025/05/26",
+                        code: "CSC 222",
+                        name: "نظم التشغيل",
+                        period: "ثانية",
+                        time: "11:30 - 1:00",
+                        regulation: "1",
+                    },
+                    {
+                        day: "الاثنين",
+                        date: "2025/05/26",
+                        code: "CS 404",
+                        name: "نظريات نظم التشغيل",
+                        period: "ثانية",
+                        time: "11:30 - 1:00",
+                        regulation: "4",
+                    },
+                    {
+                        day: "الاثنين",
+                        date: "2025/05/26",
+                        code: "CSC 414",
+                        name: "هندسة البرمجيات (2)",
+                        period: "ثالثة",
+                        time: "1:30 - 3:00",
+                        regulation: "1",
+                    },
+                    {
+                        day: "الثلاثاء",
+                        date: "2025/05/27",
+                        code: "CSC 324",
+                        name: "البرمجة المنطقية",
+                        period: "أولى",
+                        time: "9:30 - 11:00",
+                        regulation: "1",
+                    },
+                    {
+                        day: "الثلاثاء",
+                        date: "2025/05/27",
+                        code: "CS 300",
+                        name: "موضوعات مختارة في علوم الحاسب - مستوى 3",
+                        period: "أولى",
+                        time: "9:30 - 11:00",
+                        regulation: "4",
+                    },
+                    {
+                        day: "الثلاثاء",
+                        date: "2025/05/27",
+                        code: "BSC 222",
+                        name: "طرق احصائية",
+                        period: "ثانية",
+                        time: "11:30 - 1:00",
+                        regulation: "1",
+                    },
+                    {
+                        day: "الثلاثاء",
+                        date: "2025/05/27",
+                        code: "CS 101",
+                        name: "مقدمة في علوم الحاسب",
+                        period: "ثانية",
+                        time: "11:30 - 1:00",
+                        regulation: "4",
+                    },
+                ],
 
                 // Initialize Application
                 init: async function () {
@@ -2862,6 +3679,21 @@
 
                 // Setup Event Listeners
                 setupEventListeners: function () {
+                    const mainContent = document.querySelector('.content-area'); // Or the main container for pages
+
+                    mainContent.addEventListener('click', (e) => {
+                        // Generate Schedule Button Check
+                        if (e.target && e.target.id === 'generateScheduleBtn') { // Check the ID
+                            console.log('Generate Schedule button click detected via delegation.'); // <-- ADD THIS LOG
+                            this.generateSchedule(); // Ensure 'this' refers to the 'app' object
+                        }
+                        // Export PDF Button Check
+                        else if (e.target && e.target.id === 'exportPdfBtn') {
+                            console.log('Export PDF button click detected via delegation.'); // <-- ADD THIS LOG
+                            this.exportScheduleToPDF(); // Ensure 'this' refers to the 'app' object
+                        }
+                        // ... other delegated listeners (view course, back button etc.) ...
+                    });
                     // Add this at the beginning of setupEventListeners
                     window.addEventListener('resize', () => {
                         const sidebar = document.getElementById('sidebar');
@@ -3177,6 +4009,18 @@
                             this.navigateTo('dashboard');
                         }
                     }
+                    // --- ADD Handling for the new Exam Schedule page ---
+                    else if (page === 'exam-schedule') {
+                        const targetPageElement = document.getElementById('exam-schedule-page');
+                        if (targetPageElement) {
+                            targetPageElement.classList.remove('hidden');
+                            document.getElementById('current-page-breadcrumb').textContent = 'Exam Schedule';
+                            this.renderExamSchedulePage(); // Call the specific render function
+                        } else {
+                            console.error("Exam Schedule page element not found!");
+                            this.navigateTo('dashboard'); // Fallback
+                        }
+                    }
                     // Handle other pages (rest of the logic remains the same)
                     else {
                         const targetPageElement = document.getElementById(`${page}-page`);
@@ -3209,6 +4053,341 @@
 
 
                 }, // End of navigateTo function
+                // --- ADD Render function for the Exam Schedule Page ---
+                renderExamSchedulePage: function () {
+                    console.log("Rendering Exam Schedule Page");
+                    // Ensure the container is visible (handled by navigateTo)
+                    // Populate the checkboxes
+                    this.populateCourseCheckboxes();
+                    // Hide results initially
+                    document.getElementById('scheduleOutput').classList.add('hidden');
+                    document.getElementById('noResults').classList.add('hidden');
+                    // Attach specific listeners if not using delegation or if needed for complex setup
+                    // (Delegation in setupEventListeners is generally preferred)
+                },
+                // --- END Render function ---
+                // --- ADD Exam Schedule Generator Functions as App Methods ---
+
+                adjustTimeFormat: function (timeStr) {
+                    // Input format like "10.30:9.30" or "1.00:11.30" or already "HH:MM - HH:MM"
+                    if (timeStr.includes(':') && timeStr.includes('-')) return timeStr; // Already formatted
+
+                    const parts = timeStr.split(':');
+                    if (parts.length === 2) {
+                        // Handle potential . vs : in time parts
+                        let start = parts[1].replace('.', ':');
+                        let end = parts[0].replace('.', ':');
+
+                        // Pad with leading zeros if needed
+                        start = start.split(':').map(p => p.padStart(2, '0')).join(':');
+                        end = end.split(':').map(p => p.padStart(2, '0')).join(':');
+
+                        return `${start} - ${end}`;
+                    }
+                    console.warn(`Unexpected time format encountered: ${timeStr}`);
+                    return timeStr; // Return original if format is unexpected
+                },
+
+                populateCourseCheckboxes: function () {
+                    const checkboxContainer = document.getElementById('checkboxContainer');
+                    if (!checkboxContainer) {
+                        console.error("Checkbox container not found!");
+                        return;
+                    }
+                    checkboxContainer.innerHTML = ''; // Clear loading/previous
+                    const addedCodes = new Set();
+                    const coursesToDisplay = [];
+
+                    this.examScheduleData.forEach(exam => {
+                        const upperCode = exam.code.toUpperCase();
+                        if (!addedCodes.has(upperCode)) {
+                            addedCodes.add(upperCode);
+                            // Check if name exists, provide fallback
+                            const displayName = exam.name || 'Unknown Course';
+                            coursesToDisplay.push({ code: exam.code, name: displayName });
+                        }
+                    });
+
+                    coursesToDisplay.sort((a, b) => a.name.localeCompare(b.name, 'ar'));
+
+                    coursesToDisplay.forEach(course => {
+                        const div = document.createElement('div');
+                        div.className = 'checkbox-item';
+
+                        const checkbox = document.createElement('input');
+                        checkbox.type = 'checkbox';
+                        checkbox.id = `examcourse-${course.code.replace(/\s+/g, '-')}`; // Ensure valid ID
+                        checkbox.value = course.code;
+                        checkbox.name = 'examCourseSelection';
+
+                        const label = document.createElement('label');
+                        label.htmlFor = checkbox.id;
+                        // Ensure course code and name are displayed, handle missing name gracefully
+                        label.textContent = `${course.code} - ${course.name || 'Unnamed Course'}`;
+                        label.className = 'text-sm text-gray-700 dark:text-gray-200 flex-grow'; // Added dark mode text
+
+                        div.appendChild(checkbox);
+                        div.appendChild(label);
+                        checkboxContainer.appendChild(div);
+                    });
+                    if (coursesToDisplay.length === 0) {
+                        checkboxContainer.innerHTML = '<p class="text-gray-500 dark:text-gray-400">No courses available in schedule data.</p>';
+                    }
+                },
+
+                generateSchedule: function () {
+                    const checkedBoxes = document.querySelectorAll('#checkboxContainer input[type="checkbox"]:checked');
+                    const scheduleOutputDiv = document.getElementById('scheduleOutput');
+                    const noResultsP = document.getElementById('noResults');
+
+
+                    if (checkedBoxes.length === 0) {
+                        alert("Please select at least one course.");
+                        scheduleOutputDiv.classList.add('hidden');
+                        noResultsP.classList.add('hidden');
+                        return;
+                    }
+
+                    const selectedCodes = Array.from(checkedBoxes).map(cb => cb.value.toUpperCase());
+
+                    const filteredSchedule = this.examScheduleData.filter(exam =>
+                        selectedCodes.includes(exam.code.toUpperCase())
+                    );
+
+                    this.displaySchedule(filteredSchedule); // Call the app method
+                },
+
+                displaySchedule: function (schedule) {
+                    const resultsTableBody = document.getElementById('resultsBody');
+                    const scheduleOutputDiv = document.getElementById('scheduleOutput');
+                    const noResultsP = document.getElementById('noResults');
+
+                    if (!resultsTableBody || !scheduleOutputDiv || !noResultsP) {
+                        console.error("Required elements for displaying schedule not found.");
+                        return;
+                    }
+
+                    resultsTableBody.innerHTML = ''; // Clear previous results
+
+                    if (schedule.length === 0) {
+                        noResultsP.classList.remove('hidden');
+                        scheduleOutputDiv.classList.add('hidden'); // Hide the table section
+                    } else {
+                        noResultsP.classList.add('hidden');
+
+                        // Sort by date and then time
+                        schedule.sort((a, b) => {
+                            const dateA = new Date(a.date.split('/').reverse().join('-')); // Convert DD/MM/YYYY to YYYY-MM-DD for sorting
+                            const dateB = new Date(b.date.split('/').reverse().join('-'));
+                            const dateComparison = dateA - dateB;
+                            if (dateComparison !== 0) return dateComparison;
+
+                            const timeA = a.time.split(' - ')[0];
+                            const timeB = b.time.split(' - ')[0];
+                            return timeA.localeCompare(timeB);
+                        });
+
+
+                        schedule.forEach(exam => {
+                            const row = resultsTableBody.insertRow();
+                            // Apply dark mode classes conditionally or via CSS
+                            row.className = 'bg-white dark:bg-gray-800'; // Base classes
+
+                            // Format time using the helper again just in case
+                            const formattedTime = this.adjustTimeFormat(exam.time);
+
+                            row.insertCell().textContent = exam.day || 'N/A';
+                            row.insertCell().textContent = exam.date || 'N/A';
+                            row.insertCell().textContent = exam.code || 'N/A';
+                            row.insertCell().textContent = exam.name || 'N/A';
+                            row.insertCell().textContent = exam.period || 'N/A';
+                            row.insertCell().textContent = formattedTime; // Use formatted time
+                            row.insertCell().textContent = exam.regulation || 'N/A';
+
+                            // Apply styling to cells
+                            Array.from(row.cells).forEach(cell => cell.classList.add('px-6', 'py-4', 'whitespace-nowrap')); // Added whitespace-nowrap
+                            // Specific alignment if needed (can also be done with CSS nth-child)
+                            row.cells[2].classList.add('text-center'); // Code
+                            row.cells[6].classList.add('text-center'); // Regulation
+                            row.cells[1].classList.add('text-center'); // Date
+                            row.cells[5].classList.add('text-center'); // Time
+                        });
+                        scheduleOutputDiv.classList.remove('hidden'); // Show the table section
+                    }
+                },
+
+                exportScheduleToPDF: async function () {
+                    console.log("Export PDF function started."); // For debugging
+                    // --- STEP 1: Check if jsPDF library is loaded ---
+                    if (typeof window.jspdf === 'undefined' || typeof window.jspdf.jsPDF === 'undefined') {
+                        console.error("jsPDF library is not loaded or available (window.jspdf or window.jspdf.jsPDF is undefined).");
+                        alert("PDF Exporter is not ready. Please wait a moment or try refreshing the page.");
+                        return; // Stop execution if the library isn't ready
+                    }
+                    // --- END Check ---
+                    const { jsPDF } = window.jspdf; // Ensure jsPDF is loaded
+                    // --- STEP 2: Initialize the jsPDF document ---
+                    let doc; // Declare here
+                    try {
+                        doc = new jsPDF(); // *** INITIALIZE 'doc' HERE, EARLY ***
+                        console.log("jsPDF instance created."); // For debugging
+                    } catch (pdfError) {
+                        console.error("Failed to initialize jsPDF:", pdfError);
+                        alert("An error occurred while initializing the PDF generator. Please check the console.");
+                        return; // Stop if initialization fails
+                    }
+                    // --- END Initialization ---
+                    // --- STEP 3: Check if autoTable plugin is loaded (needed AFTER doc is created) ---
+                    if (typeof doc.autoTable !== 'function') {
+                        console.error("jsPDF autoTable plugin is not loaded (doc.autoTable is not a function).");
+                        alert("PDF Table Generator is not ready. Please wait a moment or try refreshing the page.");
+                        return; // Stop execution if the plugin isn't ready
+                    }
+                    // --- END Check ---
+                    if (typeof jsPDF === 'undefined' || typeof doc.autoTable === 'undefined') {
+                        alert("PDF generation library not loaded. Please wait or refresh.");
+                        return;
+                    }
+
+                    // --- Logo Loading ---
+                    let logoDataUrl = null;
+                    try {
+                        // *** IMPORTANT: Update 'placeholder-logo.png' to your actual logo path ***
+                        const logoPath = 'icon.png'; // Or 'favicon/android-icon-192x192.png' etc.
+                        const logoResponse = await fetch(logoPath);
+                        if (!logoResponse.ok) throw new Error(`Logo file not found at ${logoPath}`);
+                        const logoBlob = await logoResponse.blob();
+                        logoDataUrl = await new Promise((resolve, reject) => {
+                            const reader = new FileReader();
+                            reader.onloadend = () => resolve(reader.result);
+                            reader.onerror = reject;
+                            reader.readAsDataURL(logoBlob);
+                        });
+                    } catch (error) {
+                        console.error("Error loading logo for PDF:", error);
+                        // Non-blocking error, continue without logo
+                    }
+                    // --- End Logo Loading ---
+
+                    // --- Font Loading ---
+                    try {
+                        // *** IMPORTANT: Ensure 'Amiri-Regular.ttf' is in the correct path relative to index.html ***
+                        const fontPath = 'Amiri-Regular.ttf'; // Adjust if needed
+                        const fontResponse = await fetch(fontPath);
+                        if (!fontResponse.ok) throw new Error(`Font file not found at ${fontPath}`);
+                        const fontArrayBuffer = await fontResponse.arrayBuffer();
+                        const fontBase64 = btoa(new Uint8Array(fontArrayBuffer).reduce((data, byte) => data + String.fromCharCode(byte), ''));
+                        doc.addFileToVFS('Amiri-Regular.ttf', fontBase64);
+                        doc.addFont('Amiri-Regular.ttf', 'Amiri', 'normal');
+                        doc.setFont('Amiri');
+                    } catch (error) {
+                        console.error("Error loading font for PDF:", error);
+                        // Non-blocking error, PDF might render Arabic incorrectly
+                        alert("Warning: Could not load Arabic font for PDF. Text might not display correctly.");
+                    }
+                    // --- End Font Loading ---
+
+                    // --- Page Setup ---
+                    const pageHeight = doc.internal.pageSize.getHeight();
+                    const pageWidth = doc.internal.pageSize.getWidth();
+                    const margin = 10;
+                    let currentY = margin;
+
+                    // --- Add Logo ---
+                    if (logoDataUrl) {
+                        try {
+                            const imgType = logoDataUrl.split(';')[0].split('/')[1].toUpperCase();
+                            const logoHeight = 15;
+                            const tempImg = new Image();
+                            tempImg.src = logoDataUrl;
+                            await new Promise(resolve => { tempImg.onload = resolve; });
+                            const aspectRatio = tempImg.width / tempImg.height;
+                            const logoWidth = logoHeight * aspectRatio;
+                            const logoX = pageWidth - margin - logoWidth;
+                            const logoY = margin;
+                            doc.addImage(logoDataUrl, imgType, logoX, logoY, logoWidth, logoHeight);
+                            currentY = logoY + logoHeight + 5;
+                        } catch (imgError) {
+                            console.error("Error adding logo image to PDF:", imgError);
+                            currentY = margin + 15; // Fallback spacing if logo fails
+                        }
+                    } else {
+                        currentY = margin + 15; // Space if no logo
+                    }
+
+                    // --- Add Title ---
+                    doc.setFont('Amiri'); // Re-apply font
+                    doc.setFontSize(18);
+                    const title = "Exam Schedule"; // Use Arabic if font loaded: "جدول الامتحانات المخصص"
+                    const titleWidth = doc.getStringUnitWidth(title) * doc.internal.getFontSize() / doc.internal.scaleFactor;
+                    const titleX = (pageWidth - titleWidth) / 2;
+                    doc.text(title, titleX, currentY);
+                    currentY += 7;
+
+                    doc.setFontSize(12);
+                    const subtitle = `Generated for ${this.state.userData.name || 'User'}`; // Use Arabic if font loaded: "(قسم علوم الحاسب - مايو/يناير 2024/2025)"
+                    const subtitleWidth = doc.getStringUnitWidth(subtitle) * doc.internal.getFontSize() / doc.internal.scaleFactor;
+                    const subtitleX = (pageWidth - subtitleWidth) / 2;
+                    doc.text(subtitle, subtitleX, currentY);
+                    currentY += 10;
+
+                    // --- Generate Table ---
+                    try {
+                        doc.autoTable({
+                            html: '#resultsTable',
+                            startY: currentY,
+                            theme: 'grid',
+                            styles: {
+                                font: 'Amiri', // Critical for Arabic
+                                halign: 'center',
+                                cellPadding: 2,
+                                fontSize: 9, // Slightly smaller font for potentially more columns
+                                overflow: 'linebreak',
+                            },
+                            headStyles: {
+                                fillColor: [79, 70, 229], // Indigo-600
+                                textColor: 255, // White
+                                fontStyle: 'bold',
+                                halign: 'center', // Center header text
+                            },
+                            columnStyles: { // Fine-tune alignment per column
+                                0: { halign: 'right' }, // Day (Arabic)
+                                1: { halign: 'center' },// Date
+                                2: { halign: 'center' },// Code
+                                3: { halign: 'right' }, // Name (Arabic)
+                                4: { halign: 'right' }, // Period (Arabic)
+                                5: { halign: 'center' },// Time
+                                6: { halign: 'center' },// Regulation
+                            },
+                            didParseCell: function (data) {
+                                // Additional parsing if needed, but columnStyles is often enough
+                                if (data.section === 'head') {
+                                    data.cell.styles.halign = 'center'; // Ensure headers are centered override
+                                }
+                                // Basic RTL reverse for known Arabic columns (can be imperfect)
+                                if (data.section === 'body' && ['day', 'name', 'period'].includes(data.column.dataKey)) {
+                                    if (typeof data.cell.raw === 'string' && /[\u0600-\u06FF]/.test(data.cell.raw)) {
+                                        // Simple word reverse - might need more sophisticated library for perfect display
+                                        // data.cell.text = data.cell.raw.split(' ').reverse().join('  ');
+                                        data.cell.styles.halign = 'right'; // Ensure right alignment
+                                    }
+                                }
+                            },
+                            // Ensure column headers match the table exactly if using `html` property isn't enough
+                            // columns: [ ... ] // Usually not needed if `html` works well
+                        });
+                    } catch (tableError) {
+                        console.error("Error generating PDF table with autoTable:", tableError);
+                        alert("An error occurred while creating the PDF table. Please check the console for details.");
+                        return; // Stop PDF generation
+                    }
+
+                    // Save the PDF
+                    doc.save(`Exam_Schedule_${this.state.userData.name || 'User'}.pdf`); // Personalized filename
+                },
+
+
+                // --- END Exam Schedule Generator Functions ---
                 toggleDarkMode: function (forcedState) {
                     const newState = forcedState !== undefined ? forcedState : !this.state.darkMode;
 
