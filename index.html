@@ -1063,6 +1063,7 @@
     </button>
 
     <!-- Donation Modal -->
+    <!-- Donation Modal -->
     <div id="donation-modal"
         class="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-60 backdrop-blur-sm hidden animate-fadeIn">
         <div class="bg-white dark:bg-gray-800 rounded-lg shadow-xl p-6 w-full max-w-md mx-4 relative animate-scaleIn">
@@ -1078,9 +1079,43 @@
                 generosity!
             </p>
 
-            <div class="space-y-5">
-                <!-- Vodafone Cash -->
-                <div class="p-4 border border-gray-200 dark:border-gray-700 rounded-md bg-gray-50 dark:bg-gray-700">
+            <!-- START: Mobile Method Selector (Hidden on Medium+) -->
+            <div id="donation-method-selector" class="space-y-3 mb-6 md:hidden">
+                <h3 class="text-lg font-semibold text-center text-gray-700 dark:text-gray-300 mb-3">Choose a donation
+                    method:</h3>
+                <button data-method="vodafone"
+                    class="donation-select-button w-full flex items-center justify-center py-2 px-4 border border-gray-300 dark:border-gray-600 rounded-md shadow-sm text-sm font-medium text-gray-700 dark:text-gray-200 bg-white dark:bg-gray-700 hover:bg-gray-50 dark:hover:bg-gray-600 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500">
+                    <img src="https://cdn0.iconfinder.com/data/icons/circle-icons/512/vodafone.png" alt=""
+                        class="w-5 h-5 mr-2">
+                    Vodafone Cash
+                </button>
+                <button data-method="instapay"
+                    class="donation-select-button w-full flex items-center justify-center py-2 px-4 border border-gray-300 dark:border-gray-600 rounded-md shadow-sm text-sm font-medium text-gray-700 dark:text-gray-200 bg-white dark:bg-gray-700 hover:bg-gray-50 dark:hover:bg-gray-600 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500">
+                    <img src="instapay_8c90e905dd.svg" alt="" class="w-5 h-5 mr-2 rounded">
+                    Instapay
+                </button>
+                <button data-method="coffee"
+                    class="donation-select-button w-full flex items-center justify-center py-2 px-4 border border-gray-300 dark:border-gray-600 rounded-md shadow-sm text-sm font-medium text-gray-700 dark:text-gray-200 bg-white dark:bg-gray-700 hover:bg-gray-50 dark:hover:bg-gray-600 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500">
+                    <img src="https://cdn.buymeacoffee.com/buttons/bmc-new-btn-logo.svg" alt="" class="w-5 h-5 mr-2">
+                    Buy Me a Coffee
+                </button>
+            </div>
+            <!-- END: Mobile Method Selector -->
+
+            <!-- START: Back Button (Mobile Only) -->
+            <button id="donation-back-button"
+                class="absolute top-3 left-3 text-gray-500 hover:text-gray-700 dark:text-gray-300 dark:hover:text-white md:hidden hidden focus:outline-none"
+                aria-label="Go back to donation method selection">
+                <i class="fas fa-arrow-left text-xl"></i>
+            </button>
+            <!-- END: Back Button -->
+
+            <!-- Container for All Details (Hidden on Mobile initially, Shown on MD+) -->
+            <div id="donation-details-container" class="space-y-5 hidden md:block">
+
+                <!-- Vodafone Cash Details (Add ID) -->
+                <div id="vodafone-details"
+                    class="donation-detail-section p-4 border border-gray-200 dark:border-gray-700 rounded-md bg-gray-50 dark:bg-gray-700">
                     <h3 class="text-lg font-semibold mb-2 text-gray-800 dark:text-gray-100 flex items-center">
                         <img src="https://cdn0.iconfinder.com/data/icons/circle-icons/512/vodafone.png"
                             alt="Vodafone Cash" class="w-6 h-6 mr-2">
@@ -1088,19 +1123,14 @@
                     </h3>
                     <p class="text-sm text-gray-600 dark:text-gray-300 mb-2">Enter the amount you wish to donate (EGP):
                     </p>
-
-                    <!-- Amount Input -->
                     <div class="mb-3">
                         <label for="vodafone-amount" class="sr-only">Donation Amount</label>
                         <input type="number" id="vodafone-amount" name="vodafone-amount" placeholder="e.g., 50" min="1"
                             inputmode="numeric"
                             class="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100">
                     </div>
-
-                    <!-- Dial Button -->
                     <a id="vodafone-dial-link" href="#" aria-disabled="true"
                         class="block w-full text-center py-2 px-4 bg-red-600 text-white font-medium rounded-md transition-colors focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500 dark:focus:ring-offset-gray-800 opacity-50 cursor-not-allowed">
-                        <!-- Text will be updated by JS -->
                         Enter Amount to Generate Code
                     </a>
                     <p class="text-xs text-center text-gray-500 dark:text-gray-400 mt-2">
@@ -1108,42 +1138,41 @@
                     </p>
                 </div>
 
-                <!-- Instapay -->
-                <div class="p-4 border border-gray-200 dark:border-gray-700 rounded-md bg-gray-50 dark:bg-gray-700">
+                <!-- Instapay Details (Add ID) -->
+                <div id="instapay-details"
+                    class="donation-detail-section p-4 border border-gray-200 dark:border-gray-700 rounded-md bg-gray-50 dark:bg-gray-700">
                     <h3 class="text-lg font-semibold mb-2 text-gray-800 dark:text-gray-100 flex items-center">
                         <img src="instapay_8c90e905dd.svg" alt="Instapay" class="w-6 h-6 mr-2 rounded">
-                        <!-- Replace with actual Instapay logo if possible -->
                         Instapay
                     </h3>
                     <p class="text-sm text-gray-600 dark:text-gray-300 mb-2">Use the following Instapay address (IPA):
                     </p>
-                    <!-- <img src="your-instapay-qr.png" alt="Instapay QR Code" class="mx-auto mt-3 w-32 h-32"> -->
-
-                    <!-- Instapay Link Button -->
                     <a href="https://ipn.eg/S/tameryousef59/instapay/8SpdQx" target="_blank" rel="noopener noreferrer"
                         class="block w-full text-center mt-3 py-2 px-4 bg-indigo-600 text-white font-medium rounded-md hover:bg-indigo-700 transition-colors focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 dark:focus:ring-offset-gray-800">
                         <i class="fas fa-external-link-alt mr-1"></i> Open Instapay Link
                     </a>
-
                 </div>
 
-                <!-- Buy Me a Coffee -->
-                <div class="p-4 border border-gray-200 dark:border-gray-700 rounded-md bg-gray-50 dark:bg-gray-700">
+                <!-- Buy Me a Coffee Details (Add ID) -->
+                <div id="coffee-details"
+                    class="donation-detail-section p-4 border border-gray-200 dark:border-gray-700 rounded-md bg-gray-50 dark:bg-gray-700">
                     <h3 class="text-lg font-semibold mb-3 text-gray-800 dark:text-gray-100 flex items-center">
                         <img src="https://cdn.buymeacoffee.com/buttons/bmc-new-btn-logo.svg" alt="Buy Me a Coffee"
                             class="w-6 h-6 mr-2">
                         Buy Me a Coffee
                     </h3>
-                    <a href="https://www.buymeacoffee.com/teamshoky" target="_blank" rel="noopener noreferrer"
+                    <a href="https://www.buymeacoffee.com/jooexploit" target="_blank" rel="noopener noreferrer"
                         class="block w-full text-center py-2.5 px-4 bg-yellow-400 text-gray-900 font-semibold rounded-md hover:bg-yellow-500 transition-colors focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-yellow-500 dark:focus:ring-offset-gray-800">
                         Buy a Coffee for the Team ☕
                     </a>
-                    <img src="bmc_qr.png" alt="buymeacoffee QR Code" class="mx-auto mt-3 w-32 h-32">
+                    <img src="bmc_qr.png" alt="Instapay QR Code" class="mx-auto mt-3 w-32 h-32">
                 </div>
-            </div>
+
+            </div> <!-- End donation-details-container -->
 
         </div>
     </div>
+    <!-- End Donation Modal -->
     <!-- End Donation Modal -->
     <!-- Welcome Modal (First Visit) -->
     <div id="welcome-modal" class="fixed inset-0 z-50 flex items-center justify-center modal-backdrop hidden">
@@ -2578,6 +2607,7 @@
         document.addEventListener('DOMContentLoaded', function () {
 
             // --- Donation Modal Logic ---
+
             // --- Vodafone Cash USSD Logic ---
             const vodafoneAmountInput = document.getElementById('vodafone-amount');
             const vodafoneDialLink = document.getElementById('vodafone-dial-link');
@@ -2649,30 +2679,100 @@
                 console.warn("Donation button or modal elements not found. Modal functionality disabled.");
             }
 
-            // --- Copy Button Logic ---
-            copyButtons.forEach(button => {
-                button.addEventListener('click', async () => {
-                    const targetId = button.dataset.copytarget;
-                    const targetElement = document.getElementById(targetId);
-                    if (targetElement) {
-                        const textToCopy = targetElement.textContent || targetElement.innerText;
-                        try {
-                            await navigator.clipboard.writeText(textToCopy);
-                            // Visual feedback
-                            const originalIcon = button.innerHTML;
-                            button.innerHTML = '<i class="fas fa-check mr-1"></i> Copied!';
-                            button.disabled = true;
-                            setTimeout(() => {
-                                button.innerHTML = originalIcon; // Restore original icon/text
-                                button.disabled = false;
-                            }, 1500); // Reset after 1.5 seconds
-                        } catch (err) {
-                            console.error('Failed to copy: ', err);
-                            alert('Failed to copy text. Please try manually.');
-                        }
+            // --- Mobile Donation Method Selection Logic ---
+            const donationMethodSelector = document.getElementById('donation-method-selector');
+            const donationDetailsContainer = document.getElementById('donation-details-container');
+            const donationDetailSections = document.querySelectorAll('.donation-detail-section'); // Get all detail sections
+            const donationSelectButtons = document.querySelectorAll('.donation-select-button');
+            const donationBackButton = document.getElementById('donation-back-button');
+            const MOBILE_BREAKPOINT = 768; // Tailwind's 'md' breakpoint
+
+            function isMobileView() {
+                return window.innerWidth < MOBILE_BREAKPOINT;
+            }
+
+            // Function to set the initial state of the modal based on screen size
+            function setupDonationModalView() {
+                if (!donationModal || !donationMethodSelector || !donationDetailsContainer || !donationBackButton) return;
+
+                if (isMobileView()) {
+                    // Mobile view: Show selector, hide details and back button initially
+                    donationMethodSelector.classList.remove('hidden');
+                    donationDetailsContainer.classList.add('hidden'); // Ensure container is hidden
+                    donationDetailSections.forEach(section => section.classList.add('hidden')); // Hide individual sections
+                    donationBackButton.classList.add('hidden');
+                } else {
+                    // Desktop view: Hide selector/back button, show details container
+                    donationMethodSelector.classList.add('hidden');
+                    donationDetailsContainer.classList.remove('hidden'); // Ensure container is visible
+                    donationDetailSections.forEach(section => section.classList.remove('hidden')); // Show individual sections
+                    donationBackButton.classList.add('hidden');
+                }
+            }
+
+            // --- Event Listeners ---
+
+            // When the main donate button is clicked, set up the correct view
+            if (donateButton && donationModal) {
+                donateButton.addEventListener('click', () => {
+                    setupDonationModalView(); // Set view before showing
+                    donationModal.classList.remove('hidden');
+                    // document.body.style.overflow = 'hidden'; // Optional: Prevent scroll
+                });
+            }
+
+            // When a method selection button is clicked (mobile only)
+            donationSelectButtons.forEach(button => {
+                button.addEventListener('click', () => {
+                    const method = button.dataset.method; // 'vodafone', 'instapay', or 'coffee'
+                    const targetSection = document.getElementById(`${method}-details`);
+
+                    if (targetSection && donationMethodSelector && donationBackButton) {
+                        // Hide selector, show details container, hide all sections, then show target
+                        donationMethodSelector.classList.add('hidden');
+                        donationDetailsContainer.classList.remove('hidden'); // Show the main container
+                        donationDetailSections.forEach(section => section.classList.add('hidden')); // Hide all first
+                        targetSection.classList.remove('hidden'); // Show the chosen one
+                        donationBackButton.classList.remove('hidden'); // Show the back button
                     }
                 });
             });
+
+            // When the back button is clicked (mobile only)
+            if (donationBackButton) {
+                donationBackButton.addEventListener('click', () => {
+                    setupDonationModalView(); // Reset to the initial mobile selection view
+                });
+            }
+
+            // Adjust view on window resize
+            let resizeTimer;
+            window.addEventListener('resize', () => {
+                clearTimeout(resizeTimer);
+                resizeTimer = setTimeout(() => {
+                    // Only run setup if the modal is currently visible
+                    if (donationModal && !donationModal.classList.contains('hidden')) {
+                        setupDonationModalView();
+                    }
+                }, 150); // Debounce resize events
+            });
+
+            // Make sure modal closes cleanly (Existing close logic should still work)
+            if (closeDonationModalButton && donationModal) {
+                closeDonationModalButton.addEventListener('click', () => {
+                    donationModal.classList.add('hidden');
+                    // document.body.style.overflow = ''; // Optional: Restore scroll
+                });
+            }
+            if (donationModal) {
+                donationModal.addEventListener('click', (event) => {
+                    if (event.target === donationModal) {
+                        donationModal.classList.add('hidden');
+                        // document.body.style.overflow = ''; // Optional: Restore scroll
+                    }
+                });
+            }
+            // --- End Mobile Donation Method Selection Logic ---
             // --- End Donation Modal Logic ---
             // Sticky Note Template
             const noteTemplate = (color, content = '', id = Date.now()) => `
