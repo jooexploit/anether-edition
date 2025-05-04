@@ -2746,16 +2746,79 @@
             }
 
             // Adjust view on window resize
+            // Adjust view on window resize (Improved Logic to handle keyboard)
             let resizeTimer;
+            let lastKnownWidth = window.innerWidth; // Track the width across resize events
+
             window.addEventListener('resize', () => {
                 clearTimeout(resizeTimer);
                 resizeTimer = setTimeout(() => {
-                    // Only run setup if the modal is currently visible
-                    if (donationModal && !donationModal.classList.contains('hidden')) {
-                        setupDonationModalView();
+                    const currentWidth = window.innerWidth;
+                    const modalIsOpen = donationModal && !donationModal.classList.contains('hidden');
+
+                    // Don't do anything if the modal isn't even open
+                    if (!modalIsOpen) {
+                        lastKnownWidth = currentWidth; // Still update width for next time modal opens
+                        return;
                     }
-                }, 150); // Debounce resize events
+
+                    const currentlyMobile = isMobileView(); // Use helper function based on currentWidth
+                    const wasMobile = lastKnownWidth < MOBILE_BREAKPOINT; // Check based on previous width
+                    const detailSectionVisibleMobile = currentlyMobile && donationBackButton && !donationBackButton.classList.contains('hidden');
+
+                    // --- Decision Logic ---
+
+                    // 1. If resizing causes keyboard appearance/disappearance *while staying mobile*
+                    //    AND a detail section is already showing, *DO NOTHING*. This is the key fix.
+                    if (currentlyMobile && wasMobile && detailSectionVisibleMobile) {
+                        // console.log("Resize event on mobile while detail view active (Keyboard?). Ignoring view reset.");
+                        lastKnownWidth = currentWidth; // Update width tracker but don't change view
+                        return; // Explicitly do nothing further
+                    }
+
+                    // 2. If transitioning FROM Mobile TO Desktop view
+                    if (!currentlyMobile && wasMobile) {
+                        // console.log("Resized: Mobile -> Desktop");
+                        // Hide selector/back button, show details container & ensure all sections are visible
+                        donationMethodSelector?.classList.add('hidden');
+                        donationBackButton?.classList.add('hidden');
+                        donationDetailsContainer?.classList.remove('hidden');
+                        donationDetailSections?.forEach(section => section.classList.remove('hidden'));
+                    }
+                    // 3. If transitioning FROM Desktop TO Mobile view
+                    else if (currentlyMobile && !wasMobile) {
+                        // console.log("Resized: Desktop -> Mobile");
+                        // Show selector, hide details container & back button (Reset to initial mobile state)
+                        donationMethodSelector?.classList.remove('hidden');
+                        donationBackButton?.classList.add('hidden');
+                        donationDetailsContainer?.classList.add('hidden');
+                        // Individual sections will be hidden by default or when switching back
+                    }
+                    // 4. If resizing *while staying desktop* (or initially loading on desktop)
+                    else if (!currentlyMobile && !wasMobile) {
+                        // console.log("Resized: Staying Desktop");
+                        // Optional: Ensure desktop view is consistent, though usually not needed unless elements were hidden by other means
+                        donationMethodSelector?.classList.add('hidden');
+                        donationBackButton?.classList.add('hidden');
+                        donationDetailsContainer?.classList.remove('hidden');
+                        donationDetailSections?.forEach(section => section.classList.remove('hidden'));
+                    }
+                    // 5. If resizing *while staying mobile* BUT *no detail section selected yet* (i.e., selector is visible)
+                    else if (currentlyMobile && wasMobile && !detailSectionVisibleMobile) {
+                        // console.log("Resized: Staying Mobile (Selector View)");
+                        // Ensure selector view is consistent
+                        donationMethodSelector?.classList.remove('hidden');
+                        donationBackButton?.classList.add('hidden');
+                        donationDetailsContainer?.classList.add('hidden');
+                    }
+
+                    lastKnownWidth = currentWidth; // Update width tracker for the next resize event
+
+                }, 250); // Increased debounce slightly, might help stabilize
             });
+
+            // The setupDonationModalView function IS STILL NEEDED for the initial modal open and the back button logic.
+            // Just the automatic call on *every* resize was the issue.
 
             // Make sure modal closes cleanly (Existing close logic should still work)
             if (closeDonationModalButton && donationModal) {
