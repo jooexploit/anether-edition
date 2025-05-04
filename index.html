@@ -1056,6 +1056,95 @@
 </script>
 
 <body class="light">
+    <!-- Donation Floating Button -->
+    <button id="donate-button" aria-label="Open donation options"
+        class="fixed bottom-5 right-5 z-40 w-14 h-14 bg-indigo-600 hover:bg-indigo-700 text-white rounded-full flex items-center justify-center shadow-lg cursor-pointer transition-transform transform hover:scale-110 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500">
+        <i class="fas fa-heart text-xl"></i> <!-- Or fa-coffee, fa-donate -->
+    </button>
+
+    <!-- Donation Modal -->
+    <div id="donation-modal"
+        class="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-60 backdrop-blur-sm hidden animate-fadeIn">
+        <div class="bg-white dark:bg-gray-800 rounded-lg shadow-xl p-6 w-full max-w-md mx-4 relative animate-scaleIn">
+            <!-- Close Button -->
+            <button id="close-donation-modal" aria-label="Close donation options"
+                class="absolute top-3 right-3 text-gray-500 hover:text-gray-800 dark:text-gray-400 dark:hover:text-white transition-colors focus:outline-none">
+                <i class="fas fa-times text-2xl"></i>
+            </button>
+
+            <h2 class="text-2xl font-bold text-gray-900 dark:text-white mb-6 text-center">Support Team Shoky! ❤️</h2>
+            <p class="text-center text-gray-600 dark:text-gray-300 mb-6">
+                Your contribution helps us maintain and improve this platform for students. Thank you for your
+                generosity!
+            </p>
+
+            <div class="space-y-5">
+                <!-- Vodafone Cash -->
+                <div class="p-4 border border-gray-200 dark:border-gray-700 rounded-md bg-gray-50 dark:bg-gray-700">
+                    <h3 class="text-lg font-semibold mb-2 text-gray-800 dark:text-gray-100 flex items-center">
+                        <img src="https://cdn0.iconfinder.com/data/icons/circle-icons/512/vodafone.png"
+                            alt="Vodafone Cash" class="w-6 h-6 mr-2">
+                        Vodafone Cash
+                    </h3>
+                    <p class="text-sm text-gray-600 dark:text-gray-300 mb-2">Enter the amount you wish to donate (EGP):
+                    </p>
+
+                    <!-- Amount Input -->
+                    <div class="mb-3">
+                        <label for="vodafone-amount" class="sr-only">Donation Amount</label>
+                        <input type="number" id="vodafone-amount" name="vodafone-amount" placeholder="e.g., 50" min="1"
+                            inputmode="numeric"
+                            class="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100">
+                    </div>
+
+                    <!-- Dial Button -->
+                    <a id="vodafone-dial-link" href="#" aria-disabled="true"
+                        class="block w-full text-center py-2 px-4 bg-red-600 text-white font-medium rounded-md transition-colors focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500 dark:focus:ring-offset-gray-800 opacity-50 cursor-not-allowed">
+                        <!-- Text will be updated by JS -->
+                        Enter Amount to Generate Code
+                    </a>
+                    <p class="text-xs text-center text-gray-500 dark:text-gray-400 mt-2">
+                        Clicking will open your dialer. You still need to press 'Call'.
+                    </p>
+                </div>
+
+                <!-- Instapay -->
+                <div class="p-4 border border-gray-200 dark:border-gray-700 rounded-md bg-gray-50 dark:bg-gray-700">
+                    <h3 class="text-lg font-semibold mb-2 text-gray-800 dark:text-gray-100 flex items-center">
+                        <img src="instapay_8c90e905dd.svg" alt="Instapay" class="w-6 h-6 mr-2 rounded">
+                        <!-- Replace with actual Instapay logo if possible -->
+                        Instapay
+                    </h3>
+                    <p class="text-sm text-gray-600 dark:text-gray-300 mb-2">Use the following Instapay address (IPA):
+                    </p>
+                    <!-- <img src="your-instapay-qr.png" alt="Instapay QR Code" class="mx-auto mt-3 w-32 h-32"> -->
+
+                    <!-- Instapay Link Button -->
+                    <a href="https://ipn.eg/S/tameryousef59/instapay/8SpdQx" target="_blank" rel="noopener noreferrer"
+                        class="block w-full text-center mt-3 py-2 px-4 bg-indigo-600 text-white font-medium rounded-md hover:bg-indigo-700 transition-colors focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 dark:focus:ring-offset-gray-800">
+                        <i class="fas fa-external-link-alt mr-1"></i> Open Instapay Link
+                    </a>
+
+                </div>
+
+                <!-- Buy Me a Coffee -->
+                <div class="p-4 border border-gray-200 dark:border-gray-700 rounded-md bg-gray-50 dark:bg-gray-700">
+                    <h3 class="text-lg font-semibold mb-3 text-gray-800 dark:text-gray-100 flex items-center">
+                        <img src="https://cdn.buymeacoffee.com/buttons/bmc-new-btn-logo.svg" alt="Buy Me a Coffee"
+                            class="w-6 h-6 mr-2">
+                        Buy Me a Coffee
+                    </h3>
+                    <a href="https://www.buymeacoffee.com/teamshoky" target="_blank" rel="noopener noreferrer"
+                        class="block w-full text-center py-2.5 px-4 bg-yellow-400 text-gray-900 font-semibold rounded-md hover:bg-yellow-500 transition-colors focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-yellow-500 dark:focus:ring-offset-gray-800">
+                        Buy a Coffee for the Team ☕
+                    </a>
+                    <img src="bmc_qr.png" alt="buymeacoffee QR Code" class="mx-auto mt-3 w-32 h-32">
+                </div>
+            </div>
+
+        </div>
+    </div>
+    <!-- End Donation Modal -->
     <!-- Welcome Modal (First Visit) -->
     <div id="welcome-modal" class="fixed inset-0 z-50 flex items-center justify-center modal-backdrop hidden">
         <div class="bg-white dark:bg-gray-800 rounded-lg shadow-xl p-6 w-full max-w-md mx-4 animate-fadeIn">
@@ -2487,6 +2576,104 @@
         let db; // Declare db variable to be accessible within the app object
         // --- END: Get Firebase Database Reference ---
         document.addEventListener('DOMContentLoaded', function () {
+
+            // --- Donation Modal Logic ---
+            // --- Vodafone Cash USSD Logic ---
+            const vodafoneAmountInput = document.getElementById('vodafone-amount');
+            const vodafoneDialLink = document.getElementById('vodafone-dial-link');
+            const recipientNumber = '0100514973'; // The number to send money TO
+
+            function updateVodafoneLink() {
+                const amount = vodafoneAmountInput.value;
+
+                if (amount && !isNaN(amount) && Number(amount) > 0) {
+                    const ussdCode = `*9*7*${recipientNumber}*${amount}#`;
+                    // IMPORTANT: Encode the USSD code for the tel: URI
+                    const encodedUssd = encodeURIComponent(ussdCode);
+                    const telLink = `tel:${encodedUssd}`;
+
+                    vodafoneDialLink.href = telLink;
+                    vodafoneDialLink.classList.remove('opacity-50', 'cursor-not-allowed');
+                    vodafoneDialLink.setAttribute('aria-disabled', 'false');
+                    vodafoneDialLink.innerHTML = `<i class="fas fa-phone-alt mr-1"></i> Send ${amount} EGP via Dialer`;
+
+                } else {
+                    // Disable the link if amount is invalid
+                    vodafoneDialLink.href = '#'; // Prevent navigation
+                    vodafoneDialLink.classList.add('opacity-50', 'cursor-not-allowed');
+                    vodafoneDialLink.setAttribute('aria-disabled', 'true');
+                    vodafoneDialLink.innerHTML = 'Enter Valid Amount';
+                }
+            }
+
+            if (vodafoneAmountInput && vodafoneDialLink) {
+                // Update the link whenever the input value changes
+                vodafoneAmountInput.addEventListener('input', updateVodafoneLink);
+
+                // Initial state check in case the modal is pre-filled somehow (unlikely here)
+                updateVodafoneLink();
+            } else {
+                console.warn("Vodafone Cash input or dial link elements not found.");
+            }
+            // --- End Vodafone Cash USSD Logic ---
+            const donateButton = document.getElementById('donate-button');
+            const donationModal = document.getElementById('donation-modal');
+            const closeDonationModalButton = document.getElementById('close-donation-modal');
+            const copyButtons = document.querySelectorAll('.copy-button');
+
+            if (donateButton && donationModal && closeDonationModalButton) {
+                // Show modal
+                donateButton.addEventListener('click', () => {
+                    donationModal.classList.remove('hidden');
+                    // Optional: prevent body scroll when modal is open
+                    // document.body.style.overflow = 'hidden';
+                });
+
+                // Hide modal with close button
+                closeDonationModalButton.addEventListener('click', () => {
+                    donationModal.classList.add('hidden');
+                    // Optional: restore body scroll
+                    // document.body.style.overflow = '';
+                });
+
+                // Hide modal by clicking outside the content box
+                donationModal.addEventListener('click', (event) => {
+                    // Check if the click is directly on the modal overlay (the background)
+                    if (event.target === donationModal) {
+                        donationModal.classList.add('hidden');
+                        // Optional: restore body scroll
+                        // document.body.style.overflow = '';
+                    }
+                });
+            } else {
+                console.warn("Donation button or modal elements not found. Modal functionality disabled.");
+            }
+
+            // --- Copy Button Logic ---
+            copyButtons.forEach(button => {
+                button.addEventListener('click', async () => {
+                    const targetId = button.dataset.copytarget;
+                    const targetElement = document.getElementById(targetId);
+                    if (targetElement) {
+                        const textToCopy = targetElement.textContent || targetElement.innerText;
+                        try {
+                            await navigator.clipboard.writeText(textToCopy);
+                            // Visual feedback
+                            const originalIcon = button.innerHTML;
+                            button.innerHTML = '<i class="fas fa-check mr-1"></i> Copied!';
+                            button.disabled = true;
+                            setTimeout(() => {
+                                button.innerHTML = originalIcon; // Restore original icon/text
+                                button.disabled = false;
+                            }, 1500); // Reset after 1.5 seconds
+                        } catch (err) {
+                            console.error('Failed to copy: ', err);
+                            alert('Failed to copy text. Please try manually.');
+                        }
+                    }
+                });
+            });
+            // --- End Donation Modal Logic ---
             // Sticky Note Template
             const noteTemplate = (color, content = '', id = Date.now()) => `
                 <div class="note p-4 rounded-lg shadow-md h-40 flex flex-col bg-${color}-100 dark:bg-${color}-800" data-id="${id}">
