@@ -3884,6 +3884,8 @@
                 // Initialize Application
                 init: async function () {
                     console.log("App init started...");
+                    this.handleCacheInvalidationSignal();
+
 
                     // --- START: Get Firebase Database Reference (Moved Here) ---
                     try {
@@ -4974,6 +4976,21 @@
                 CACHE_KEY: 'appDataCache',
                 CACHE_TIMESTAMP_KEY: 'appDataCacheTimestamp',
                 CACHE_DURATION_MS: 60 * 60 * 1000, // 1 hour cache duration (adjust as needed)
+                // NEW: Function to check for and handle the cache invalidation signal
+                handleCacheInvalidationSignal: function () {
+                    const urlParams = new URLSearchParams(window.location.search);
+                    const forceRefresh = urlParams.get('forceRefreshData'); // Or whatever parameter name you choose
+
+                    if (forceRefresh === 'true') {
+                        console.log("Force refresh signal detected. Clearing data cache.");
+                        this.clearDataCache(); // Your existing function to clear cache
+
+                        // Remove the query parameter from the URL so it doesn't trigger on next refresh/bookmark
+                        const newUrl = window.location.pathname + window.location.hash; // Keep path and hash, remove query
+                        history.replaceState(null, '', newUrl);
+                        console.log("Query parameter removed from URL.");
+                    }
+                },
 
                 loadFirebaseData: async function () {
                     console.log("Checking cache before loading Firestore data...");
